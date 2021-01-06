@@ -40,13 +40,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="字典标签" width="100" align="center">
+      <el-table-column label="字典标签" width="80" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.dictLabel }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="字典键值" width="100" align="center">
+      <el-table-column label="字典键值" width="130" align="center">
         <template slot-scope="scope">
           <el-tag v-if="scope.$index%5 == 0" type="warning">{{scope.row.dictValue}}</el-tag>
           <el-tag v-if="scope.$index%5 == 1" type="success">{{scope.row.dictValue}}</el-tag>
@@ -56,20 +56,20 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="字典类型" width="200" align="center">
+      <el-table-column label="字典类型" width="150" align="center">
         <template slot-scope="scope">
           <el-tag>{{ scope.row.sysDictType.dictType}}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="是否默认" width="100" align="center">
+      <el-table-column label="是否默认" width="77" align="center">
         <template slot-scope="scope">
           <el-tag type="success" v-if="scope.row.isDefault==1">是</el-tag>
           <el-tag type="warning" v-if="scope.row.isDefault==0">否</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="回显样式" width="100" align="center">
+      <el-table-column label="回显样式" width="87" align="center">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.listClass == 'default'">{{scope.row.listClass}}</el-tag>
           <el-tag v-if="scope.row.listClass == 'success'" type="success">{{scope.row.listClass}}</el-tag>
@@ -86,7 +86,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="发布状态" width="100" align="center">
+      <el-table-column label="发布状态" width="77" align="center">
         <template slot-scope="scope">
           <el-tag type="success" v-if="scope.row.isPublish == '1' ">上架</el-tag>
           <el-tag type="danger" v-else>下架</el-tag>
@@ -99,13 +99,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="创建时间" width="160" align="center">
+      <el-table-column label="创建时间" width="100%" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.createTime }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="状态" width="100" align="center">
+      <el-table-column label="状态" width="57" align="center">
         <template slot-scope="scope">
           <template v-if="scope.row.status == 1">
             <span>正常</span>
@@ -119,7 +119,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" fixed="right" min-width="240">
+      <el-table-column label="操作" fixed="right" min-width="147">
         <template slot-scope="scope">
           <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/sysDictData/edit'">编辑</el-button>
           <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/sysDictData/deleteBatch'">删除</el-button>

@@ -5,7 +5,7 @@
       <h1 class="t_nav">
         <span>好咖啡要和朋友一起品尝，好“资料”也要和同样喜欢它的人一起分享。</span>
         <a href="/" class="n1">网站首页</a>
-        <a href="/" class="n2">专题</a>
+        <a href="javascript:void(0);" class="n2">专题</a>
       </h1>
 
       <div class="share">
@@ -52,7 +52,7 @@ export default {
     return {
       dataList: [],
       currentPage: 1,
-      pageSize: 16,
+      pageSize: 12,
       total: 0, //总数量
       visiable: false, //是否显示专辑item侧边栏
       selectSubjectUid: "", // 选中的SubjectUid

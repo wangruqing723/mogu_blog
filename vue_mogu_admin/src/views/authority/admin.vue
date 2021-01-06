@@ -22,7 +22,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="头像" width="120" align="center">
+      <el-table-column label="头像" width="100%" align="center">
         <template slot-scope="scope">
           <img
             v-if="scope.row.photoList"
@@ -32,56 +32,56 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="用户名" width="100" align="center">
+      <el-table-column label="用户名" width="100%" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.userName }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="拥有角色" width="150" align="center">
+      <el-table-column label="拥有角色" width="107" align="center">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.role" type="danger">{{scope.row.role.roleName}}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="性别" width="60" align="center">
+      <el-table-column label="性别" width="57" align="center">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.gender==1" type="success">男</el-tag>
           <el-tag v-if="scope.row.gender==2" type="danger">女</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="登录次数" width="100" align="center">
+      <el-table-column label="登录次数" width="77" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.loginCount }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="已用空间" width="100" align="center">
+      <el-table-column label="已用空间" width="87" align="center">
         <template slot-scope="scope">
           <el-tag type="warning">{{ calculateFileSize(scope.row.storageSize)}}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="网盘大小" width="100" align="center">
+      <el-table-column label="网盘大小" width="97" align="center">
         <template slot-scope="scope">
           <el-tag type="warning">{{ calculateFileSize(scope.row.maxStorageSize * 1024 * 1024)}}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="登录IP" width="160" align="center">
+      <el-table-column label="登录IP" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.lastLoginIp }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="最后登录时间" width="160" align="center">
+      <el-table-column label="最后登录" width="100%" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.lastLoginTime }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="状态" width="100" align="center">
+      <el-table-column label="状态" width="57" align="center">
         <template slot-scope="scope">
           <template v-if="scope.row.status == 1">
             <span>正常</span>
@@ -95,7 +95,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" fixed="right" min-width="250" >
+      <el-table-column label="操作" fixed="right" min-width="240" >
         <template slot-scope="scope">
           <el-button @click="handRest(scope.row)" type="warning" size="small" v-permission="'/admin/restPwd'">重置密码</el-button>
           <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/admin/edit'">编辑</el-button>

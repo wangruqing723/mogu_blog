@@ -32,7 +32,7 @@
 	      </template>
 	    </el-table-column> -->
 
-      <el-table-column label="异常内容" width="600" align="center">
+      <el-table-column label="异常内容" width="350" align="center">
 	      <template slot-scope="scope">
 	        <span>{{ scope.row.exceptionMessage }}</span>
 	      </template>
@@ -44,13 +44,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="IP" width="150" align="center">
+      <el-table-column label="IP" width="110" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.ip }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="IP来源" width="200" align="center">
+      <el-table-column label="IP来源" width="180" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.ipSource }}</span>
         </template>
@@ -77,7 +77,7 @@
 	   	  </template>
 	    </el-table-column>
 
-      <el-table-column label="操作" fixed="right" min-width="150">
+      <el-table-column label="操作" fixed="right" min-width="100">
         <template slot-scope="scope">
           <el-button @click="handleShow(scope.row)" type="primary" size="small">详情</el-button>
         </template>

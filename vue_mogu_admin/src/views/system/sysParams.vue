@@ -42,25 +42,25 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="参数名称" width="150" align="center">
+      <el-table-column label="参数名称" width="130" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.paramsName }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="参数键名" width="240" align="center">
+      <el-table-column label="参数键名" width="230" align="center">
         <template slot-scope="scope">
           <el-tag type="primary">{{ scope.row.paramsKey }}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="参数键值" width="200" align="center">
+      <el-table-column label="参数键值" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.paramsValue }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="系统内置" width="80" align="center">
+      <el-table-column label="系统内置" width="100" align="center">
         <template slot-scope="scope">
           <template>
             <el-tag v-for="item in paramsTypeDictList" :key="item.uid" :type="item.listClass" v-if="scope.row.paramsType == item.dictValue">{{item.dictLabel}}</el-tag>
@@ -68,19 +68,19 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="备注" width="200" align="center">
+      <el-table-column label="备注" width="250" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="排序" width="100" align="center">
+      <el-table-column label="排序" width="90" align="center">
         <template slot-scope="scope">
           <el-tag type="warning">{{ scope.row.sort }}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="状态" width="100" align="center">
+      <el-table-column label="状态" width="90" align="center">
         <template slot-scope="scope">
           <template v-if="scope.row.status == 1">
             <span>正常</span>
@@ -94,7 +94,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" fixed="right" min-width="240">
+      <el-table-column label="操作" fixed="right" min-width="147">
         <template slot-scope="scope">
           <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/link/edit'">编辑</el-button>
           <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/link/delete'">删除</el-button>

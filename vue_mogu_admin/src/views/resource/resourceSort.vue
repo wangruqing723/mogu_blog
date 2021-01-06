@@ -29,7 +29,7 @@
 	      </template>
 	    </el-table-column>
 
-        <el-table-column label="分类介绍" width="160" align="center">
+        <el-table-column label="分类介绍" width="200" align="center">
 	      <template slot-scope="scope">
 	        <span>{{ scope.row.content }}</span>
 	      </template>
@@ -295,7 +295,6 @@ export default {
         });
     },
     handleDeleteBatch: function() {
-      var that = this;
       var that = this;
       if(that.multipleSelection.length <= 0 ) {
         this.$commonUtil.message.error("请先选中需要删除的内容")

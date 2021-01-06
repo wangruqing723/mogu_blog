@@ -33,7 +33,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="反馈人" width="150" align="center">
+      <el-table-column label="反馈人" width="120" align="center">
         <template slot-scope="scope">
           <el-tag style="cursor: pointer" v-if="scope.row.user" @click.native="goUserInfo(scope.row.user)" type="primary">{{ scope.row.user.nickName }}</el-tag>
         </template>
@@ -45,7 +45,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="反馈状态" width="100" align="center">
+      <el-table-column label="反馈状态" width="83" align="center">
         <template slot-scope="scope">
           <template>
             <el-tag v-for="item in feedbackStatusDictList" :key="item.uid" :type="item.listClass" v-if="scope.row.feedbackStatus == item.dictValue">{{item.dictLabel}}</el-tag>
@@ -75,7 +75,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="状态" width="100" align="center">
+      <el-table-column label="状态" width="77" align="center">
         <template slot-scope="scope">
           <template v-if="scope.row.status == 1">
             <span>正常</span>
@@ -86,7 +86,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" fixed="right" min-width="240">
+      <el-table-column label="操作" fixed="right" min-width="147">
         <template slot-scope="scope">
           <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/feedback/edit'">编辑</el-button>
           <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/feedback/deleteBatch'">删除</el-button>

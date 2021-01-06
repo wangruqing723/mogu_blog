@@ -123,13 +123,13 @@
     <el-table :data="tableData" ref="articleTable" style="width: 100%" @selection-change="handleSelectionChange">
       <el-table-column type="selection"></el-table-column>
 
-      <el-table-column label="序号" width="60" align="center">
+      <el-table-column label="序号" width="50px" align="center">
         <template slot-scope="scope">
           <span>{{scope.$index + 1}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="标题图" width="160" align="center">
+      <el-table-column label="标题图" width="87" align="center">
         <template slot-scope="scope">
           <img
             v-if="scope.row.photoList"
@@ -139,32 +139,32 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="标题" width="160" align="center">
+      <el-table-column label="标题" width="160px" align="center">
         <template slot-scope="scope">
           <span @click="onClick(scope.row)" style="cursor:pointer;">{{ scope.row.title }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="作者" width="100" align="center">
+      <el-table-column label="作者" width="70px" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.author }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="是否原创" width="100" align="center">
+      <el-table-column label="是否原创" width="76px" align="center">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.isOriginal==1" type="success">原创</el-tag>
           <el-tag v-if="scope.row.isOriginal==0" type="info">转载</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="分类" width="100" align="center">
+      <el-table-column label="分类" width="80px" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.blogSort.sortName }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="标签" width="200" align="center" >
+      <el-table-column label="标签" width="150px" align="center" >
         <template slot-scope="scope">
           <template>
             <el-tag
@@ -178,19 +178,19 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="推荐等级" width="100" align="center">
+      <el-table-column label="推荐等级" width="80px" align="center">
         <template slot-scope="scope">
           <el-tag v-for="item in blogLevelDictList" :key="item.uid" v-if="scope.row.level == item.dictValue" :type="item.listClass">{{item.dictLabel}}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="点击数" width="70" align="center">
+      <el-table-column label="点击数" width="65px" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.clickCount }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="开启评论" width="100" align="center">
+      <el-table-column label="评论" width="70px" align="center">
         <template slot-scope="scope">
           <template>
             <el-tag v-for="item in openDictList" :key="item.uid" :type="item.listClass" v-if="scope.row.openComment == item.dictValue">{{item.dictLabel}}</el-tag>
@@ -198,7 +198,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="发布状态" width="100" align="center">
+      <el-table-column label="发布状态" width="76px" align="center">
         <template slot-scope="scope">
           <template>
             <el-tag v-for="item in blogPublishDictList" :key="item.uid" :type="item.listClass" v-if="scope.row.isPublish == item.dictValue">{{item.dictLabel}}</el-tag>
@@ -206,13 +206,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="创建时间" width="160" align="center">
+      <el-table-column label="创建时间" width="100%" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.createTime }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" fixed="right" min-width="150">
+      <el-table-column label="操作" fixed="right" min-width="147px">
         <template slot-scope="scope">
           <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/blog/edit'">编辑</el-button>
           <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/blog/delete'">删除</el-button>

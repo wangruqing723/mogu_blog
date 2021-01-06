@@ -31,13 +31,13 @@
 
       <el-table-column type="selection"></el-table-column>
 
-      <el-table-column label="序号" width="60" align="center">
+      <el-table-column label="序号" width="100%" align="center">
 	      <template slot-scope="scope">
 	        <span >{{scope.$index + 1}}</span>
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="头像" width="160" align="center">
+      <el-table-column label="头像" width="100%" align="center">
         <template slot-scope="scope">
           <img
             v-if="scope.row.user"
@@ -53,20 +53,20 @@
         </template>
       </el-table-column>
 
-	    <el-table-column label="评论人" width="150" align="center">
+	    <el-table-column label="评论人" width="110" align="center">
 	      <template slot-scope="scope">
           <el-tag type="primary" v-if="scope.row.user"  style="cursor: pointer;" @click.native="goUser(scope.row.user)">{{ scope.row.user.nickName }}</el-tag>
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="被评论人" width="150" align="center">
+      <el-table-column label="被评论人" width="110" align="center">
         <template slot-scope="scope">
           <el-tag type="info" v-if="scope.row.toUser" style="cursor: pointer;" @click.native="goUser(scope.row.toUser)">{{ scope.row.toUser.nickName }}</el-tag>
           <el-tag type="info" style="cursor: pointer;" v-else>无</el-tag>
         </template>
       </el-table-column>
 
-        <el-table-column label="类型" width="80" align="center">
+        <el-table-column label="类型" width="100%" align="center">
           <template slot-scope="scope">
             <template>
               <el-tag type="danger" v-if="scope.row.type == 1">点赞</el-tag>
@@ -75,7 +75,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="来源" width="80" align="center">
+        <el-table-column label="来源" width="110" align="center">
           <template slot-scope="scope">
             <template>
               <el-tag type="warning" @click.native="goPage(scope.row.source, scope.row.blog)" style="cursor: pointer;">{{scope.row.sourceName}}</el-tag>
@@ -91,7 +91,7 @@
 <!--          </template>-->
 <!--        </el-table-column>-->
 
-        <el-table-column label="内容" width="300" align="center">
+        <el-table-column label="内容" width="325px" align="center">
           <template slot-scope="scope">
 <!--            <el-popover-->
 <!--              v-if="scope.row.content"-->
@@ -105,15 +105,15 @@
           </template>
         </el-table-column>
 
-	    <el-table-column label="创建时间" width="160" align="center">
+	    <el-table-column label="创建时间" width="100%" align="center">
 	      <template slot-scope="scope">
 	        <span >{{ scope.row.createTime }}</span>
 	      </template>
 	    </el-table-column>
 
-	    <el-table-column label="操作" fixed="right" min-width="150">
+	    <el-table-column label="操作" fixed="right" min-width="100%">
 	      <template slot-scope="scope" >
-<!--          <el-button @click="handleReply(scope.row)" type="success" size="small">回复</el-button>-->
+          <el-button @click="handleReply(scope.row)" type="success" size="small">回复</el-button>
 	        <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/comment/delete'">删除</el-button>
 	      </template>
 	    </el-table-column>
@@ -247,6 +247,7 @@ export default {
 			this.commentList();
 		},
     handleReply: function(row) {
+      this.$commonUtil.message.info("回复功能待完善")
       console.log("点击了回复");
     },
     handleDelete: function(row) {
@@ -264,7 +265,7 @@ export default {
           })
         })
         .catch(() => {
-          this.$commonUtil.info("已取消删除")
+          this.$commonUtil.message.info("已取消删除")
         });
     },
     handleDeleteBatch: function() {
@@ -283,12 +284,12 @@ export default {
       })
         .then(() => {
           deleteBatchComment(that.multipleSelection).then(response => {
-            this.$commonUtil.message(response.message)
+            this.$commonUtil.message.success(response.message)
             that.commentList();
           });
         })
         .catch(() => {
-          this.$commonUtil.info("已取消删除")
+          this.$commonUtil.message.info("已取消删除")
         });
     },
     handleCurrentChange: function(val) {

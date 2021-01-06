@@ -53,7 +53,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" fixed="right" min-width="150">
+      <el-table-column label="操作" fixed="right" min-width="147">
         <template slot-scope="scope">
           <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/role/edit'">编辑</el-button>
           <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/role/delete'">删除</el-button>

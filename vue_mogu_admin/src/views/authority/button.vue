@@ -27,56 +27,56 @@
                 </template>
               </el-table-column>
 
-              <el-table-column label width="150" align="center">
+              <el-table-column label width="105" align="center">
                 <template slot-scope="scope_child">
                   <span>{{ scope_child.row.name }}</span>
                 </template>
               </el-table-column>
 
-              <el-table-column label width="100" align="center">
+              <el-table-column label width="97" align="center">
                 <template slot-scope="scope_child">
                   <el-tag v-for="item in menuLevelDictList" :key="item.uid" v-if="scope_child.row.menuLevel == item.dictValue" :type="item.listClass">{{item.dictLabel}}</el-tag>
                 </template>
               </el-table-column>
 
-              <el-table-column label width="100" align="center">
+              <el-table-column label width="77" align="center">
                 <template slot-scope="scope">
                   <el-tag v-for="item in menuTypeDictList" :key="item.uid" v-if="scope.row.menuType == item.dictValue" :type="item.listClass">{{item.dictLabel}}</el-tag>
                 </template>
               </el-table-column>
 
-              <el-table-column label width="250" align="center">
+              <el-table-column label width="160" align="center">
                 <template slot-scope="scope_child">
                   <span>{{ scope_child.row.summary }}</span>
                 </template>
               </el-table-column>
 
-              <el-table-column label width="100" align="center">
+              <el-table-column label width="50" align="center">
                 <template slot-scope="scope_child">
                   <span>{{ scope_child.row.icon }}</span>
                   <i :class="scope_child.row.icon" />
                 </template>
               </el-table-column>
 
-              <el-table-column label width="200" align="center">
+              <el-table-column label width="190" align="center">
                 <template slot-scope="scope_child">
                   <span>{{ scope_child.row.url }}</span>
                 </template>
               </el-table-column>
 
-              <el-table-column width="100" align="center">
+              <el-table-column width="87" align="center">
                 <template slot-scope="scope">
                   <el-tag v-for="item in yesNoDictList" :key="item.uid" v-if="scope.row.isShow == item.dictValue" :type="item.listClass">{{item.dictLabel}}</el-tag>
                 </template>
               </el-table-column>
 
-              <el-table-column width="100" align="center">
+              <el-table-column width="67" align="center">
                 <template slot-scope="scope">
                   <el-tag type="warning">{{ scope.row.sort }}</el-tag>
                 </template>
               </el-table-column>
 
-              <el-table-column label width="100" align="center">
+              <el-table-column label width="50" align="center">
                 <template slot-scope="scope_child">
                   <template v-if="scope_child.row.status == 1">
                     <span>正常</span>
@@ -90,7 +90,7 @@
                 </template>
               </el-table-column>
 
-              <el-table-column fixed="right" min-width="230">
+              <el-table-column fixed="right" min-width="217">
                 <template slot-scope="scope_child">
                   <el-button @click="handleStick(scope_child.row)" type="warning" size="small" v-permission="'/categoryMenu/stick'">置顶</el-button>
                   <el-button @click="handleEdit(scope.row, scope_child.row)" type="primary" size="small" v-permission="'/categoryMenu/edit'">编辑</el-button>
@@ -108,55 +108,55 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="菜单名称" width="150" align="center">
+      <el-table-column label="菜单名称" width="105" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="菜单级别" width="100" align="center">
+      <el-table-column label="菜单级别" width="97" align="center">
         <template slot-scope="scope">
           <el-tag v-for="item in menuLevelDictList" :key="item.uid" v-if="scope.row.menuLevel == item.dictValue" :type="item.listClass">{{item.dictLabel}}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="菜单类型" width="100" align="center">
+      <el-table-column label="菜单类型" width="77" align="center">
         <template slot-scope="scope">
           <el-tag v-for="item in menuTypeDictList" :key="item.uid" v-if="scope.row.menuType == item.dictValue" :type="item.listClass">{{item.dictLabel}}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="菜单简介" width="250" align="center">
+      <el-table-column label="菜单简介" width="160" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.summary }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="图标" width="100" align="center">
+      <el-table-column label="图标" width="50" align="center">
         <template slot-scope="scope">
           <i :class="scope.row.icon"></i>
         </template>
       </el-table-column>
 
-      <el-table-column label="路由" width="200" align="center">
+      <el-table-column label="路由" width="190" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.url }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="是否显示" width="100" align="center">
+      <el-table-column label="是否显示" width="87" align="center">
         <template slot-scope="scope">
           <el-tag v-for="item in yesNoDictList" :key="item.uid" v-if="scope.row.isShow == item.dictValue" :type="item.listClass">{{item.dictLabel}}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="排序" width="100" align="center">
+      <el-table-column label="排序" width="67" align="center">
         <template slot-scope="scope">
           <el-tag type="warning">{{ scope.row.sort }}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="状态" width="100" align="center">
+      <el-table-column label="状态" width="50" align="center">
         <template slot-scope="scope">
           <template v-if="scope.row.status == 1">
             <span>正常</span>
@@ -170,7 +170,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" fixed="right" min-width="230">
+      <el-table-column label="操作" fixed="right" min-width="217">
         <template slot-scope="scope">
 
         </template>

@@ -17,19 +17,19 @@
 	      </template>
 	    </el-table-column>
 
-	   	<el-table-column label="标题图" width="160" align="center">
+	   	<el-table-column label="标题图" width="120" align="center">
 	      <template slot-scope="scope">
 	      	<img  v-if="scope.row.photoList" :src="scope.row.photoList[0]" style="width: 105px;height: 70px;"/>
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="名称" width="160" align="center">
+      <el-table-column label="名称" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="分类名" width="160" align="center">
+      <el-table-column label="分类名" width="120" align="center">
 	      <template slot-scope="scope">
           <el-tag type="danger">{{ scope.row.resourceSort.sortName }}</el-tag>
 	      </template>
@@ -41,7 +41,7 @@
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="点击数" width="100" align="center">
+      <el-table-column label="点击数" width="90" align="center">
 	      <template slot-scope="scope">
 	        <span>{{ scope.row.clickCount }}</span>
 	      </template>
@@ -53,7 +53,7 @@
 	      </template>
 	    </el-table-column>
 
-	    <el-table-column label="创建时间" width="160" align="center">
+	    <el-table-column label="创建时间" width="100%" align="center">
 	      <template slot-scope="scope">
 	        <span >{{ scope.row.createTime }}</span>
 	      </template>

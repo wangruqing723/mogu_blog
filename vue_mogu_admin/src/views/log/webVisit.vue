@@ -26,25 +26,25 @@
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="IP" width="120" align="center">
+      <el-table-column label="IP" width="110" align="center">
 	      <template slot-scope="scope">
 	        <span>{{ scope.row.ip }}</span>
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="IP来源" width="200" align="center">
+      <el-table-column label="IP来源" width="160" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.ipSource }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="平台" width="150" align="center">
+      <el-table-column label="平台" width="87" align="center">
 	      <template slot-scope="scope">
 	        <span>{{ scope.row.os }}</span>
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="浏览器" width="200" align="center">
+      <el-table-column label="浏览器" width="165" align="center">
 	      <template slot-scope="scope">
 	        <span>{{ scope.row.browser }}</span>
 	      </template>
@@ -56,7 +56,7 @@
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="内容" width="200" align="center">
+      <el-table-column label="内容" width="220" align="center">
 	      <template slot-scope="scope">
           <span v-html="$xss(scope.row.content, options)"></span>
 	      </template>
@@ -68,7 +68,7 @@
 	      </template>
 	    </el-table-column>
 
-	   	<el-table-column label="状态" width="100" align="center">
+	   	<el-table-column label="状态" width="57" align="center">
 	   	  <template slot-scope="scope">
 		   	  <template v-if="scope.row.status == 1">
 		        <span>正常</span>

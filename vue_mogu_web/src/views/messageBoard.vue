@@ -1,12 +1,12 @@
 
 <template>
   <div class="page">
-    <div class="pagebg ab"></div>
+    <div class="pagebg tagPage"></div>
     <div class="container">
       <h1 class="t_nav">
         <span>每个人都有自己故事，只是演绎的方式不同。</span>
         <a href="/" class="n1">网站首页</a>
-        <a href="/" class="n2">留言</a>
+        <a href="javascript:void(0);" class="n2">留言</a>
       </h1>
 
         <CommentBox
@@ -71,7 +71,7 @@
             var winHeight = $(window).height(); // 获取当前窗体的高度(显示的高度)
             var winScrollHeight = $(window).scrollTop(); // 获取滚动条滚动的距离(移动距离)
             //还有30像素的时候,就查询
-            if(docHeight == winHeight + winScrollHeight){
+            if(docHeight == winHeight + winScrollHeight - 30){
               if(that.comments.length >= that.total) {
                 return;
               }

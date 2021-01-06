@@ -51,7 +51,7 @@ public class BaseMessageConf {
     public static final String CHILDREN_MENU_UNDER_THIS_MENU = "该菜单下还有子菜单！";
     public static final String THIS_SORT_IS_TOP = "该分类已经在顶端！";
     public static final String THIS_TAG_IS_TOP = "该标签已经在顶端！";
-    public final static String INVALID_TOKEN = "token令牌未被识别";
+    public final static String INVALID_TOKEN = "token令牌未被识别，请重新登录";
     public final static String SERVER_ERROR = "服务器目前繁忙，请稍等片刻后重试";
     public final static String ERROR_PASSWORD = "密码错误";
     public final static String YOU_HAVE_BEEN_PRISE = "您已经点赞过了!";

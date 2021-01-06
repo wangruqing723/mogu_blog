@@ -22,31 +22,31 @@
 	      </template>
 	    </el-table-column>
 
-	    <el-table-column label="分类名" width="160" align="center">
+	    <el-table-column label="分类名" width="150" align="center">
 	      <template slot-scope="scope">
 	        <span>{{ scope.row.name }}</span>
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="排序" width="100" align="center">
+      <el-table-column label="排序" width="60" align="center">
         <template slot-scope="scope">
           <el-tag type="warning">{{ scope.row.sort }}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="图片选择器显示" width="150" align="center">
+      <el-table-column label="图片选择器显示" width="120" align="center">
         <template slot-scope="scope">
           <el-tag v-for="item in yesNoDictList" :key="item.uid" v-if="scope.row.isShow == item.dictValue" :type="item.listClass">{{item.dictLabel}}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="创建时间" width="160" align="center">
+      <el-table-column label="创建时间" width="100%" align="center">
 	      <template slot-scope="scope">
 	        <span >{{ scope.row.createTime }}</span>
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="更新时间" width="160" align="center">
+      <el-table-column label="更新时间" width="100%" align="center">
         <template slot-scope="scope">
           <span >{{ scope.row.updateTime }}</span>
         </template>

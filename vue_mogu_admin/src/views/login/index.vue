@@ -8,7 +8,7 @@
       auto-complete="on"
       label-position="left"
     >
-      <h3 class="title">蘑菇博客后台管理系统</h3>
+      <h3 class="title">Java博客后台管理系统</h3>
       <el-form-item prop="username">
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user"/>

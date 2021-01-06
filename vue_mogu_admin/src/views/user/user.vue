@@ -45,7 +45,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="头像" width="120">
+      <el-table-column align="center" label="头像" width="100%">
         <template slot-scope="scope">
           <img
             :src="scope.row.photoUrl ? scope.row.photoUrl:'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'" onerror="onerror=null;src='https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'"
@@ -54,14 +54,14 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="昵称" width="150">
+      <el-table-column align="center" label="昵称" width="77">
         <template slot-scope="scope">
           <span>{{ scope.row.nickName }}</span>
         </template>
       </el-table-column>
 
 
-      <el-table-column align="center" label="账号来源" width="100">
+      <el-table-column align="center" label="账号来源" width="85">
         <template slot-scope="scope">
           <template>
             <el-tag :key="item.uid" :type="item.listClass" v-for="item in accountSourceDictList"
@@ -71,7 +71,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="评论状态" width="100">
+      <el-table-column align="center" label="评论状态" width="77">
         <template slot-scope="scope">
           <template>
             <el-tag :key="item.uid" :type="item.listClass" v-for="item in commentStatusDictList"
@@ -81,7 +81,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="用户标签" width="100">
+      <el-table-column align="center" label="用户标签" width="93">
         <template slot-scope="scope">
           <template>
             <el-tag :key="item.uid" :type="item.listClass" v-for="item in userTagDictList"
@@ -91,49 +91,49 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="登录次数" width="50">
+      <el-table-column align="center" label="登录次数" width="77">
         <template slot-scope="scope">
           <span>{{ scope.row.loginCount }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="登录IP" width="160">
+      <el-table-column align="center" label="登录IP" width="110">
         <template slot-scope="scope">
           <span>{{ scope.row.lastLoginIp }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作系统" width="160">
+      <el-table-column align="center" label="操作系统" width="87">
         <template slot-scope="scope">
           <span>{{ scope.row.os }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="浏览器" width="160">
+      <el-table-column align="center" label="浏览器" width="100%">
         <template slot-scope="scope">
           <span>{{ scope.row.browser }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="最后登录时间" width="160">
+      <el-table-column align="center" label="最后登录" width="100%">
         <template slot-scope="scope">
           <span>{{ scope.row.lastLoginTime }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="邮箱" width="200">
+      <el-table-column align="center" label="邮箱" width="165">
         <template slot-scope="scope">
           <span>{{ scope.row.email }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="IP来源" width="160">
+      <el-table-column align="center" label="IP来源" width="110">
         <template slot-scope="scope">
           <span>{{ scope.row.ipSource }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="状态" width="100">
+      <el-table-column label="状态" width="57">
         <template slot-scope="scope">
           <template v-if="scope.row.status == 1">
             <span>正常</span>
@@ -147,11 +147,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column fixed="right" label="操作" min-width="250">
+      <el-table-column fixed="right" label="操作" min-width="240">
         <template slot-scope="scope">
           <el-button @click="handleEdit(scope.row)" size="small" type="primary" v-permission="'/user/edit'">编辑
           </el-button>
-          <el-button @click="handleUpdatePassword(scope.row)" size="small" type="primary"
+          <el-button @click="handleUpdatePassword(scope.row)" size="small" type="warning"
                      v-permission="'/user/resetUserPassword'">重置密码
           </el-button>
           <el-button @click="handleDelete(scope.row)" size="small" type="danger" v-permission="'/user/delete'">删除

@@ -41,19 +41,19 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="字典名称" width="150" align="center">
+      <el-table-column label="字典名称" width="130" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.dictName }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="备注" width="200" align="center">
+      <el-table-column label="备注" width="208" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="发布状态" width="100" align="center">
+      <el-table-column label="发布状态" width="80" align="center">
         <template slot-scope="scope">
           <el-tag type="success" v-if="scope.row.isPublish == '1' ">上架</el-tag>
           <el-tag type="danger" v-else>下架</el-tag>
@@ -86,7 +86,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" fixed="right" min-width="240">
+      <el-table-column label="操作" fixed="right" min-width="147">
         <template slot-scope="scope">
           <el-button @click="handleList(scope.row)" type="success" size="small">列表</el-button>
           <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/sysDictType/edit'">编辑</el-button>

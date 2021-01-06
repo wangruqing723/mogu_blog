@@ -32,31 +32,31 @@
 
     <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
       <el-table-column type="selection"></el-table-column>
-      <el-table-column label="序号" width="60" align="center">
+      <el-table-column label="序号" width="100%" align="center">
         <template slot-scope="scope">
           <span>{{scope.$index + 1}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="分类名" width="100" align="center">
+      <el-table-column label="分类名" width="115" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.sortName }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="分类介绍" width="250" align="center">
+      <el-table-column label="分类介绍" width="310px" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.content }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="点击数" width="100" align="center">
+      <el-table-column label="点击数" width="110" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.clickCount }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="排序" width="100" align="center">
+      <el-table-column label="排序" width="100%" align="center">
         <template slot-scope="scope">
           <el-tag type="warning">{{ scope.row.sort }}</el-tag>
         </template>
@@ -68,7 +68,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="状态" width="100" align="center">
+      <el-table-column label="状态" width="100%" align="center">
         <template slot-scope="scope">
           <template v-if="scope.row.status == 1">
             <span>正常</span>
@@ -82,7 +82,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" fixed="right" min-width="230">
+      <el-table-column label="操作" fixed="right" min-width="217">
         <template slot-scope="scope">
           <el-button @click="handleStick(scope.row)" type="warning" size="small" v-permission="'/blogSort/stick'">置顶</el-button>
           <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/blogSort/edit'">编辑</el-button>

@@ -67,15 +67,21 @@
 <!--          </router-link>-->
 <!--        </li>-->
 
-<!--        <li>-->
-<!--          <router-link to="/time">-->
-<!--            <a href="javascript:void(0);" :class="[saveTitle == '/time' ? 'title' : '']">时间轴</a>-->
-<!--          </router-link>-->
-<!--        </li>-->
+        <li>
+          <router-link to="/time">
+            <a href="javascript:void(0);" :class="[saveTitle == '/time' ? 'title' : '']">时间轴</a>
+          </router-link>
+        </li>
 
         <li v-if="openComment=='1'">
           <router-link to="/messageBoard">
             <a href="javascript:void(0);" :class="[saveTitle == '/messageBoard' ? 'title' : '']">留言板</a>
+          </router-link>
+        </li>
+
+        <li>
+          <router-link to="/tool">
+            <a href="javascript:void(0);" :class="[saveTitle == '/tool' ? 'title' : '']">放松一下</a>
           </router-link>
         </li>
 

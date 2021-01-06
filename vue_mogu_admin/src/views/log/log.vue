@@ -63,37 +63,37 @@
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="请求接口" width="150" align="center">
+      <el-table-column label="请求接口" width="160" align="center">
 	      <template slot-scope="scope">
 	        <span>{{ scope.row.url }}</span>
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="请求方式" width="100" align="center">
+      <el-table-column label="请求方式" width="77" align="center">
 	      <template slot-scope="scope">
 	        <span>{{ scope.row.type }}</span>
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="接口名" width="150" align="center">
+      <el-table-column label="接口名" width="137" align="center">
 	      <template slot-scope="scope">
 	        <span>{{ scope.row.operation }}</span>
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="IP" width="150" align="center">
+      <el-table-column label="IP" width="110" align="center">
 	      <template slot-scope="scope">
 	        <span>{{ scope.row.ip }}</span>
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="IP来源" width="200" align="center">
+      <el-table-column label="IP来源" width="160" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.ipSource }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="请求耗时" width="160" align="center">
+      <el-table-column label="请求耗时" width="95" align="center">
         <template slot-scope="scope">
           <el-tag v-for="item in spendTimeDictList" :type="item.listClass" :key="item.uid" v-if="scope.row.spendTime >= splitTime(item.dictValue)[0] && scope.row.spendTime < splitTime(item.dictValue)[1]">{{ scope.row.spendTime}} ms </el-tag>
         </template>

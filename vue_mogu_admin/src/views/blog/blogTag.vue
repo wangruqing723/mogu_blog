@@ -33,13 +33,13 @@
     <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
       <el-table-column type="selection"></el-table-column>
 
-      <el-table-column label="序号" width="60" align="center">
+      <el-table-column label="序号" width="100%" align="center">
         <template slot-scope="scope">
           <span>{{scope.$index + 1}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="标签名" width="100" align="center">
+      <el-table-column label="标签名" width="180" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.content }}</span>
         </template>
@@ -51,7 +51,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="排序" width="100" align="center">
+      <el-table-column label="排序" width="100%" align="center">
         <template slot-scope="scope">
           <el-tag type="warning">{{ scope.row.sort }}</el-tag>
         </template>
@@ -69,7 +69,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="状态" width="100" align="center">
+      <el-table-column label="状态" width="100%" align="center">
         <template slot-scope="scope">
           <template v-if="scope.row.status == 1">
             <span>正常</span>
@@ -83,7 +83,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" fixed="right" min-width="230">
+      <el-table-column label="操作" fixed="right" min-width="217">
         <template slot-scope="scope">
           <el-button @click="handleStick(scope.row)" type="warning" size="small" v-permission="'/tag/stick'">置顶</el-button>
           <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/tag/edit'">编辑</el-button>
