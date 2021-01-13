@@ -13,7 +13,7 @@
           <li>
             <div class="shareli">
               <a href="http://www.vewlwy.wang/Music/index.html" target="_blank">
-                <i><img class="resImg" src="/static/Music/icon.png"></i>
+                <i><img class="resImg" src="http://www.vewlwy.wang/Music/icon.png"></i>
                 <h2><b>点击页面或鼠标键盘，跟着节奏摇摆吧！！！</b></h2>
                 <span>Music</span>
               </a>
@@ -22,7 +22,7 @@
           <li>
             <div class="shareli">
               <a href="http://www.vewlwy.wang/2048/index.html" target="_blank">
-                <i><img class="resImg" src="/static/2048/icon.png"></i>
+                <i><img class="resImg" src="http://www.vewlwy.wang/2048/icon.png"></i>
                 <h2><b>开始游戏吧！！！</b></h2>
                 <span>2048</span>
               </a>
