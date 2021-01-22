@@ -5,4 +5,4 @@
 spring:
   profiles:
     #启动dev环境的配置文件
-    active: prod
+    active: dev

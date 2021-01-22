@@ -230,8 +230,12 @@
             params.isRememberMe = 1;
             localLogin(params).then(response => {
               if (response.code == this.$ECode.SUCCESS) {
-                // 跳转到首页
-                location.replace(this.vueMoguWebUrl + "/#/?token=" + response.data)
+                // 跳转到首页,修改:登录成功刷新当前页面,不跳转到首页
+                if (window.location.href.indexOf("?") === -1){
+                  location.replace(window.location.href + "?token=" + response.data)
+                } else {
+                  location.replace(window.location.href.split("&token")[0] + "&token=" + response.data)
+                }
                 window.location.reload()
               } else {
                 this.$message({
@@ -295,10 +299,11 @@
         })
         var params = new URLSearchParams();
         params.append("source", source);
+        params.append("reUrl", window.location.href);
         login(params).then(response => {
-          if (response.code == this.$ECode.SUCCESS) {
-            var token = response.data.token;
-            window.location.href = response.data.url
+          if (response.code === this.$ECode.SUCCESS) {
+            // var token = response.data.token;
+            window.location.href = response.data.url;
           }
         });
       },

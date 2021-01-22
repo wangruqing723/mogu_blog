@@ -119,7 +119,10 @@ public class AuthRestApi {
 
     @ApiOperation(value = "获取认证", notes = "获取认证")
     @RequestMapping("/render")
-    public String renderAuth(String source) {
+    public String renderAuth(@RequestParam("source") String source,
+                             @RequestParam("reUrl") String reUrl,
+                             HttpServletRequest httpServletRequest) {
+        httpServletRequest.getSession().getServletContext().setAttribute("reUrl", reUrl);
         // 将传递过来的转换成大写
         Boolean isOpenLoginType = webConfigService.isOpenLoginType(source.toUpperCase());
         if (!isOpenLoginType){
@@ -137,9 +140,11 @@ public class AuthRestApi {
 
     /**
      * oauth平台中配置的授权回调地址，以本项目为例，在创建gitee授权应用时的回调地址应为：http://127.0.0.1:8603/oauth/callback/gitee
+     * https://gitee.com/oauth/authorize?response_type=code&client_id=86b1d9b75aea903cbef88c12d672af50edfba09555bc0e8e8b2e501bfdbcee2c&redirect_uri=http://127.0.0.1:8603/oauth/callback/gitee&state=c2620e8dd61b99cee00089f60912223c
      */
     @RequestMapping("/callback/{source}")
-    public void login(@PathVariable("source") String source, AuthCallback callback, HttpServletResponse httpServletResponse) throws IOException {
+    public void login(@PathVariable("source") String source, AuthCallback callback,
+                      HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse) throws IOException {
         log.info("进入callback：" + source + " callback params：" + JSONObject.toJSONString(callback));
         AuthRequest authRequest = getAuthRequest(source);
         AuthResponse response = authRequest.login(callback);
@@ -252,8 +257,13 @@ public class AuthRestApi {
             //将从数据库查询的数据缓存到redis中
             stringRedisTemplate.opsForValue().set(RedisConf.USER_TOKEN + Constants.SYMBOL_COLON + accessToken, JsonUtils.objectToJson(user), userTokenSurvivalTime, TimeUnit.HOURS);
         }
-
-        httpServletResponse.sendRedirect(webSiteUrl + "?token=" + accessToken);
+        String reUrl = (String) httpServletRequest.getSession().getServletContext().getAttribute("reUrl");
+        httpServletRequest.getSession().getServletContext().removeAttribute("reUrl");
+        if (!reUrl.contains("?")) {
+            httpServletResponse.sendRedirect(reUrl + "?token=" + accessToken);
+        } else {
+            httpServletResponse.sendRedirect(reUrl.split("&token")[0] + "&token=" + accessToken);
+        }
     }
 
     /**
