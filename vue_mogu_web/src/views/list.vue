@@ -5,7 +5,7 @@
       <h1 class="t_nav">
         <span>慢生活，不是懒惰，放慢速度不是拖延时间，而是让我们在生活中寻找到平衡。</span>
         <a href="/" class="n1">网站首页</a>
-        <a href="javascript:void(0);" class="n2">搜索</a>
+        <a href="javascript:void(0);" class="n2" v-text="searchField">搜索</a>
       </h1>
 
       <!--blogsbox begin-->
@@ -21,25 +21,27 @@
               href="javascript:void(0);"
               @click="goToInfo(item.id?item.id:item.uid)"
               v-html="item.title"
-            >{{item.title}}</a>
+            >{{ item.title }}</a>
           </h3>
           <span class="blogpic">
             <a href="javascript:void(0);" @click="goToInfo(item.id?item.id:item.uid)" title>
               <img v-if="item.photoUrl" :src="item.photoUrl" alt="">
             </a>
           </span>
-          <p class="blogtext" v-html="item.summary">{{item.summary}}</p>
+          <p class="blogtext" v-html="item.summary">{{ item.summary }}</p>
           <div class="bloginfo">
             <ul>
               <li class="author">
                 <span class="iconfont">&#xe60f;</span>
-                <a href="javascript:void(0);" @click="goToAuthor(item.author)">{{item.author}}</a>
+                <a href="javascript:void(0);" @click="goToAuthor(item.author)">{{ item.author }}</a>
               </li>
               <li class="lmname" v-if="item.blogSortName">
                 <span class="iconfont">&#xe603;</span>
-                <a href="javascript:void(0);" @click="goToList(item.blogSortUid)">{{item.blogSortName}}</a>
+                <a href="javascript:void(0);" @click="goToList(item.blogSortUid,item.blogSortName)">{{
+                    item.blogSortName
+                  }}</a>
               </li>
-              <li class="createTime"><span class="iconfont">&#xe606;</span>{{item.createTime}}</li>
+              <li class="createTime"><span class="iconfont">&#xe606;</span>{{ item.createTime }}</li>
             </ul>
           </div>
         </div>
@@ -49,7 +51,8 @@
             class="loadContent"
             @click="loadContent"
             v-if="!isEnd && !loading && totalPages>0"
-          >点击加载更多</div>
+          >点击加载更多
+          </div>
 
           <div class="lds-css ng-scope" v-if="!isEnd && loading">
             <div style="width:100%;height:100%" class="lds-facebook">
@@ -61,7 +64,7 @@
 
           <span v-if="blogData.length >= 0 && isEnd &&!loading && totalPages>0">我也是有底线的~</span>
 
-          <span v-if="totalPages == 0 && !loading">空空如也~</span>
+          <span v-if="totalPages === 0 && !loading">空空如也~</span>
         </div>
       </div>
       <!--blogsbox end-->
@@ -113,10 +116,14 @@ export default {
       pageSize: 10,
       total: 0, //总数量
       tagUid: "",
+      author: "",
       searchBlogData: [], //搜索出来的文章
       sortUid: "",
       isEnd: false, //是否到底底部了
-      loading: false //内容是否正在加载
+      loading: false, //内容是否正在加载
+      searchField: "搜索关键字", //显示在搜索后面的搜索字段
+      blogSortName: "搜索博客分类" , //显示在搜索后面的搜索字段
+      tagName:"搜索标签"  //显示在搜索后面的搜索字段
     };
   },
   components: {
@@ -131,17 +138,29 @@ export default {
     this.tagUid = this.$route.query.tagUid;
     this.sortUid = this.$route.query.sortUid;
     this.author = this.$route.query.author;
+    this.blogSortName = this.$route.query.blogSortName;
+    this.tagName = this.$route.query.tagName;
 
     if (
-      this.keywords == undefined &&
-      this.tagUid == undefined &&
-      this.sortUid == undefined &&
-      this.author == undefined
+      this.keywords === undefined &&
+      this.tagUid === undefined &&
+      this.sortUid === undefined &&
+      this.author === undefined
     ) {
       return;
     }
 
     this.search();
+
+    if (this.keywords !== undefined) {
+      this.searchField = "搜索关键字：" + this.keywords;
+    } else if (this.tagUid !== undefined) {
+      this.searchField = "搜索标签：" + this.tagName;
+    } else if (this.sortUid !== undefined) {
+      this.searchField = "搜索分类：" + this.blogSortName;
+    } else if (this.author !== undefined) {
+      this.searchField = "搜索作者：" + this.author;
+    }
   },
   mounted() {
     // 注册scroll事件并监听
@@ -163,6 +182,9 @@ export default {
       this.sortUid = this.$route.query.sortUid;
       this.searchBlogData = [] // 清空查询出来的博客
       this.search();
+      if (this.keywords !== undefined) {
+        this.searchField = "搜索关键字：" + this.keywords;
+      }
     }
   },
   methods: {
@@ -170,15 +192,15 @@ export default {
     goToInfo(uid) {
       let routeData = this.$router.resolve({
         path: "/info",
-        query: { blogUid: uid }
+        query: {blogUid: uid}
       });
       window.open(routeData.href, '_blank');
     },
     //点击了分类
-    goToList(uid) {
+    goToList(uid, sortName) {
       let routeData = this.$router.resolve({
         path: "/list",
-        query: { sortUid: uid }
+        query: {sortUid: uid, blogSortName: sortName}
       });
       window.open(routeData.href, '_blank');
     },
@@ -190,23 +212,23 @@ export default {
       window.open(routeData.href, '_blank');
     },
     // 加载内容
-    loadContent: function() {
+    loadContent: function () {
       var that = this;
       that.currentPage = that.currentPage + 1;
       that.search();
     },
-    search: function() {
+    search: function () {
       var that = this;
 
       that.loading = true;
 
-      if (this.keywords != undefined) {
+      if (this.keywords !== undefined) {
         var params = new URLSearchParams();
         params.append("currentPage", that.currentPage);
         params.append("pageSize", that.pageSize);
         params.append("keywords", that.keywords);
         searchBlog(params).then(response => {
-          if (response.code == this.$ECode.SUCCESS) {
+          if (response.code === this.$ECode.SUCCESS) {
             that.isEnd = false;
             //获取总页数
             that.totalPages = response.data.blogList.length;
@@ -216,7 +238,7 @@ export default {
             var blogData = response.data.blogList;
 
             // 判断搜索的博客是否有内容
-            if(response.data.total <= 0) {
+            if (response.data.total <= 0) {
               that.isEnd = true;
               that.loading = false;
               this.blogData = []
@@ -236,7 +258,7 @@ export default {
           }
           that.loading = false;
         });
-      } else if (this.tagUid != undefined) {
+      } else if (this.tagUid !== undefined) {
         var params = new URLSearchParams();
 
         params.append("tagUid", that.tagUid);
@@ -244,7 +266,7 @@ export default {
         params.append("pageSize", that.pageSize);
 
         searchBlogByTag(params).then(response => {
-          if (response.code == this.$ECode.SUCCESS && response.data.records.length > 0) {
+          if (response.code === this.$ECode.SUCCESS && response.data.records.length > 0) {
             that.isEnd = false;
             //获取总页数
             that.totalPages = response.data.total;
@@ -275,7 +297,7 @@ export default {
             that.loading = false;
           }
         });
-      } else if (this.sortUid != undefined) {
+      } else if (this.sortUid !== undefined) {
         var params = new URLSearchParams();
 
         params.append("blogSortUid", that.sortUid);
@@ -283,7 +305,7 @@ export default {
         params.append("pageSize", that.pageSize);
 
         searchBlogBySort(params).then(response => {
-          if (response.code == this.$ECode.SUCCESS && response.data.records.length > 0) {
+          if (response.code === this.$ECode.SUCCESS && response.data.records.length > 0) {
             that.isEnd = false;
             //获取总页数
             that.totalPages = response.data.total;
@@ -307,19 +329,18 @@ export default {
             this.blogData = blogData;
             that.loading = false;
           } else {
-
-
             that.isEnd = true;
             that.loading = false;
           }
+          this.blogSortName = this.searchBlogData[0].blogSortName;
         });
-      } else if (this.author != undefined) {
+      } else if (this.author !== undefined) {
         var params = new URLSearchParams();
         params.append("author", that.author);
         params.append("currentPage", that.currentPage);
         params.append("pageSize", that.pageSize);
         searchBlogByAuthor(params).then(response => {
-          if (response.code == this.$ECode.SUCCESS && response.data.records.length > 0) {
+          if (response.code === this.$ECode.SUCCESS && response.data.records.length > 0) {
             that.loading = false;
 
             that.isEnd = false;
@@ -338,7 +359,7 @@ export default {
             }
 
             for (var i = 0; i < blogData.length; i++) {
-              if (blogData[i].blogSort == undefined) {
+              if (blogData[i].blogSort === undefined) {
                 blogData[i].blogSort = "未分类";
               } else {
                 blogData[i].blogSort = blogData[i].blogSort.sortName;
@@ -404,6 +425,7 @@ export default {
     height: 40px;
   }
 }
+
 @-webkit-keyframes lds-facebook_1 {
   0% {
     top: 0px;
@@ -418,6 +440,7 @@ export default {
     height: 40px;
   }
 }
+
 @keyframes lds-facebook_2 {
   0% {
     top: 20px;
@@ -432,6 +455,7 @@ export default {
     height: 40px;
   }
 }
+
 @-webkit-keyframes lds-facebook_2 {
   0% {
     top: 20px;
@@ -446,6 +470,7 @@ export default {
     height: 40px;
   }
 }
+
 @keyframes lds-facebook_3 {
   0% {
     top: 40px;
@@ -460,6 +485,7 @@ export default {
     height: 40px;
   }
 }
+
 @-webkit-keyframes lds-facebook_3 {
   0% {
     top: 40px;
@@ -474,13 +500,16 @@ export default {
     height: 40px;
   }
 }
+
 .lds-facebook {
   position: relative;
 }
+
 .lds-facebook div {
   position: absolute;
   width: 20px;
 }
+
 .lds-facebook div:nth-child(1) {
   left: 40px;
   background: #1d0e0b;
@@ -489,6 +518,7 @@ export default {
   -webkit-animation-delay: -0.2s;
   animation-delay: -0.2s;
 }
+
 .lds-facebook div:nth-child(2) {
   left: 90px;
   background: #774023;
@@ -497,12 +527,14 @@ export default {
   -webkit-animation-delay: -0.1s;
   animation-delay: -0.1s;
 }
+
 .lds-facebook div:nth-child(3) {
   left: 140px;
   background: #d88c51;
   -webkit-animation: lds-facebook_3 1s cubic-bezier(0, 0.5, 0.5, 1) infinite;
   animation: lds-facebook_3 1s cubic-bezier(0, 0.5, 0.5, 1) infinite;
 }
+
 .lds-facebook {
   width: 90px !important;
   height: 90px !important;

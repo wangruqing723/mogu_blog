@@ -48,7 +48,7 @@
 
 <script>
 import Todo from "./Todo.vue";
-import { getList, addTodo, editTodo, deleteTodo, toggleAll } from "@/api/todo";
+import {getList, addTodo, editTodo, deleteTodo, toggleAll} from "@/api/todo";
 
 const STORAGE_KEY = "todos";
 
@@ -60,7 +60,7 @@ const filters = {
 
 export default {
 
-  components: { Todo },
+  components: {Todo},
   data() {
     return {
       visibility: "active",
@@ -128,15 +128,24 @@ export default {
 
     },
     deleteTodo(todo) {
-      var params = {};
-      params.uid = todo.uid;
-      deleteTodo(params).then(response => {
-        if (response.code == this.$ECode.SUCCESS) {
-          this.getTodoList();
-        }
+      this.$confirm("此操作将删除该事项, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        var params = {};
+        params.uid = todo.uid;
+        deleteTodo(params).then(response => {
+          if (response.code == this.$ECode.SUCCESS) {
+            this.getTodoList();
+          }
+        });
+      }).catch(() => {
+        that.$commonUtil.message.info("已取消删除")
       });
+
     },
-    editTodo({ todo, value }) {
+    editTodo({todo, value}) {
       var params = {};
       params.done = todo.done;
       params.uid = todo.uid;
@@ -155,7 +164,7 @@ export default {
     },
 
     //切换
-    toggleAll({ done }) {
+    toggleAll({done}) {
       var params = {};
       params.done = done;
       toggleAll(params).then(response => {

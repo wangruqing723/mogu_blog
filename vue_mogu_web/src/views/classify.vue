@@ -17,13 +17,13 @@
                 <span
                   @click="getBlogList(activity.uid)"
                   :class="[activity.uid == selectBlogUid ? 'sortBoxSpan sortBoxSpanSelect' : 'sortBoxSpan']"
-                >{{activity.sortName}}</span>
+                >{{ activity.sortName }}</span>
               </el-timeline-item>
             </el-timeline>
           </div>
         </div>
 
-        <div class="article">
+        <div class="article" v-if="itemByDate.length !==0">
           <div class="block" v-infinite-scroll="load">
             <el-timeline>
               <el-timeline-item
@@ -33,7 +33,7 @@
                 placement="top"
               >
                 <el-card>
-                  <h4 @click="goToList('blogContent', item)" class="itemTitle">{{item.title}}</h4>
+                  <h4 @click="goToList('blogContent', item)" class="itemTitle">{{ item.title }}</h4>
                   <br>
                   <el-tag class="elTag" v-if="item.isOriginal==1" type="danger">原创</el-tag>
                   <el-tag class="elTag" v-if="item.isOriginal==0" type="info">转载</el-tag>
@@ -42,14 +42,16 @@
                     class="elTag"
                     v-if="item.author"
                     @click="goToList('author', item)"
-                  >{{item.author}}</el-tag>
+                  >{{ item.author }}
+                  </el-tag>
 
                   <el-tag
                     class="elTag"
                     type="success"
                     v-if="item.blogSort != null"
                     @click="goToList('blogSort', item)"
-                  >{{item.blogSort.sortName}}</el-tag>
+                  >{{ item.blogSort.sortName }}
+                  </el-tag>
                   <el-tag
                     class="elTag"
                     v-for="tagItem in item.tagList"
@@ -57,11 +59,15 @@
                     :key="tagItem.uid"
                     @click="goToList('tag', tagItem)"
                     type="warning"
-                  >{{tagItem.content}}</el-tag>
+                  >{{ tagItem.content }}
+                  </el-tag>
                 </el-card>
               </el-timeline-item>
             </el-timeline>
           </div>
+        </div>
+        <div v-if="itemByDate.length === 0">
+          <el-card>该分类下暂无博客！！！</el-card>
         </div>
       </div>
     </div>
@@ -69,7 +75,8 @@
 </template>
 
 <script>
-import { getBlogSortList, getArticleByBlogSortUid } from "../api/classify";
+import {getBlogSortList, getArticleByBlogSortUid} from "../api/classify";
+
 export default {
   data() {
     return {
@@ -86,7 +93,8 @@ export default {
   components: {
     //注册组件
   },
-  mounted() { },
+  mounted() {
+  },
   created() {
     var that = this;
     getBlogSortList().then(response => {
@@ -143,44 +151,40 @@ export default {
     //跳转到搜索详情页
     goToList(type, entity) {
       switch (type) {
-        case "tag":
-        {
+        case "tag": {
           // 标签uid
           let routeData = this.$router.resolve({
             path: "/list",
-            query: { tagUid: entity.uid }
+            query: {tagUid: entity.uid, tagName: entity.content}
           });
           window.open(routeData.href, "_blank");
         }
           break;
-        case "blogSort":
-        {
+        case "blogSort": {
           let routeData = this.$router.resolve({
             path: "/list",
-            query: { sortUid: entity.blogSort.uid }
+            query: {sortUid: entity.blogSort.uid,blogSortName: entity.blogSort.sortName}
           });
           window.open(routeData.href, "_blank");
         }
           break;
-        case "author":
-        {
+        case "author": {
           let routeData = this.$router.resolve({
             path: "/list",
-            query: { author: entity.author }
+            query: {author: entity.author}
           });
           window.open(routeData.href, "_blank");
         }
           break;
 
-        case "blogContent":
-        {
-          if(entity.type == "0") {
+        case "blogContent": {
+          if (entity.type == "0") {
             let routeData = this.$router.resolve({
               path: "/info",
-              query: { blogOid: entity.oid }
+              query: {blogOid: entity.oid}
             });
             window.open(routeData.href, "_blank");
-          } else if(entity.type == "1") {
+          } else if (entity.type == "1") {
             window.open(entity.outsideLink, '_blank');
           }
         }
@@ -200,9 +204,11 @@ export default {
 .sortBoxSpan {
   cursor: pointer;
 }
+
 .sortBoxSpan:hover {
   color: #409eff;
 }
+
 .sortBoxSpanSelect {
   color: #409eff;
 }
@@ -210,9 +216,11 @@ export default {
 .itemTitle {
   cursor: pointer;
 }
+
 .itemTitle:hover {
   color: #409eff;
 }
+
 .elTag {
   cursor: pointer;
 }

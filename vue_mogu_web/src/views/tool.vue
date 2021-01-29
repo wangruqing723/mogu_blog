@@ -9,7 +9,7 @@
       </h1>
 
       <div class="share">
-        <ul>
+        <ul id="licount">
           <li>
             <div class="shareli">
               <a href="http://www.vewlwy.wang/Music/index.html" target="_blank">
@@ -61,6 +61,9 @@ export default {
   components: {
   },
   created() {
+  },
+  mounted() {
+    this.total=document.getElementById("licount").getElementsByTagName("li").length
   },
   methods: {
     //改变页码
