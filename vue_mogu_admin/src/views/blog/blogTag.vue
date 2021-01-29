@@ -8,7 +8,7 @@
         class="filter-item"
         style="width: 200px;"
         v-model="keyword"
-        placeholder="请输入博客名"
+        placeholder="请输入标签名"
       ></el-input>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFind" v-permission="'/tag/getList'">查找</el-button>
       <el-button class="filter-item" type="primary" @click="handleAdd" icon="el-icon-edit" v-permission="'/tag/add'">添加标签</el-button>

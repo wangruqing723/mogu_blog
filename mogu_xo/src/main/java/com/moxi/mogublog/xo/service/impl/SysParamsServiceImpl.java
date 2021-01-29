@@ -56,7 +56,7 @@ public class SysParamsServiceImpl extends SuperServiceImpl<SysParamsMapper, SysP
         Page<SysParams> page = new Page<>();
         page.setCurrent(sysParamsVO.getCurrentPage());
         page.setSize(sysParamsVO.getPageSize());
-        queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
+        queryWrapper.ne(SQLConf.STATUS, EStatus.DISABLED);
         queryWrapper.orderByDesc(SQLConf.SORT, SQLConf.CREATE_TIME);
         IPage<SysParams> pageList = sysParamsService.page(page, queryWrapper);
         return pageList;
@@ -66,7 +66,8 @@ public class SysParamsServiceImpl extends SuperServiceImpl<SysParamsMapper, SysP
     public SysParams getSysParamsByKey(String paramsKey) {
         QueryWrapper<SysParams> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(SQLConf.PARAMS_KEY, paramsKey);
-        queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
+        queryWrapper.ne(SQLConf.STATUS, EStatus.DISABLED);
+        queryWrapper.ne(SQLConf.STATUS, EStatus.FREEZE);
         queryWrapper.last(SysConf.LIMIT_ONE);
         SysParams sysParams = sysParamsService.getOne(queryWrapper);
         return sysParams;
@@ -95,7 +96,7 @@ public class SysParamsServiceImpl extends SuperServiceImpl<SysParamsMapper, SysP
         // 判断添加的字典类型是否存在
         QueryWrapper<SysParams> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(SQLConf.PARAMS_KEY, sysParamsVO.getParamsKey());
-        queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
+        queryWrapper.ne(SQLConf.STATUS, EStatus.DISABLED);
         queryWrapper.last(SysConf.LIMIT_ONE);
         SysParams temp = sysParamsService.getOne(queryWrapper);
         if (temp != null) {
@@ -108,6 +109,7 @@ public class SysParamsServiceImpl extends SuperServiceImpl<SysParamsMapper, SysP
         sysParams.setParamsType(sysParamsVO.getParamsType());
         sysParams.setRemark(sysParamsVO.getRemark());
         sysParams.setSort(sysParamsVO.getSort());
+        sysParams.setStatus(sysParamsVO.getStatus());
         sysParams.insert();
         return ResultUtil.successWithMessage(MessageConf.INSERT_SUCCESS);
     }
@@ -119,7 +121,7 @@ public class SysParamsServiceImpl extends SuperServiceImpl<SysParamsMapper, SysP
         if (!sysParamsVO.getParamsKey().equals(sysParams.getParamsKey())) {
             QueryWrapper<SysParams> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq(SQLConf.PARAMS_KEY, sysParamsVO.getParamsKey());
-            queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
+            queryWrapper.ne(SQLConf.STATUS, EStatus.DISABLED);
             queryWrapper.last(SysConf.LIMIT_ONE);
             SysParams temp = sysParamsService.getOne(queryWrapper);
             if (temp != null) {
@@ -132,6 +134,7 @@ public class SysParamsServiceImpl extends SuperServiceImpl<SysParamsMapper, SysP
         sysParams.setParamsType(sysParamsVO.getParamsType());
         sysParams.setRemark(sysParamsVO.getRemark());
         sysParams.setSort(sysParamsVO.getSort());
+        sysParams.setStatus(sysParamsVO.getStatus());
         sysParams.setUpdateTime(new Date());
         sysParams.updateById();
         // 清空Redis中存在的配置

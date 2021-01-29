@@ -20,17 +20,12 @@
         placeholder="请输入参数键名"
       ></el-input>
 
-<!--      <el-select v-model="queryParams.paramsType" clearable placeholder="系统内置" style="width:140px">-->
-<!--        <el-option-->
-<!--          v-for="item in paramsTypeDictList"-->
-<!--          :key="item.uid"-->
-<!--          :label="item.dictLabel"-->
-<!--          :value="item.dictValue"-->
-<!--        ></el-option>-->
-<!--      </el-select>-->
-
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFind" v-permission="'/link/getList'">查找</el-button>
-      <el-button class="filter-item" type="primary" @click="handleAdd" icon="el-icon-edit" v-permission="'/link/add'">添加参数</el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFind"
+                 v-permission="'/link/getList'">查找
+      </el-button>
+      <el-button class="filter-item" type="primary" @click="handleAdd" icon="el-icon-edit" v-permission="'/link/add'">
+        添加参数
+      </el-button>
     </div>
 
     <el-table :data="tableData" style="width: 100%">
@@ -38,7 +33,7 @@
 
       <el-table-column label="序号" width="60" align="center">
         <template slot-scope="scope">
-          <span>{{scope.$index + 1}}</span>
+          <span>{{ scope.$index + 1 }}</span>
         </template>
       </el-table-column>
 
@@ -63,7 +58,9 @@
       <el-table-column label="系统内置" width="100" align="center">
         <template slot-scope="scope">
           <template>
-            <el-tag v-for="item in paramsTypeDictList" :key="item.uid" :type="item.listClass" v-if="scope.row.paramsType == item.dictValue">{{item.dictLabel}}</el-tag>
+            <el-tag v-for="item in paramsTypeDictList" :key="item.uid" :type="item.listClass"
+                    v-if="scope.row.paramsType == item.dictValue">{{ item.dictLabel }}
+            </el-tag>
           </template>
         </template>
       </el-table-column>
@@ -82,22 +79,20 @@
 
       <el-table-column label="状态" width="90" align="center">
         <template slot-scope="scope">
-          <template v-if="scope.row.status == 1">
-            <span>正常</span>
-          </template>
-          <template v-if="scope.row.status == 2">
-            <span>推荐</span>
-          </template>
-          <template v-if="scope.row.status == 0">
-            <span>已删除</span>
+          <template>
+            <el-tag v-for="item in paramsStatusDictList" :key="item.uid" :type="item.listClass"
+                    v-if="scope.row.status == item.dictValue">{{ item.dictLabel }}
+            </el-tag>
           </template>
         </template>
       </el-table-column>
 
       <el-table-column label="操作" fixed="right" min-width="147">
         <template slot-scope="scope">
-          <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/link/edit'">编辑</el-button>
-          <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/link/delete'">删除</el-button>
+          <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/link/edit'">编辑
+          </el-button>
+          <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/link/delete'">删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -129,9 +124,22 @@
           <el-input v-model="form.paramsValue" auto-complete="off"></el-input>
         </el-form-item>
 
-        <el-form-item label="系统内置" :label-width="formLabelWidth" prop="paramsType">
-          <el-radio v-for="item in paramsTypeDictList" :key="item.uid" v-model="form.paramsType" :label="parseInt(item.dictValue)" border size="medium">{{item.dictLabel}}</el-radio>
-        </el-form-item>
+        <el-row :gutter="24">
+          <el-col :span="12">
+            <el-form-item label="系统内置" :label-width="formLabelWidth" prop="paramsType">
+              <el-radio v-for="item in paramsTypeDictList" :key="item.uid" v-model="form.paramsType"
+                        :label="parseInt(item.dictValue)" border size="medium">{{ item.dictLabel }}
+              </el-radio>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="状态" :label-width="formLabelWidth" prop="status">
+              <el-radio v-for="item in paramsStatusDictList" :key="item.uid" v-model="form.status"
+                        :label="parseInt(item.dictValue)" border size="medium">{{ item.dictLabel }}
+              </el-radio>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
         <el-form-item label="备注" :label-width="formLabelWidth" prop="remark">
           <el-input v-model="form.remark" auto-complete="off"></el-input>
@@ -151,13 +159,9 @@
 </template>
 
 <script>
-import {
-  getSysParamsList,
-  addSysParams,
-  editSysParams,
-  deleteBatchSysParams
-} from "@/api/sysParams";
+import {addSysParams, deleteBatchSysParams, editSysParams, getSysParamsList} from "@/api/sysParams";
 import {getListByDictTypeList} from "@/api/sysDictData"
+
 export default {
   data() {
     return {
@@ -171,7 +175,9 @@ export default {
       title: "增加友链",
       dialogFormVisible: false, //控制弹出框
       paramsTypeDictList: [], // 友链状态字典
+      paramsStatusDictList: [],
       paramsTypeDefault: null, // 友链状态默认值
+      paramsStatusDefault: null, //
       formLabelWidth: "120px",
       isEditForm: false,
       form: {
@@ -196,6 +202,10 @@ export default {
           {required: true, message: '系统内置字段不能为空', trigger: 'blur'},
           {pattern: /^[0-9]\d*$/, message: '系统内置字段只能为自然数'},
         ],
+        status: [
+          {required: true, message: '状态字段不能为空', trigger: 'blur'},
+          {pattern: /^[0-9]\d*$/, message: '状态字段只能为自然数'},
+        ],
         sort: [
           {required: true, message: '排序字段不能为空', trigger: 'blur'},
           {pattern: /^[0-9]\d*$/, message: '排序字段只能为自然数'},
@@ -210,7 +220,7 @@ export default {
     this.sysParamsList();
   },
   methods: {
-    sysParamsList: function() {
+    sysParamsList: function () {
       var params = {};
       params.paramsName = this.queryParams.paramsName;
       params.paramsKey = this.queryParams.paramsKey;
@@ -224,74 +234,76 @@ export default {
         this.total = response.data.total;
       });
     },
-    getFormObject: function() {
-      var formObject = {
+    getFormObject: function () {
+      return {
         paramsName: null,
         paramsKey: null,
         paramsValue: null,
         remark: "",
         paramsType: this.paramsTypeDefault,
+        status: this.paramsStatusDefault,
         sort: 0
       };
-      return formObject;
     },
     /**
      * 字典查询
      */
     getDictList: function () {
 
-      var dictTypeList = ['sys_params_type']
+      var dictTypeList = ['sys_params_type', 'sys_params_status']
 
       getListByDictTypeList(dictTypeList).then(response => {
         if (response.code == this.$ECode.SUCCESS) {
           var dictMap = response.data;
-          this.paramsTypeDictList = dictMap.sys_params_type.list
-          if(dictMap.sys_params_type.defaultValue) {
+          this.paramsTypeDictList = dictMap.sys_params_type.list;
+          this.paramsStatusDictList = dictMap.sys_params_status.list;
+          if (dictMap.sys_params_type.defaultValue) {
             this.paramsTypeDefault = parseInt(dictMap.sys_params_type.defaultValue);
+          }
+          if (dictMap.sys_params_status.defaultValue) {
+            this.paramsStatusDefault = parseInt(dictMap.sys_params_status.defaultValue);
           }
         }
       });
     },
-    handleFind: function() {
+    handleFind: function () {
       this.sysParamsList();
     },
-    handleAdd: function() {
+    handleAdd: function () {
       this.title = "增加参数"
       this.dialogFormVisible = true;
       this.form = this.getFormObject();
       this.isEditForm = false;
     },
-    handleEdit: function(row) {
-      title: "编辑参数";
+    handleEdit: function (row) {
+      this.title = "编辑参数";
       this.dialogFormVisible = true;
       this.isEditForm = true;
       this.form = row;
     },
-    handleDelete: function(row) {
+    handleDelete: function (row) {
       var that = this;
       this.$confirm("此操作将把参数配置删除, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      })
-        .then(() => {
-          let list = [row]
-          deleteBatchSysParams(list).then(response => {
-            this.$commonUtil.message.success(response.message)
-            that.sysParamsList();
-          });
-        })
-        .catch(() => {
-          this.$commonUtil.message.info("已取消删除")
+      }).then(() => {
+        let list = [row]
+        deleteBatchSysParams(list).then(response => {
+          this.$commonUtil.message.success(response.message)
+          that.sysParamsList();
         });
+      }).catch(() => {
+        this.$commonUtil.message.info("已取消删除")
+      });
     },
-    handleCurrentChange: function(val) {
+    handleCurrentChange: function (val) {
       this.currentPage = val;
       this.sysParamsList();
     },
-    submitForm: function() {
+    submitForm: function () {
       this.$refs.form.validate((valid) => {
-        if(!valid) {
+        if (!valid) {
           console.log("校验失败")
         } else {
           if (this.isEditForm) {

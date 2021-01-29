@@ -9,8 +9,12 @@
         v-model="keyword"
         placeholder="请输入管理员名"
       ></el-input>
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFind" v-permission="'/admin/getList'">查找</el-button>
-      <el-button class="filter-item" type="primary" @click="handleAdd" icon="el-icon-edit" v-permission="'/admin/add'">添加</el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFind"
+                 v-permission="'/admin/getList'">查找
+      </el-button>
+      <el-button class="filter-item" type="primary" @click="handleAdd" icon="el-icon-edit" v-permission="'/admin/add'">
+        添加
+      </el-button>
     </div>
 
     <el-table :data="tableData" style="width: 100%">
@@ -18,7 +22,7 @@
 
       <el-table-column label="序号" width="60" align="center">
         <template slot-scope="scope">
-          <span>{{scope.$index + 1}}</span>
+          <span>{{ scope.$index + 1 }}</span>
         </template>
       </el-table-column>
 
@@ -40,14 +44,17 @@
 
       <el-table-column label="拥有角色" width="107" align="center">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.role" type="danger">{{scope.row.role.roleName}}</el-tag>
+          <el-tag v-if="scope.row.role" type="primary">{{ scope.row.role.roleName }}</el-tag>
         </template>
       </el-table-column>
 
       <el-table-column label="性别" width="57" align="center">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.gender==1" type="success">男</el-tag>
-          <el-tag v-if="scope.row.gender==2" type="danger">女</el-tag>
+          <template>
+            <el-tag v-for="item in genderDictList" :key="item.uid" :type="item.listClass"
+                    v-if="scope.row.gender == item.dictValue">{{ item.dictLabel }}
+            </el-tag>
+          </template>
         </template>
       </el-table-column>
 
@@ -59,13 +66,13 @@
 
       <el-table-column label="已用空间" width="87" align="center">
         <template slot-scope="scope">
-          <el-tag type="warning">{{ calculateFileSize(scope.row.storageSize)}}</el-tag>
+          <el-tag type="warning">{{ calculateFileSize(scope.row.storageSize) }}</el-tag>
         </template>
       </el-table-column>
 
       <el-table-column label="网盘大小" width="97" align="center">
         <template slot-scope="scope">
-          <el-tag type="warning">{{ calculateFileSize(scope.row.maxStorageSize * 1024 * 1024)}}</el-tag>
+          <el-tag type="warning">{{ calculateFileSize(scope.row.maxStorageSize * 1024 * 1024) }}</el-tag>
         </template>
       </el-table-column>
 
@@ -83,23 +90,22 @@
 
       <el-table-column label="状态" width="57" align="center">
         <template slot-scope="scope">
-          <template v-if="scope.row.status == 1">
-            <span>正常</span>
-          </template>
-          <template v-if="scope.row.status == 2">
-            <span>推荐</span>
-          </template>
-          <template v-if="scope.row.status == 0">
-            <span>已删除</span>
+          <template>
+            <el-tag v-for="item in paramsStatusDictList" :key="item.uid" :type="item.listClass"
+                    v-if="scope.row.status == item.dictValue">{{ item.dictLabel }}
+            </el-tag>
           </template>
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" fixed="right" min-width="240" >
+      <el-table-column label="操作" fixed="right" min-width="240">
         <template slot-scope="scope">
-          <el-button @click="handRest(scope.row)" type="warning" size="small" v-permission="'/admin/restPwd'">重置密码</el-button>
-          <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/admin/edit'">编辑</el-button>
-          <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/admin/delete'">删除</el-button>
+          <el-button @click="handRest(scope.row)" type="warning" size="small" v-permission="'/admin/restPwd'">重置密码
+          </el-button>
+          <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/admin/edit'">编辑
+          </el-button>
+          <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/admin/delete'">删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -122,7 +128,7 @@
         <el-form-item label="用户头像" :label-width="formLabelWidth">
           <div class="imgBody" v-if="form.photoList">
             <i class="el-icon-error inputClass" v-show="icon" @click="deletePhoto()" @mouseover="icon = true"></i>
-            <img @mouseover="icon = true" @mouseout="icon = false" v-bind:src="form.photoList[0]" />
+            <img @mouseover="icon = true" @mouseout="icon = false" v-bind:src="form.photoList[0]"/>
           </div>
 
           <div v-else class="uploadImgBody" @click="checkPhoto">
@@ -157,8 +163,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="10">
-            <el-form-item label="性别"  :label-width="formLabelWidth" prop="gender">
-              <el-radio v-for="gender in genderDictList" :key="gender.uid" v-model="form.gender" :label="gender.dictValue" border size="medium">{{gender.dictLabel}}</el-radio>
+            <el-form-item label="手机号" :label-width="formLabelWidth" prop="mobile">
+              <el-input v-model="form.mobile" placeholder="请输入手机号"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -169,9 +175,11 @@
               <el-input v-model="form.email" placeholder="请输入邮箱"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="10">
-            <el-form-item label="手机号" :label-width="formLabelWidth" prop="mobile">
-              <el-input v-model="form.mobile" placeholder="请输入手机号"></el-input>
+          <el-col :span="12">
+            <el-form-item label="性别" :label-width="formLabelWidth" prop="gender">
+              <el-radio v-for="item in genderDictList" :key="item.uid" v-model="form.gender"
+                        :label="item.dictValue" border size="medium">{{ item.dictLabel }}
+              </el-radio>
             </el-form-item>
           </el-col>
         </el-row>
@@ -182,17 +190,24 @@
               <el-input v-model="form.qqNumber" placeholder="请输入QQ号码"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="10">
-            <el-form-item label="职业" :label-width="formLabelWidth">
-              <el-input v-model="form.occupation" placeholder="请输入职业"></el-input>
+          <el-col :span="12">
+            <el-form-item label="状态" :label-width="formLabelWidth" prop="status">
+              <el-radio v-for="item in paramsStatusDictList" :key="item.uid" v-model="form.status"
+                        :label="parseInt(item.dictValue)" border size="medium">{{ item.dictLabel }}
+              </el-radio>
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-row :gutter="24">
           <el-col :span="10">
+            <el-form-item label="职业" :label-width="formLabelWidth">
+              <el-input v-model="form.occupation" placeholder="请输入职业"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
             <el-form-item label="网盘容量(MB)" :label-width="formLabelWidth" prop="maxStorageSize">
-              <el-input-number v-model="form.maxStorageSize" :min="0"  label="用户最大网盘容量"></el-input-number>
+              <el-input-number v-model="form.maxStorageSize" :min="0" label="用户最大网盘容量"></el-input-number>
             </el-form-item>
           </el-col>
         </el-row>
@@ -219,20 +234,12 @@
 </template>
 
 <script>
-import {
-  getAdminList,
-  addAdmin,
-  editAdmin,
-  deleteAdmin,
-  restPwdAdmin,
-  registerAdmin
-} from "@/api/admin";
+import {addAdmin, deleteAdmin, editAdmin, getAdminList, restPwdAdmin} from "@/api/admin";
 
-import { getRoleList } from "@/api/role";
-import {getListByDictType} from "@/api/sysDictData"
+import {getRoleList} from "@/api/role";
+import {getListByDictTypeList} from "@/api/sysDictData"
 import AvatarCropper from '@/components/AvatarCropper'
 
-import { formatData } from "@/utils/webUtils";
 export default {
   data() {
     return {
@@ -257,6 +264,9 @@ export default {
       photoList: [],
       icon: false, //控制删除图标的显示
       genderDictList: [], //字典列表
+      genderDefault: null,
+      paramsStatusDictList: [],
+      paramsStatusDefault: null,
       rules: {
         userName: [
           {required: true, message: '用户名不能为空', trigger: 'blur'},
@@ -273,10 +283,14 @@ export default {
           {pattern: /\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/, message: '请输入正确的邮箱'},
         ],
         mobile: [
-          {required: false, pattern: /0?(13|14|15|18)[0-9]{9}/, message: '请输入正确的手机号码'}
+          {required: false, pattern: /0?(13|14|15|16|17|18|19)[0-9]{9}/, message: '请输入正确的手机号码'}
         ],
         qqNumber: [
           {pattern: /[1-9]([0-9]{5,11})/, message: '请输入正确的QQ号码'}
+        ],
+        status: [
+          {required: true, message: '状态字段不能为空', trigger: 'blur'},
+          {pattern: /^[0-9]\d*$/, message: '状态字段只能为自然数'},
         ]
       }
     };
@@ -290,15 +304,15 @@ export default {
     this.roleList();
   },
   methods: {
-    adminList: function() {
+    adminList: function () {
       var params = {}
       params.keyword = this.keyword
       params.currentPage = this.currentPage
       params.pageSize = this.pageSize
       getAdminList(params).then(response => {
-        if(response.code == this.$ECode.SUCCESS) {
+        if (response.code == this.$ECode.SUCCESS) {
           let tableData = response.data.records;
-          for(let a=0; a< tableData.length; a++) {
+          for (let a = 0; a < tableData.length; a++) {
             tableData[a].maxStorageSize = tableData[a].maxStorageSize / 1024 / 1024
 
           }
@@ -313,14 +327,17 @@ export default {
      * 字典查询
      */
     getDictList: function () {
-      var params = {};
-      params.dictType = 'sys_user_sex';
-      getListByDictType(params).then(response => {
+      var dictTypeList = ['sys_user_sex', 'sys_params_status'];
+      getListByDictTypeList(dictTypeList).then(response => {
         if (response.code == this.$ECode.SUCCESS) {
-          this.genderDictList = response.data.list;
-          // 设置默认值
-          if(response.data.defaultValue) {
-            this.genderDefaultValue =response.data.defaultValue
+          var dictMap = response.data;
+          this.genderDictList = dictMap.sys_user_sex.list;
+          this.paramsStatusDictList = dictMap.sys_params_status.list;
+          if (dictMap.sys_user_sex.defaultValue) {
+            this.genderDefault = dictMap.sys_user_sex.defaultValue;
+          }
+          if (dictMap.sys_params_status.defaultValue) {
+            this.paramsStatusDefault = parseInt(dictMap.sys_params_status.defaultValue);
           }
         }
       });
@@ -346,7 +363,7 @@ export default {
     close() {
       this.imagecropperShow = false
     },
-    deletePhoto: function() {
+    deletePhoto: function () {
       this.form.photoList = null;
       this.form.ava = "";
       this.icon = false;
@@ -356,23 +373,24 @@ export default {
       this.avatar = "";
       this.imagecropperShow = true;
     },
-    getFormObject: function() {
-      var formObject = {
+    getFormObject: function () {
+      return {
         uid: null,
-        gender: this.genderDefaultValue
+        gender: this.genderDefault,
+        status: this.paramsStatusDefault
       };
-      return formObject;
     },
-    handleFind: function() {
+    handleFind: function () {
       this.adminList();
     },
-    handleAdd: function() {
+    handleAdd: function () {
       this.title = "增加管理员"
       this.dialogFormVisible = true;
       this.form = this.getFormObject();
       this.isEditForm = false;
     },
-    handleEdit: function(row) {
+    handleEdit: function (row) {
+      console.log(row)
       this.title = "编辑管理员";
       this.dialogFormVisible = true;
       this.isEditForm = true;
@@ -380,34 +398,32 @@ export default {
       this.roleValue = [];
       var roleList = [];
       //设置选择的角色列表
-      if(row.roleList) {
+      if (row.roleList) {
         row.roleList.forEach(element => {
           roleList.push(element.uid);
         });
         this.roleValue = roleList;
       }
     },
-    handRest: function(row) {
+    handRest: function (row) {
       var that = this;
       this.$confirm("此操作将会将该用户密码重置为默认密码, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      })
-        .then(() => {
-          let params = {}
-          params.uid = row.uid
-          restPwdAdmin(params).then(response => {
-            if (response.code == this.$ECode.SUCCESS) {
-              this.$commonUtil.message.success(response.message)
-            } else {
-              this.$commonUtil.message.error(response.message)
-            }
-          });
-        })
-        .catch(() => {
-          this.$commonUtil.message.info("已取消删除")
+      }).then(() => {
+        let params = {}
+        params.uid = row.uid
+        restPwdAdmin(params).then(response => {
+          if (response.code == this.$ECode.SUCCESS) {
+            this.$commonUtil.message.success(response.message)
+          } else {
+            this.$commonUtil.message.error(response.message)
+          }
         });
+      }).catch(() => {
+        this.$commonUtil.message.info("已取消重置")
+      });
     },
     //  计算文件大小
     calculateFileSize(size) {
@@ -427,37 +443,35 @@ export default {
         return (size / GB).toFixed(3) + 'TB'
       }
     },
-    handleDelete: function(row) {
+    handleDelete: function (row) {
       this.$confirm("此操作将该管理员删除, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      })
-        .then(() => {
-          let params = new URLSearchParams();
-          var adminUids = [];
-          adminUids.push(row.uid);
-          params.append("adminUids", adminUids);
-          deleteAdmin(params).then(response => {
-            if(response.code == this.$ECode.SUCCESS) {
-              this.$commonUtil.message.success(response.message)
-            } else {
-              this.$commonUtil.message.error(response.message)
-            }
-            this.adminList();
-          });
-        })
-        .catch(() => {
-          this.$commonUtil.message.info("已取消删除")
+      }).then(() => {
+        let params = new URLSearchParams();
+        var adminUids = [];
+        adminUids.push(row.uid);
+        params.append("adminUids", adminUids);
+        deleteAdmin(params).then(response => {
+          if (response.code == this.$ECode.SUCCESS) {
+            this.$commonUtil.message.success(response.message)
+          } else {
+            this.$commonUtil.message.error(response.message)
+          }
+          this.adminList();
         });
+      }).catch(() => {
+        this.$commonUtil.message.info("已取消删除")
+      });
     },
-    handleCurrentChange: function(val) {
+    handleCurrentChange: function (val) {
       this.currentPage = val;
       this.adminList();
     },
-    submitForm: function() {
+    submitForm: function () {
       this.$refs.form.validate((valid) => {
-        if(!valid) {
+        if (!valid) {
           console.log("校验出错")
         } else {
           if (this.isEditForm) {
@@ -497,9 +511,11 @@ export default {
   position: relative;
   overflow: hidden;
 }
+
 .avatar-uploader .el-upload:hover {
   border-color: #409eff;
 }
+
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
@@ -508,6 +524,7 @@ export default {
   line-height: 100px;
   text-align: center;
 }
+
 .imgBody {
   width: 100px;
   height: 100px;
@@ -515,6 +532,7 @@ export default {
   float: left;
   position: relative;
 }
+
 .uploadImgBody {
   margin-left: 5px;
   width: 100px;
@@ -523,12 +541,15 @@ export default {
   float: left;
   position: relative;
 }
+
 .uploadImgBody :hover {
   border: dashed 1px #00ccff;
 }
+
 .inputClass {
   position: absolute;
 }
+
 img {
   width: 100px;
   height: 100px;

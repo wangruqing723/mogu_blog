@@ -178,7 +178,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         page.setSize(adminVO.getPageSize());
         // 去除密码
         queryWrapper.select(Admin.class, i -> !i.getProperty().equals(SQLConf.PASS_WORD));
-        queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
+        queryWrapper.ne(SQLConf.STATUS, EStatus.DISABLED);
         IPage<Admin> pageList = adminService.page(page, queryWrapper);
         List<Admin> list = pageList.getRecords();
 
@@ -226,7 +226,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
 
             // 设置已用容量大小和最大容量
             Storage storage = storageMap.get(item.getUid());
-            if(storage != null) {
+            if (storage != null) {
                 item.setStorageSize(storage.getStorageSize());
                 item.setMaxStorageSize(storage.getMaxStorageSize());
             } else {
@@ -238,6 +238,10 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         return ResultUtil.successWithData(pageList);
     }
 
+    /**
+     * @param adminVO
+     * @return
+     */
     @Override
     public String addAdmin(AdminVO adminVO) {
 
@@ -262,8 +266,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
             admin.setUserName(adminVO.getUserName());
             admin.setNickName(adminVO.getNickName());
             admin.setRoleUid(adminVO.getRoleUid());
-            // 设置为未审核状态
-            admin.setStatus(EStatus.ENABLE);
+            admin.setStatus(adminVO.getStatus());
             PasswordEncoder encoder = new BCryptPasswordEncoder();
             //设置默认密码
             admin.setPassWord(encoder.encode(defaultPassword));
@@ -271,7 +274,12 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
             //TODO 这里需要通过SMS模块，发送邮件告诉初始密码
 
             // 更新成功后，同时申请网盘存储空间
-            String maxStorageSize = sysParamsService.getSysParamsValueByKey(SysConf.MAX_STORAGE_SIZE);
+            String maxStorageSize;
+            if (adminVO.getMaxStorageSize() == 0 && adminVO.getMaxStorageSize() == null) {
+                maxStorageSize = sysParamsService.getSysParamsValueByKey(SysConf.MAX_STORAGE_SIZE);
+            } else {
+                maxStorageSize = adminVO.getMaxStorageSize().toString();
+            }
             // 初始化网盘的容量, 单位 B
             pictureFeignClient.initStorageSize(admin.getUid(), StringUtils.getLong(maxStorageSize, 0L) * 1024 * 1024);
             return ResultUtil.successWithMessage(MessageConf.INSERT_SUCCESS);
@@ -288,7 +296,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
                 return ResultUtil.errorWithMessage("超级管理员用户名必须为admin");
             }
             QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
+            queryWrapper.ne(SQLConf.STATUS, EStatus.DISABLED);
             queryWrapper.eq(SQLConf.USER_NAME, adminVO.getUserName());
             List<Admin> adminList = adminService.list(queryWrapper);
             if (adminList != null) {
@@ -306,6 +314,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         if (StringUtils.isNotEmpty(adminVO.getRoleUid()) && !admin.getRoleUid().equals(adminVO.getRoleUid())) {
             redisUtil.delete(RedisConf.ADMIN_VISIT_MENU + RedisConf.SEGMENTATION + admin.getUid());
         }
+        assert admin != null;
         admin.setUserName(adminVO.getUserName());
         admin.setAvatar(adminVO.getAvatar());
         admin.setNickName(adminVO.getNickName());
@@ -318,6 +327,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         admin.setUpdateTime(new Date());
         admin.setMobile(adminVO.getMobile());
         admin.setRoleUid(adminVO.getRoleUid());
+        admin.setStatus(adminVO.getStatus());
         // 无法直接修改密码，只能通过重置密码完成密码修改
         admin.setPassWord(null);
         admin.updateById();
@@ -325,7 +335,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         // 更新完成后，判断是否调整了网盘的大小
         String result = pictureFeignClient.editStorageSize(admin.getUid(), adminVO.getMaxStorageSize() * 1024 * 1024);
         Map<String, String> resultMap = webUtil.getMessage(result);
-        if(SysConf.SUCCESS.equals(resultMap.get(SysConf.CODE))) {
+        if (SysConf.SUCCESS.equals(resultMap.get(SysConf.CODE))) {
             return ResultUtil.successWithMessage(resultMap.get(SysConf.MESSAGE));
         } else {
             return ResultUtil.errorWithMessage(resultMap.get(SysConf.MESSAGE));
@@ -411,7 +421,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         List<String> tokenList = new ArrayList<>();
         tokenUidList.forEach(item -> {
             String token = redisUtil.get(RedisConf.LOGIN_UUID_KEY + RedisConf.SEGMENTATION + item);
-            if(StringUtils.isNotEmpty(token)) {
+            if (StringUtils.isNotEmpty(token)) {
                 tokenList.add(token);
             }
         });

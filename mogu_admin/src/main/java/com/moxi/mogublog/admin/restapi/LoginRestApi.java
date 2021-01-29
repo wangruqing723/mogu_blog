@@ -18,6 +18,7 @@ import com.moxi.mogublog.xo.service.CategoryMenuService;
 import com.moxi.mogublog.xo.service.RoleService;
 import com.moxi.mogublog.xo.utils.WebUtil;
 import com.moxi.mougblog.base.enums.EMenuType;
+import com.moxi.mougblog.base.enums.EStatus;
 import com.moxi.mougblog.base.global.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -102,7 +103,10 @@ public class LoginRestApi {
         Admin admin = adminService.getOne(queryWrapper);
         if (admin == null) {
             // 设置错误登录次数
-            return ResultUtil.result(SysConf.ERROR, String.format(MessageConf.LOGIN_ERROR, setLoginCommit(request)));
+            return ResultUtil.result(SysConf.ERROR, String.format(MessageConf.LOGIN_NOT_EXIST, setLoginCommit(request)));
+        }
+        if (EStatus.FREEZE == admin.getStatus()) {
+            return ResultUtil.result(SysConf.ERROR, MessageConf.LOGIN_DISABLE);
         }
         // 对密码进行加盐加密验证，采用SHA-256 + 随机盐【动态加盐】 + 密钥对密码进行加密
         PasswordEncoder encoder = new BCryptPasswordEncoder();
