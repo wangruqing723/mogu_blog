@@ -29,7 +29,7 @@
 	      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFind" v-permission="'/log/getLogList'">查找</el-button>
 	    </div>
 
-      <el-table :data="tableData"  style="width: 100%">
+      <el-table :data="tableData"  style="width: 100%" max-height="530">
 
         <el-table-column type="expand">
           <template slot-scope="props">

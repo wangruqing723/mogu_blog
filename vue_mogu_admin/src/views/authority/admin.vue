@@ -17,7 +17,7 @@
       </el-button>
     </div>
 
-    <el-table :data="tableData" style="width: 100%">
+    <el-table :data="tableData" style="width: 100%" max-height="530">
       <el-table-column type="selection"></el-table-column>
 
       <el-table-column label="序号" width="60" align="center">
@@ -283,7 +283,7 @@ export default {
           {pattern: /\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/, message: '请输入正确的邮箱'},
         ],
         mobile: [
-          {required: false, pattern: /0?(13|14|15|16|17|18|19)[0-9]{9}/, message: '请输入正确的手机号码'}
+          {required: false, pattern: /^1(3[0-9]|4[01456879]|5[0-35-9]|6[2567]|7[0-8]|8[0-9]|9[0-35-9])\d{8}$/, message: '请输入正确的手机号码'}
         ],
         qqNumber: [
           {pattern: /[1-9]([0-9]{5,11})/, message: '请输入正确的QQ号码'}
@@ -377,7 +377,8 @@ export default {
       return {
         uid: null,
         gender: this.genderDefault,
-        status: this.paramsStatusDefault
+        status: this.paramsStatusDefault,
+        maxStorageSize: 50
       };
     },
     handleFind: function () {

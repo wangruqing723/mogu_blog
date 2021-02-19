@@ -26,7 +26,7 @@
       <el-button class="filter-item" type="danger" @click="handleDeleteBatch" icon="el-icon-delete" v-permission="'/sysDictType/delete'">删除选中</el-button>
     </div>
 
-    <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
+    <el-table :data="tableData" style="width: 100%" max-height="530" @selection-change="handleSelectionChange">
       <el-table-column type="selection"></el-table-column>
 
       <el-table-column label="序号" width="60" align="center">

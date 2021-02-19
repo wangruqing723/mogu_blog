@@ -256,7 +256,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         }
         String defaultPassword = sysParamsService.getSysParamsValueByKey(SysConf.SYS_DEFAULT_PASSWORD);
         QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(SQLConf.USER_NAME, userName);
+        queryWrapper.eq(SQLConf.USER_NAME, userName).ne(SQLConf.STATUS, EStatus.DISABLED);
         Admin temp = adminService.getOne(queryWrapper);
         if (temp == null) {
             Admin admin = new Admin();
@@ -266,6 +266,9 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
             admin.setUserName(adminVO.getUserName());
             admin.setNickName(adminVO.getNickName());
             admin.setRoleUid(adminVO.getRoleUid());
+            admin.setMobile(adminVO.getMobile());
+            admin.setQqNumber(adminVO.getQqNumber());
+            admin.setOccupation(adminVO.getOccupation());
             admin.setStatus(adminVO.getStatus());
             PasswordEncoder encoder = new BCryptPasswordEncoder();
             //设置默认密码
@@ -274,7 +277,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
             //TODO 这里需要通过SMS模块，发送邮件告诉初始密码
 
             // 更新成功后，同时申请网盘存储空间
-            String maxStorageSize;
+            String maxStorageSize = "50";
             if (adminVO.getMaxStorageSize() == 0 && adminVO.getMaxStorageSize() == null) {
                 maxStorageSize = sysParamsService.getSysParamsValueByKey(SysConf.MAX_STORAGE_SIZE);
             } else {

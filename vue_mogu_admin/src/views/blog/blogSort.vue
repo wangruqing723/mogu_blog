@@ -30,7 +30,7 @@
       >引用量排序</el-button>
     </div>
 
-    <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
+    <el-table :data="tableData" style="width: 100%" max-height="530" @selection-change="handleSelectionChange">
       <el-table-column type="selection"></el-table-column>
       <el-table-column label="序号" width="100%" align="center">
         <template slot-scope="scope">

@@ -12,8 +12,8 @@
         <ul id="licount">
           <li>
             <div class="shareli">
-              <a href="http://www.vewlwy.wang/Music/index.html" target="_blank">
-                <i><img class="resImg" src="http://www.vewlwy.wang/Music/icon.png"></i>
+              <a href="https://server.wyong.top/Music/index.html" target="_blank">
+                <i><img class="resImg" src="https://server.wyong.top/Music/icon.png"></i>
                 <h2><b>点击页面或鼠标键盘，跟着节奏摇摆吧！！！</b></h2>
                 <span>Music</span>
               </a>
@@ -21,8 +21,8 @@
           </li>
           <li>
             <div class="shareli">
-              <a href="http://www.vewlwy.wang/2048/index.html" target="_blank">
-                <i><img class="resImg" src="http://www.vewlwy.wang/2048/icon.png"></i>
+              <a href="https://server.wyong.top/2048/index.html" target="_blank">
+                <i><img class="resImg" src="https://server.wyong.top/2048/icon.png"></i>
                 <h2><b>开始游戏吧！！！</b></h2>
                 <span>2048</span>
               </a>

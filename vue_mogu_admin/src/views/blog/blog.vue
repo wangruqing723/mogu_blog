@@ -89,30 +89,42 @@
           ></el-option>
         </el-select>
 
-        <el-button style="margin-left: 10px;" class="filter-item" type="primary" icon="el-icon-search" @click="handleFind" v-permission="'/blog/getList'">查找</el-button>
+        <el-button style="margin-left: 10px;" class="filter-item" type="primary" icon="el-icon-search"
+                   @click="handleFind" v-permission="'/blog/getList'">查找
+        </el-button>
 
       </el-form>
 
 
       <el-row :gutter="10" style="margin-bottom: 8px;">
         <el-col :span="1.5">
-          <el-button class="filter-item" type="primary" @click="handleAdd" icon="el-icon-edit" v-permission="'/blog/add'">添加博客</el-button>
+          <el-button class="filter-item" type="primary" @click="handleAdd" icon="el-icon-edit"
+                     v-permission="'/blog/add'">添加博客
+          </el-button>
         </el-col>
 
         <el-col :span="1.5">
-          <el-button class="filter-item" type="warning" @click="handleUpload" icon="el-icon-star-on" v-permission="'/blog/uploadLocalBlog'">本地上传</el-button>
+          <el-button class="filter-item" type="warning" @click="handleUpload" icon="el-icon-star-on"
+                     v-permission="'/blog/uploadLocalBlog'">本地上传
+          </el-button>
         </el-col>
 
         <el-col :span="1.5">
-          <el-button class="filter-item" type="warning" @click="handleDownload" icon="el-icon-s-flag"  v-permission="'/blog/downloadBatch'">导出选中</el-button>
+          <el-button class="filter-item" type="warning" @click="handleDownload" icon="el-icon-s-flag"
+                     v-permission="'/blog/downloadBatch'">导出选中
+          </el-button>
         </el-col>
 
         <el-col :span="1.5">
-          <el-button class="filter-item" type="info" @click="handleSubject" icon="el-icon-folder-opened"  v-permission="'/blog/downloadBatch'">添加专题</el-button>
+          <el-button class="filter-item" type="info" @click="handleSubject" icon="el-icon-folder-opened"
+                     v-permission="'/blog/downloadBatch'">添加专题
+          </el-button>
         </el-col>
 
         <el-col :span="1.5">
-          <el-button class="filter-item" type="danger" @click="handleDeleteBatch" icon="el-icon-delete" v-permission="'/blog/deleteBatch'">删除选中</el-button>
+          <el-button class="filter-item" type="danger" @click="handleDeleteBatch" icon="el-icon-delete"
+                     v-permission="'/blog/deleteBatch'">删除选中
+          </el-button>
         </el-col>
 
         <right-toolbar :showSearch.sync="showSearch" @queryTable="resetBlogList"></right-toolbar>
@@ -120,12 +132,13 @@
 
     </div>
 
-    <el-table :data="tableData" ref="articleTable" style="width: 100%" @selection-change="handleSelectionChange">
+    <el-table :data="tableData" ref="articleTable" style="width: 100%" max-height="480"
+              @selection-change="handleSelectionChange">
       <el-table-column type="selection"></el-table-column>
 
       <el-table-column label="序号" width="50px" align="center">
         <template slot-scope="scope">
-          <span>{{scope.$index + 1}}</span>
+          <span>{{ scope.$index + 1 }}</span>
         </template>
       </el-table-column>
 
@@ -164,7 +177,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="标签" width="150px" align="center" >
+      <el-table-column label="标签" width="150px" align="center">
         <template slot-scope="scope">
           <template>
             <el-tag
@@ -173,14 +186,17 @@
               v-if="item"
               :key="index"
               v-for="(item, index) in scope.row.tagList"
-            >{{item.content}}</el-tag>
+            >{{ item.content }}
+            </el-tag>
           </template>
         </template>
       </el-table-column>
 
       <el-table-column label="推荐等级" width="80px" align="center">
         <template slot-scope="scope">
-          <el-tag v-for="item in blogLevelDictList" :key="item.uid" v-if="scope.row.level == item.dictValue" :type="item.listClass">{{item.dictLabel}}</el-tag>
+          <el-tag v-for="item in blogLevelDictList" :key="item.uid" v-if="scope.row.level == item.dictValue"
+                  :type="item.listClass">{{ item.dictLabel }}
+          </el-tag>
         </template>
       </el-table-column>
 
@@ -193,7 +209,9 @@
       <el-table-column label="评论" width="70px" align="center">
         <template slot-scope="scope">
           <template>
-            <el-tag v-for="item in openDictList" :key="item.uid" :type="item.listClass" v-if="scope.row.openComment == item.dictValue">{{item.dictLabel}}</el-tag>
+            <el-tag v-for="item in openDictList" :key="item.uid" :type="item.listClass"
+                    v-if="scope.row.openComment == item.dictValue">{{ item.dictLabel }}
+            </el-tag>
           </template>
         </template>
       </el-table-column>
@@ -201,7 +219,9 @@
       <el-table-column label="发布状态" width="76px" align="center">
         <template slot-scope="scope">
           <template>
-            <el-tag v-for="item in blogPublishDictList" :key="item.uid" :type="item.listClass" v-if="scope.row.isPublish == item.dictValue">{{item.dictLabel}}</el-tag>
+            <el-tag v-for="item in blogPublishDictList" :key="item.uid" :type="item.listClass"
+                    v-if="scope.row.isPublish == item.dictValue">{{ item.dictLabel }}
+            </el-tag>
           </template>
         </template>
       </el-table-column>
@@ -214,8 +234,10 @@
 
       <el-table-column label="操作" fixed="right" min-width="147px">
         <template slot-scope="scope">
-          <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/blog/edit'">编辑</el-button>
-          <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/blog/delete'">删除</el-button>
+          <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/blog/edit'">编辑
+          </el-button>
+          <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/blog/delete'">删除
+          </el-button>
         </template>
       </el-table-column>
 
@@ -333,27 +355,35 @@
           <el-col :span="6.5">
             <el-form-item label="是否原创" :label-width="formLabelWidth" prop="isOriginal">
               <el-radio-group v-model="form.isOriginal" size="small">
-                <el-radio v-for="item in blogOriginalDictList" :key="item.uid" :label="item.dictValue" border>{{item.dictLabel}}</el-radio>
+                <el-radio v-for="item in blogOriginalDictList" :key="item.uid" :label="item.dictValue" border>
+                  {{ item.dictLabel }}
+                </el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
 
           <el-col :span="6.5">
             <el-form-item label="文章类型" :label-width="formLabelWidth" prop="openComment">
-              <el-radio v-for="item in blogTypeDictList" :key="item.uid" v-model="form.type" :label="item.dictValue" border size="small">{{item.dictLabel}}</el-radio>
+              <el-radio v-for="item in blogTypeDictList" :key="item.uid" v-model="form.type" :label="item.dictValue"
+                        border size="small">{{ item.dictLabel }}
+              </el-radio>
             </el-form-item>
           </el-col>
 
           <el-col :span="6.5">
             <el-form-item label="文章评论" :label-width="formLabelWidth" prop="openComment">
-              <el-radio v-for="item in openDictList" :key="item.uid" v-model="form.openComment" :label="item.dictValue" border size="small">{{item.dictLabel}}</el-radio>
+              <el-radio v-for="item in openDictList" :key="item.uid" v-model="form.openComment" :label="item.dictValue"
+                        border size="small">{{ item.dictLabel }}
+              </el-radio>
             </el-form-item>
           </el-col>
 
           <el-col :span="4.5">
             <el-form-item label="是否发布" :label-width="lineLabelWidth" prop="isPublish">
               <el-radio-group v-model="form.isPublish" size="small">
-                <el-radio v-for="item in blogPublishDictList" :key="item.uid" :label="item.dictValue" border>{{item.dictLabel}}</el-radio>
+                <el-radio v-for="item in blogPublishDictList" :key="item.uid" :label="item.dictValue" border>
+                  {{ item.dictLabel }}
+                </el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -372,8 +402,10 @@
         </el-form-item>
 
         <el-form-item label="内容" :label-width="formLabelWidth" prop="content">
-          <CKEditor v-if="systemConfig.editorModel == '0'" ref="editor" :content="form.content" @contentChange="contentChange" :height="360"></CKEditor>
-          <MarkdownEditor v-if="systemConfig.editorModel == '1'" :content="form.content" ref="editor" :height="465"></MarkdownEditor>
+          <CKEditor v-if="systemConfig.editorModel == '0'" ref="editor" :content="form.content"
+                    @contentChange="contentChange" :height="360"></CKEditor>
+          <MarkdownEditor v-if="systemConfig.editorModel == '1'" :content="form.content" ref="editor"
+                          :height="465"></MarkdownEditor>
         </el-form-item>
 
         <el-form-item style="float: right; margin-right: 20px;">
@@ -406,22 +438,23 @@
         multiple
       >
         <el-button slot="trigger" size="small" type="primary">选取本地图片</el-button>
-        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitPictureUpload">提交到图片服务器</el-button>
+        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitPictureUpload">提交到图片服务器
+        </el-button>
       </el-upload>
 
 
       <el-upload
-      class="upload-demo"
-      ref="uploadFile"
-      name="filedatas"
-      :headers="importHeaders"
-      :action="uploadAdminHost"
-      :auto-upload="false"
-      multiple
-    >
-      <el-button slot="trigger" size="small" type="primary">选取博客文件</el-button>
-      <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">提交到服务器</el-button>
-    </el-upload>
+        class="upload-demo"
+        ref="uploadFile"
+        name="filedatas"
+        :headers="importHeaders"
+        :action="uploadAdminHost"
+        :auto-upload="false"
+        multiple
+      >
+        <el-button slot="trigger" size="small" type="primary">选取博客文件</el-button>
+        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">提交到服务器</el-button>
+      </el-upload>
 
     </el-dialog>
 
@@ -435,18 +468,19 @@
       :limit="1"
     ></CheckPhoto>
 
-    <SubjectSelect v-if="!isFirstSubjectVisible" :subjectVisible="subjectVisible" @cancelModel="cancelSubjectSelect" @selectData="getSelectData"></SubjectSelect>
+    <SubjectSelect v-if="!isFirstSubjectVisible" :subjectVisible="subjectVisible" @cancelModel="cancelSubjectSelect"
+                   @selectData="getSelectData"></SubjectSelect>
   </div>
 </template>
 
 <script>
-import { getBlogList, addBlog, editBlog, deleteBlog, deleteBatchBlog } from "@/api/blog";
-import { getSystemConfig} from "@/api/systemConfig";
-import { getTagList } from "@/api/tag";
-import { getBlogSortList } from "@/api/blogSort";
+import {getBlogList, addBlog, editBlog, deleteBlog, deleteBatchBlog} from "@/api/blog";
+import {getSystemConfig} from "@/api/systemConfig";
+import {getTagList} from "@/api/tag";
+import {getBlogSortList} from "@/api/blogSort";
 import {formatData} from "@/utils/webUtils";
-import { getToken } from '@/utils/auth'
-import { setCookie, getCookie, delCookie } from "@/utils/cookieUtils";
+import {getToken} from '@/utils/auth'
+import {setCookie, getCookie, delCookie} from "@/utils/cookieUtils";
 import {getListByDictTypeList} from "@/api/sysDictData"
 import {addSubjectItemList} from "@/api/subjectItem";
 
@@ -454,9 +488,11 @@ import CheckPhoto from "../../components/CheckPhoto";
 import CKEditor from "../../components/CKEditor";
 import MarkdownEditor from "../../components/MarkdownEditor";
 import SubjectSelect from "../../components/SubjectSelect";
+
 var querystring = require("querystring");
-import { mapGetters } from "vuex";
-import { Loading } from 'element-ui';
+import {mapGetters} from "vuex";
+import {Loading} from 'element-ui';
+
 export default {
   computed: {
     ...mapGetters(["name", "roles"])
@@ -482,7 +518,7 @@ export default {
         sortName: "admin",
         token: getToken()
       },
-      queryParams:{
+      queryParams: {
         keyword: "",
         tagKeyword: "", //标签搜索
         sortKeyword: "", //分类搜索
@@ -527,7 +563,7 @@ export default {
       blogPublishDictList: [], //是否字典
       blogLevelDictList: [], //博客推荐等级字典
       openDictList: [], // 是否启动字典
-      blogTypeDictList:[], // 文章类型字典
+      blogTypeDictList: [], // 文章类型字典
       blogOriginalDefault: null, //博客原创默认值
       blogLevelDefault: null, //博客等级默认值
       blogPublishDefault: null, //博客发布默认值
@@ -577,7 +613,7 @@ export default {
         ],
         outsideLink: [
           {required: true, message: '外链地址不能为空', trigger: 'blur'},
-          {pattern:  /^((https|http|ftp|rtsp|mms)?:\/\/)[^\s]+/, message: '请输入有效的URL'},
+          {pattern: /^((https|http|ftp|rtsp|mms)?:\/\/)[^\s]+/, message: '请输入有效的URL'},
         ],
       }
     };
@@ -587,13 +623,40 @@ export default {
     let tempTag = this.$route.query.tag;
     let tempBlogSort = this.$route.query.blogSort;
 
-    if(tempTag != undefined) {
+    if (tempTag) {
       this.tagRemoteMethod(tempTag.name);
       this.queryParams.tagKeyword = tempTag.tagUid;
     }
-    if(tempBlogSort != undefined) {
+    if (tempBlogSort) {
       this.sortRemoteMethod(tempBlogSort.name);
       this.queryParams.sortKeyword = tempBlogSort.blogSortUid;
+    }
+    if (this.$route.query.keyword) {
+      this.queryParams.keyword = this.$route.query.keyword
+    }
+    if (this.$route.query.levelKeyword == 0) {
+      this.queryParams.levelKeyword = "正常"
+    }
+    if (this.$route.query.levelKeyword == 1) {
+      this.queryParams.levelKeyword = "一级推荐"
+    }
+    if (this.$route.query.levelKeyword == 2) {
+      this.queryParams.levelKeyword = "二级推荐"
+    }
+    if (this.$route.query.levelKeyword == 3) {
+      this.queryParams.levelKeyword = "三级推荐"
+    }
+    if (this.$route.query.levelKeyword ==4) {
+      this.queryParams.levelKeyword = "四级推荐"
+    }
+    if (this.$route.query.publishKeyword) {
+      this.queryParams.publishKeyword = this.$route.query.publishKeyword
+    }
+    if (this.$route.query.originalKeyword) {
+      this.queryParams.originalKeyword = this.$route.query.originalKeyword
+    }
+    if (this.$route.query.typeKeyword) {
+      this.queryParams.typeKeyword = this.$route.query.typeKeyword
     }
 
     // 判断是否需要展开条件查询
@@ -622,18 +685,18 @@ export default {
       })
     },
     closeLoading() {
-        this.uploadLoading.close()
+      this.uploadLoading.close()
     },
     // 判断是否需要展开条件查询
     getShowSearch: function () {
       let showSearch = getCookie("showSearch")
-      if(showSearch == "false"){ //此时的hasAuth是true
+      if (showSearch == "false") { //此时的hasAuth是true
         this.showSearch = false
       } else {
         this.showSearch = true
       }
     },
-    tagList: function() {
+    tagList: function () {
       var tagParams = {};
       tagParams.pageSize = 100;
       tagParams.currentPage = 1;
@@ -642,22 +705,22 @@ export default {
         this.tagOptions = response.data.records;
       });
     },
-    blogSortList: function() {
+    blogSortList: function () {
       var blogSortParams = {};
       blogSortParams.pageSize = 100;
       blogSortParams.currentPage = 1;
       getBlogSortList(blogSortParams).then(response => {
-        if(response.code == this.$ECode.SUCCESS) {
+        if (response.code == this.$ECode.SUCCESS) {
           this.blogSortData = response.data.records;
           this.sortOptions = response.data.records;
         }
       });
     },
-    resetBlogList: function (){
+    resetBlogList: function () {
       this.queryParams = {}
       this.blogList();
     },
-    blogList: function() {
+    blogList: function () {
       var params = {};
       params.keyword = this.queryParams.keyword;
       params.blogSortUid = this.queryParams.sortKeyword;
@@ -669,7 +732,7 @@ export default {
       params.currentPage = this.currentPage;
       params.pageSize = this.pageSize;
       getBlogList(params).then(response => {
-        if(response.code == this.$ECode.SUCCESS) {
+        if (response.code == this.$ECode.SUCCESS) {
           this.tableData = response.data.records;
           this.currentPage = response.data.current;
           this.pageSize = response.data.size;
@@ -682,7 +745,7 @@ export default {
      */
     getDictList: function () {
 
-      var dictTypeList =  ['sys_recommend_level', 'sys_original_status', 'sys_publish_status', 'sys_normal_disable', 'sys_blog_type']
+      var dictTypeList = ['sys_recommend_level', 'sys_original_status', 'sys_publish_status', 'sys_normal_disable', 'sys_blog_type']
 
       getListByDictTypeList(dictTypeList).then(response => {
         if (response.code == this.$ECode.SUCCESS) {
@@ -693,26 +756,26 @@ export default {
           this.openDictList = dictMap.sys_normal_disable.list
           this.blogTypeDictList = dictMap.sys_blog_type.list
 
-          if(dictMap.sys_original_status.defaultValue) {
+          if (dictMap.sys_original_status.defaultValue) {
             this.blogOriginalDefault = dictMap.sys_original_status.defaultValue;
           }
-          if(dictMap.sys_publish_status.defaultValue) {
+          if (dictMap.sys_publish_status.defaultValue) {
             this.blogPublishDefault = dictMap.sys_publish_status.defaultValue;
           }
-          if(dictMap.sys_recommend_level.defaultValue) {
+          if (dictMap.sys_recommend_level.defaultValue) {
             this.blogLevelDefault = dictMap.sys_recommend_level.defaultValue;
           }
-          if(dictMap.sys_normal_disable.defaultValue) {
+          if (dictMap.sys_normal_disable.defaultValue) {
             this.openDefault = dictMap.sys_normal_disable.defaultValue;
           }
-          if(dictMap.sys_blog_type.defaultValue) {
+          if (dictMap.sys_blog_type.defaultValue) {
             this.blogTypeDefault = dictMap.sys_blog_type.defaultValue;
           }
 
         }
       });
     },
-    getFormObject: function() {
+    getFormObject: function () {
       var formObject = {
         uid: null,
         title: null,
@@ -731,11 +794,11 @@ export default {
       return formObject;
     },
     // 跳转到该博客详情
-    onClick: function(row) {
-      window.open( this.BLOG_WEB_URL + "/#/info?blogUid=" + row.uid);
+    onClick: function (row) {
+      window.open(this.BLOG_WEB_URL + "/#/info?blogUid=" + row.uid);
     },
     //标签远程搜索函数
-    tagRemoteMethod: function(query) {
+    tagRemoteMethod: function (query) {
       if (query !== "") {
         var params = {};
         params.keyword = query;
@@ -749,7 +812,7 @@ export default {
       }
     },
     //分类远程搜索函数
-    sortRemoteMethod: function(query) {
+    sortRemoteMethod: function (query) {
       if (query !== "") {
         var params = {};
         params.keyword = query;
@@ -763,7 +826,7 @@ export default {
       }
     },
     // 获取系统配置
-    getSystemConfigList: function() {
+    getSystemConfigList: function () {
       getSystemConfig().then(response => {
         if (response.code == this.$ECode.SUCCESS) {
           if (response.data) {
@@ -787,7 +850,7 @@ export default {
     cancelModel() {
       this.photoVisible = false;
     },
-    deletePhoto: function() {
+    deletePhoto: function () {
       this.form.photoList = null;
       this.form.fileUid = "";
     },
@@ -797,7 +860,7 @@ export default {
       this.photoVisible = true;
       this.isFirstPhotoVisible = false
     },
-    submitStr: function(str, index) {
+    submitStr: function (str, index) {
       if (str.length > index) {
         return str.slice(0, index) + "...";
       }
@@ -805,7 +868,7 @@ export default {
     },
     // 添加至专题
     handleSubject() {
-      if(this.multipleSelection.length <= 0 ) {
+      if (this.multipleSelection.length <= 0) {
         this.$commonUtil.message.error("请先选中需要添加到专题的博客!")
         return;
       }
@@ -817,7 +880,7 @@ export default {
       // 选中的博客
       let multipleSelection = this.multipleSelection
       let subjectItemList = []
-      for (let a=0; a<multipleSelection.length; a++) {
+      for (let a = 0; a < multipleSelection.length; a++) {
         let params = {}
         params.subjectUid = subjectUid[0];
         params.blogUid = multipleSelection[a].uid
@@ -835,12 +898,12 @@ export default {
       });
 
     },
-    cancelSubjectSelect: function() {
+    cancelSubjectSelect: function () {
       this.subjectVisible = false
     },
     // 关闭窗口
     closeDialog(done) {
-      if(this.isChange) {
+      if (this.isChange) {
         this.$confirm("是否关闭博客编辑窗口", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
@@ -864,10 +927,10 @@ export default {
         done();
       }
     },
-    handleFind: function() {
+    handleFind: function () {
       this.blogList();
     },
-    handleAdd: function() {
+    handleAdd: function () {
       this.title = "增加博客"
       let that = this;
       let tempForm = JSON.parse(getCookie("form"));
@@ -887,7 +950,7 @@ export default {
                 that.tagValue.push(tagValue[a]);
               }
             }
-            if(that.form.uid) {
+            if (that.form.uid) {
               that.title = "编辑博客";
               that.isEditForm = true;
             } else {
@@ -922,7 +985,7 @@ export default {
         that.formBak();
       }
     },
-    handleUpload: function() {
+    handleUpload: function () {
       this.localUploadVisible = true
     },
     // 文件上传
@@ -937,7 +1000,7 @@ export default {
         action,
         success: (response) => {
           let res = JSON.parse(response)
-          if(res.code == this.$ECode.SUCCESS) {
+          if (res.code == this.$ECode.SUCCESS) {
             this.$commonUtil.message.success(res.message)
             //获取博客列表
             this.blogList()
@@ -966,11 +1029,11 @@ export default {
         action,
         success: (response) => {
           let res = JSON.parse(response)
-          if(res.code == this.$ECode.SUCCESS) {
+          if (res.code == this.$ECode.SUCCESS) {
             this.$commonUtil.message.success("图片上传成功")
             let pictureList = res.data
             let list = []
-            for(let a=0; a<pictureList.length; a++) {
+            for (let a = 0; a < pictureList.length; a++) {
               let picture = {}
               picture.uid = pictureList[a].uid
               picture.fileOldName = pictureList[a].fileOldName
@@ -1007,9 +1070,9 @@ export default {
       xhr.open("post", action, true)
       // 设置请求头
       xhr.setRequestHeader("Authorization", getToken());
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4){
-          if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304){
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4) {
+          if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304) {
             success && success(xhr.responseText)
           } else {
             error && error(xhr.status)
@@ -1018,21 +1081,21 @@ export default {
       }
       xhr.send(form)
     },
-    handleDownload: function() {
-      if(this.multipleSelection.length <= 0 ) {
+    handleDownload: function () {
+      if (this.multipleSelection.length <= 0) {
         this.$commonUtil.message.error("请先选中需要导出的博客")
         return;
       }
 
       let blogList = this.multipleSelection
-      for(let a=0; a<blogList.length; a++) {
+      for (let a = 0; a < blogList.length; a++) {
         this.$commonUtil.htmlToMarkdownFile(blogList[a].title, blogList[a].content)
       }
     },
     // 内容改变，触发监听
-    contentChange: function() {
+    contentChange: function () {
       var that = this;
-      if(this.changeCount > 0) {
+      if (this.changeCount > 0) {
         that.isChange = true;
         //存放到cookie中，时间10天
         that.form.content = that.$refs.editor.getData(); //获取CKEditor中的内容
@@ -1042,9 +1105,9 @@ export default {
       this.changeCount = this.changeCount + 1;
     },
     //备份form表单
-    formBak: function() {
+    formBak: function () {
       var that = this;
-      that.interval = setInterval(function() {
+      that.interval = setInterval(function () {
         if (that.form.title != null && that.form.title != "") {
           //存放到cookie中，时间10天
           that.form.content = that.$refs.editor.getData(); //获取CKEditor中的内容
@@ -1053,7 +1116,7 @@ export default {
         }
       }, 10000);
     },
-    handleEdit: function(row) {
+    handleEdit: function (row) {
       var that = this;
       that.title = "编辑博客";
       that.form = row;
@@ -1075,7 +1138,7 @@ export default {
       that.dialogFormVisible = true;
       that.isEditForm = true;
     },
-    handleDelete: function(row) {
+    handleDelete: function (row) {
       var that = this;
       this.$confirm("此操作将把博客删除, 是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -1094,9 +1157,9 @@ export default {
           that.$commonUtil.message.info("已取消删除")
         });
     },
-    handleDeleteBatch: function(row) {
+    handleDeleteBatch: function (row) {
       var that = this;
-      if(that.multipleSelection.length <= 0 ) {
+      if (that.multipleSelection.length <= 0) {
         that.$commonUtil.message.error("请先选中需要删除的博客")
         return;
       }
@@ -1119,18 +1182,18 @@ export default {
           that.$commonUtil.message.info("已取消删除")
         });
     },
-    handleCurrentChange: function(val) {
+    handleCurrentChange: function (val) {
       this.currentPage = val;
       this.blogList();
     },
-    submitForm: function() {
-      if(this.tagValue.length <= 0) {
+    submitForm: function () {
+      if (this.tagValue.length <= 0) {
         this.$commonUtil.message.error("标签不能为空!")
         return;
       }
 
       this.$refs.form.validate((valid) => {
-        if(!valid) {
+        if (!valid) {
 
         } else {
           this.form.content = this.$refs.editor.getData(); //获取CKEditor中的内容
@@ -1184,45 +1247,54 @@ export default {
   position: relative;
   overflow: hidden;
 }
+
 .avatar-uploader .el-upload:hover {
   border-color: #409eff;
 }
+
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
-  width:  195px;
+  width: 195px;
   height: 105px;
   line-height: 105px;
   text-align: center;
 }
+
 .imgBody {
-  width:  195px;
+  width: 195px;
   height: 105px;
   border: solid 2px #ffffff;
   float: left;
   position: relative;
 }
+
 .uploadImgBody {
   margin-left: 5px;
-  width:  195px;
+  width: 195px;
   height: 105px;
   border: dashed 1px #c0c0c0;
   float: left;
   position: relative;
 }
+
 .uploadImgBody :hover {
   border: dashed 1px #00ccff;
 }
+
 .inputClass {
   position: absolute;
 }
+
 .el-dialog__body {
   padding-top: 10px;
   padding-bottom: 0px;
 }
+
 .el-dialog {
   min-height: 400px;
 }
+
 .el-upload__tip {
   margin-top: 10px;
   margin-left: 10px;
@@ -1232,16 +1304,19 @@ export default {
 .upload-demo {
   margin-top: 50px;
 }
+
 .tipBox {
   margin-bottom: 30px;
 }
+
 .tip {
   font-size: 14px;
   font-weight: bold;
-  color: 	#808080;
+  color: #808080;
 }
+
 .tipItem {
   line-height: 22px;
-  color: 	#A9A9A9;
+  color: #A9A9A9;
 }
 </style>

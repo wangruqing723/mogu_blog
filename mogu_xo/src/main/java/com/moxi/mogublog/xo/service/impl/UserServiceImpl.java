@@ -17,7 +17,6 @@ import com.moxi.mogublog.xo.utils.WebUtil;
 import com.moxi.mogublog.xo.vo.UserVO;
 import com.moxi.mougblog.base.enums.EStatus;
 import com.moxi.mougblog.base.exception.exceptionType.InsertException;
-import com.moxi.mougblog.base.exception.exceptionType.QueryException;
 import com.moxi.mougblog.base.global.BaseSQLConf;
 import com.moxi.mougblog.base.global.Constants;
 import com.moxi.mougblog.base.global.ErrorCode;
@@ -215,7 +214,7 @@ public class UserServiceImpl extends SuperServiceImpl<UserMapper, User> implemen
     public String addUser(UserVO userVO) {
         User user = new User();
         // 字段拷贝【将userVO中的内容拷贝至user】
-        BeanUtils.copyProperties(userVO, user, SysConf.STATUS);
+        BeanUtils.copyProperties(userVO, user);
         String defaultPassword = sysParamsService.getSysParamsValueByKey(SysConf.SYS_DEFAULT_PASSWORD);
         user.setPassWord(MD5Utils.string2MD5(defaultPassword));
         user.setSource("MOGU");
@@ -239,6 +238,7 @@ public class UserServiceImpl extends SuperServiceImpl<UserMapper, User> implemen
         user.setUserTag(userVO.getUserTag());
         user.setCommentStatus(userVO.getCommentStatus());
         user.setUpdateTime(new Date());
+        user.setStatus(userVO.getStatus());
         user.updateById();
         return ResultUtil.successWithMessage(MessageConf.UPDATE_SUCCESS);
     }

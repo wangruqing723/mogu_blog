@@ -2,7 +2,7 @@
   <div class="aside-menu-wrapper" :class="{'expand': !isFolder}">
     <div class="aside-title" @click="changeIsFolder">
       <i v-show="!isFolder"></i>
-      <span v-show="!isFolder">蘑菇网盘</span>
+      <span v-show="!isFolder">Java网盘</span>
       <el-tooltip class="item" effect="dark" content="收起分类栏" placement="bottom-end">
         <i
           class="el-icon-d-arrow-left"

@@ -13,7 +13,7 @@
       <el-button class="filter-item" type="primary" @click="handleAdd" icon="el-icon-edit" v-permission="'/role/add'">添加角色</el-button>
     </div>
 
-    <el-table :data="tableData" style="width: 100%">
+    <el-table :data="tableData" style="width: 100%" max-height="530">
       <el-table-column type="selection"></el-table-column>
       <el-table-column label="序号" width="60" align="center">
         <template slot-scope="scope">
@@ -220,7 +220,7 @@ export default {
     },
 
     handleDelete: function (row) {
-      this.$confirm("此操作将把分类删除, 是否继续?", "提示", {
+      this.$confirm("此操作将把该角色删除, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"

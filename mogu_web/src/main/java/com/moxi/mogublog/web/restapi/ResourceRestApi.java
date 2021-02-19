@@ -49,9 +49,9 @@ public class ResourceRestApi {
     @Resource
     private PictureFeignClient pictureFeignClient;
 
-    @ApiOperation(value = "通过分类来获取视频", notes = "通过Uid获取博客内容")
+    @ApiOperation(value = "通过分类来获取视频", notes = "通过Uid获取资源分类")
     @GetMapping("/getStudyVideoBySort")
-    public String getBlogByUid(HttpServletRequest request,
+    public String getResourceSortByUid(HttpServletRequest request,
                                @ApiParam(name = "resourceSortUid", value = "资源分类UID", required = false) @RequestParam(name = "resourceSortUid", required = false) String resourceSortUid,
                                @ApiParam(name = "currentPage", value = "当前页数", required = false) @RequestParam(name = "currentPage", required = false, defaultValue = "1") Long currentPage,
                                @ApiParam(name = "pageSize", value = "每页显示数目", required = false) @RequestParam(name = "pageSize", required = false, defaultValue = "8") Long pageSize) {

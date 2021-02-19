@@ -68,6 +68,12 @@ public class CommentServiceImpl extends SuperServiceImpl<CommentMapper, Comment>
             queryWrapper.eq(SQLConf.TYPE, commentVO.getType());
         }
 
+        if (commentVO.getStatus() != null) {
+            queryWrapper.eq(SQLConf.STATUS, commentVO.getStatus());
+        } else {
+            queryWrapper.ne(SQLConf.STATUS, EStatus.DISABLED);
+        }
+
         if (StringUtils.isNotEmpty(commentVO.getSource()) && !SysConf.ALL.equals(commentVO.getSource())) {
             queryWrapper.eq(SQLConf.SOURCE, commentVO.getSource());
         }
@@ -76,7 +82,7 @@ public class CommentServiceImpl extends SuperServiceImpl<CommentMapper, Comment>
             String userName = commentVO.getUserName();
             QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
             userQueryWrapper.like(SQLConf.NICK_NAME, userName);
-            userQueryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
+            userQueryWrapper.ne(SQLConf.STATUS, EStatus.DISABLED);
             List<User> list = userService.list(userQueryWrapper);
             if (list.size() > 0) {
                 List<String> userUid = new ArrayList<>();
@@ -93,7 +99,6 @@ public class CommentServiceImpl extends SuperServiceImpl<CommentMapper, Comment>
         Page<Comment> page = new Page<>();
         page.setCurrent(commentVO.getCurrentPage());
         page.setSize(commentVO.getPageSize());
-        queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
         queryWrapper.orderByDesc(SQLConf.CREATE_TIME);
         IPage<Comment> pageList = commentService.page(page, queryWrapper);
         List<Comment> commentList = pageList.getRecords();

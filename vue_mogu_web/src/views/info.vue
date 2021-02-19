@@ -204,6 +204,17 @@ export default {
     Link,
     Sticky
   },
+  created() {
+    this.loadingInstance = Loading.service({
+      fullscreen: true,
+      text: "正在努力加载中~"
+    });
+    this.blogUid = this.$route.query.blogUid;
+    this.blogOid = this.$route.query.blogOid;
+    this.setCommentAndAdmiration()
+    // 屏幕大于950px的时候，显示侧边栏
+    this.showSidebar = document.body.clientWidth > 950;
+  },
   mounted() {
     var that = this;
     var params = new URLSearchParams();
@@ -216,10 +227,11 @@ export default {
     getBlogByUid(params).then(response => {
       if (response.code == this.$ECode.SUCCESS) {
         this.blogData = response.data;
-        this.blogUid = response.data.uid
-        this.blogOid = response.data.oid
+        this.$emit("showParentTitle", this.blogData)
+        this.blogUid = response.data.uid;
+        this.blogOid = response.data.oid;
         this.commentInfo.blogUid = response.data.uid;
-        this.getSameBlog()
+        this.getSameBlog();
         this.getCommentDataList();
       }
       setTimeout(() => {
@@ -278,18 +290,7 @@ export default {
         // 屏幕大于950px的时候，显示侧边栏
         that.showSidebar = document.body.clientWidth > 950
       })()
-    }
-  },
-  created() {
-    this.loadingInstance = Loading.service({
-      fullscreen: true,
-      text: "正在努力加载中~"
-    });
-    this.blogUid = this.$route.query.blogUid;
-    this.blogOid = this.$route.query.blogOid;
-    this.setCommentAndAdmiration()
-    // 屏幕大于950px的时候，显示侧边栏
-    this.showSidebar = document.body.clientWidth > 950
+    };
   },
   methods: {
     //拿到vuex中的写的两个方法

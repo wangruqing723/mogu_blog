@@ -1,24 +1,24 @@
 <template>
   <article>
     <!--banner begin-->
-    <div class="picsbox">
-      <FirstRecommend></FirstRecommend>
-      <!--banner end-->
+<!--    <div class="picsbox">-->
+<!--      <FirstRecommend></FirstRecommend>-->
+<!--      &lt;!&ndash;banner end&ndash;&gt;-->
 
-      <!-- 二级推荐 -->
-      <div class="toppic">
-        <li v-for="item in secondData" :key="item.uid" @click="goToInfo(item)">
-          <a href="javascript:void(0);">
-            <i>
-              <img v-if="item.photoList" :src="item.photoList[0]">
-            </i>
-            <h2>{{ item.title }}</h2>
-            <span>{{ item.blogSort.sortName }}</span>
-          </a>
-        </li>
-      </div>
-    </div>
-    <div class="blank"></div>
+<!--      &lt;!&ndash; 二级推荐 &ndash;&gt;-->
+<!--      <div class="toppic">-->
+<!--        <li v-for="item in secondData" :key="item.uid" @click="goToInfo(item)">-->
+<!--          <a href="javascript:void(0);">-->
+<!--            <i>-->
+<!--              <img v-if="item.photoList" :src="item.photoList[0]">-->
+<!--            </i>-->
+<!--            <h2>{{ item.title }}</h2>-->
+<!--            <span>{{ item.blogSort.sortName }}</span>-->
+<!--          </a>-->
+<!--        </li>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="blank"></div>-->
 
     <!--blogsbox begin-->
     <div class="blogsbox">

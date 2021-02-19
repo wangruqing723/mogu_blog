@@ -14,7 +14,7 @@
       <el-button class="filter-item" type="primary" @click="handleAdd" icon="el-icon-edit" v-permission="'/categoryMenu/add'">添加按钮</el-button>
     </div>
 
-    <el-table :data="tableData" style="width: 100%">
+    <el-table :data="tableData" style="width: 100%" max-height="550">
 
       <el-table-column type="expand">
         <template slot-scope="scope">

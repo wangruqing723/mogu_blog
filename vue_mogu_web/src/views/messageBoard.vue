@@ -65,13 +65,13 @@
         mounted () {
           var that = this;
           // 屏幕的高度
-          this.pageMinHeight = window.innerHeight - 62
+          this.pageMinHeight = window.innerHeight - 82
           $(window).scroll(function () {
             var docHeight = $(document).height(); // 获取整个页面的高度(不只是窗口,还包括为显示的页面)
             var winHeight = $(window).height(); // 获取当前窗体的高度(显示的高度)
-            var winScrollHeight = $(window).scrollTop(); // 获取滚动条滚动的距离(移动距离)
+            var winScrollHeight = Math.ceil($(window).scrollTop()); // 获取滚动条滚动的距离(移动距离)
             //还有30像素的时候,就查询
-            if(docHeight == winHeight + winScrollHeight - 30){
+            if(docHeight == winHeight + winScrollHeight){
               if(that.comments.length >= that.total) {
                 return;
               }
@@ -125,7 +125,7 @@
             getCommentDataList: function() {
                 let params = {};
                 params.source = "MESSAGE_BOARD";
-                params.currentPage = this.currentPage;
+                params.currentPage = 1;
                 params.pageSize = this.pageSize;
                 getCommentList(params).then(response => {
                     if (response.code == this.$ECode.SUCCESS) {
@@ -136,7 +136,7 @@
                         this.total = response.data.total;
                     }
                 });
-            },
+            }
         }
     };
 </script>
