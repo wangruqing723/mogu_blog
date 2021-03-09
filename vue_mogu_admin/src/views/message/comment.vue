@@ -113,7 +113,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="内容" width="270px" align="center">
+      <el-table-column label="内容" width="260px" align="center">
         <template slot-scope="scope">
           <span v-html="$xss(scope.row.content, options)"></span>
         </template>

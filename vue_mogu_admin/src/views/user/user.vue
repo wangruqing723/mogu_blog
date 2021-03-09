@@ -335,7 +335,7 @@ export default {
       rules: {
         userName: [
           {required: true, message: '用户名不能为空', trigger: 'blur'},
-          {min: 5, max: 30, message: '长度在1到30个字符'},
+          {min: 2, max: 30, message: '长度在2到30个字符'},
         ],
         nickName: [
           {required: true, message: '昵称不能为空', trigger: 'blur'},

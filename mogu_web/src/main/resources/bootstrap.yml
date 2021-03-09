@@ -6,16 +6,20 @@ spring:
     name: mogu-web
   cloud:
     nacos:
+      username: nacos
+      password: wy0723
       discovery:
         server-addr: localhost:8848
-        namespace: dev
+        namespace: prod
+        username: nacos
+        password: wy0723
       config:
         server-addr: localhost:8848
         file-extension: yaml
         #指定分组
-        group: dev
+        group: prod
         #指定命名空间
-        namespace: dev
+        namespace: prod
 
     # 配置Sentinel流控
     sentinel:
@@ -36,6 +40,8 @@ spring:
             group-id: DEFAULT_GROUP
             data-type: json
             rule-type: flow
+            username: ${spring.cloud.nacos.username}
+            password: ${spring.cloud.nacos.password}
         degrade:
           nacos:
             server-addr: ${spring.cloud.nacos.discovery.server-addr}
@@ -43,3 +49,5 @@ spring:
             group-id: DEFAULT_GROUP
             data-type: json
             rule-type: degrade
+            username: ${spring.cloud.nacos.username}
+            password: ${spring.cloud.nacos.password}

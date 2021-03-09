@@ -39,6 +39,7 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-alibaba-sentinel</artifactId>
+            <version>${sentinel.version}</version>
         </dependency>
 
         <dependency>

@@ -6,16 +6,18 @@ spring:
     name: mogu-sms
   cloud:
     nacos:
+      username: nacos
+      password: wy0723
       discovery:
         server-addr: localhost:8848
-        namespace: dev
+        namespace: prod
       config:
         server-addr: localhost:8848
         file-extension: yaml
         #指定分组
-        group: dev
+        group: prod
         #指定命名空间
-        namespace: dev
+        namespace: prod
 
     # 配置Sentinel流控
     sentinel:
