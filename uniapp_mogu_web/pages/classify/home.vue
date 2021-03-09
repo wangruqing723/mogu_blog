@@ -114,7 +114,7 @@
 			getLevelBlog() {
 				var that = this
 				let params = {}
-				params.level = 2;
+				params.level = 1;
 				params.useSort = 1;
 				getBlogByLevel(params).then(res =>{					
 					if(res.code == this.$ECode.SUCCESS) {

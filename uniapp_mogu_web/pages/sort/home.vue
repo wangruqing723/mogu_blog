@@ -104,7 +104,7 @@
 			getLevelBlog() {
 				var that = this
 				let params = {}
-				params.level = 4;
+				params.level = 1;
 				params.useSort = 1;
 				getBlogByLevel(params).then(res =>{					
 					if(res.code == this.$ECode.SUCCESS) {
@@ -160,6 +160,9 @@
 	}
 	.cu-list.menu-avatar>.cu-item .content {
 		width: calc(100% - 52px - 33px - 35px);
+		position: absolute;
+		left: 158upx;
+		
 	}
 	.fixed {
 		position: fixed;

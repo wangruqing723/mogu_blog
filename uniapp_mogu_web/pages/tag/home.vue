@@ -109,7 +109,7 @@
 			getLevelBlog() {
 				var that = this
 				let params = {}
-				params.level = 3;
+				params.level = 1;
 				params.useSort = 1;
 				getBlogByLevel(params).then(res =>{
 					console.log("获取推荐博客", res)
