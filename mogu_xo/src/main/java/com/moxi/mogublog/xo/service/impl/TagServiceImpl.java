@@ -198,8 +198,6 @@ public class TagServiceImpl extends SuperServiceImpl<TagMapper, Tag> implements 
         // 按点击从高到低排序
         queryWrapper.orderByDesc(SQLConf.CLICK_COUNT);
         List<Tag> tagList = tagService.list(queryWrapper);
-        // 设置初始化最大的sort值
-        Integer maxSort = tagList.size();
         for (Tag item : tagList) {
             item.setSort(item.getClickCount());
             item.setCreateTime(new Date());
@@ -218,9 +216,7 @@ public class TagServiceImpl extends SuperServiceImpl<TagMapper, Tag> implements 
         tagQueryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
         List<Tag> tagList = tagService.list(tagQueryWrapper);
         // 初始化所有标签的引用量
-        tagList.forEach(item -> {
-            map.put(item.getUid(), 0);
-        });
+        tagList.forEach(item -> map.put(item.getUid(), 0));
 
         QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
@@ -242,6 +238,7 @@ public class TagServiceImpl extends SuperServiceImpl<TagMapper, Tag> implements 
             }
         });
 
+        // 通过查询出所有标签的引用量,修改sort排序,达到引用量排序的目的
         tagList.forEach(item -> {
             item.setSort(map.get(item.getUid()));
             item.setUpdateTime(new Date());

@@ -20,5 +20,8 @@ public class BaseVO<T> extends PageInfo<T> {
     @IdValid(groups = {Update.class, Delete.class})
     private String uid;
 
+    /**
+     * 系统数据状态 （1：正常，0：已删除，2：停用\冻结\前台已删除）
+     */
     private Integer status;
 }

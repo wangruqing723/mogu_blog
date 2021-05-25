@@ -8,7 +8,7 @@
         class="filter-item"
         style="width: 200px;"
         v-model="keyword"
-        placeholder="请输入博客名"
+        placeholder="请输入标签名"
       ></el-input>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFind" v-permission="'/tag/getList'">查找</el-button>
       <el-button class="filter-item" type="primary" @click="handleAdd" icon="el-icon-edit" v-permission="'/tag/add'">添加标签</el-button>
@@ -129,16 +129,8 @@
 </template>
 
 <script>
-import {
-  getTagList,
-  addTag,
-  editTag,
-  deleteBatchTag,
-  stickTag,
-  tagSortByClickCount,
-  tagSortByCite
-} from "@/api/tag";
-import { formatData } from "@/utils/webUtils";
+import {addTag, deleteBatchTag, editTag, getTagList, stickTag, tagSortByCite, tagSortByClickCount} from "@/api/tag";
+
 export default {
   data() {
     return {
@@ -174,9 +166,9 @@ export default {
   },
   methods: {
     // 从后台获取数据,重新排序
-    changeSort (val) {
+    changeSort(val) {
       // 根据当前排序重新获取后台数据,一般后台会需要一个排序的参数
-      if(val.order == "ascending") {
+      if (val.order == "ascending") {
         this.orderByAscColumn = val.prop
         this.orderByDescColumn = ""
       } else {
@@ -185,7 +177,7 @@ export default {
       }
       this.tagList()
     },
-    tagList: function() {
+    tagList: function () {
       var params = {};
       params.keyword = this.keyword;
       params.currentPage = this.currentPage;
@@ -199,26 +191,25 @@ export default {
         this.total = response.data.total;
       });
     },
-    getFormObject: function() {
-      var formObject = {
+    getFormObject: function () {
+      return {
         uid: null,
         content: null,
         clickCount: 0,
         sort: 0
       };
-      return formObject;
     },
-    handleFind: function() {
+    handleFind: function () {
       this.tagList();
     },
-    handleAdd: function() {
+    handleAdd: function () {
       this.title = "增加标签"
       this.dialogFormVisible = true;
       this.form = this.getFormObject();
       this.isEditForm = false;
     },
     // 通过点击量排序
-    handleTagSortByClickCount: function() {
+    handleTagSortByClickCount: function () {
       this.$confirm(
         "此操作将根据点击量对所有的标签进行降序排序, 是否继续?",
         "提示",
@@ -227,21 +218,19 @@ export default {
           cancelButtonText: "取消",
           type: "warning"
         }
-      )
-        .then(() => {
-          tagSortByClickCount().then(response => {
-            if (response.code == this.$ECode.SUCCESS) {
-              this.$commonUtil.message.success(response.message)
-              this.tagList();
-            }
-          });
-        })
-        .catch(() => {
-          this.$commonUtil.message.info("已取消批量排序")
+      ).then(() => {
+        tagSortByClickCount().then(response => {
+          if (response.code == this.$ECode.SUCCESS) {
+            this.$commonUtil.message.success(response.message)
+            this.tagList();
+          }
         });
+      }).catch(() => {
+        this.$commonUtil.message.info("已取消批量排序")
+      });
     },
-    // 通过点击量排序
-    handleTagSortByCite: function() {
+    // 通过引用量排序
+    handleTagSortByCite: function () {
       this.$confirm(
         "此操作将根据博客引用量对所有的标签进行降序排序, 是否继续?",
         "提示",
@@ -250,28 +239,24 @@ export default {
           cancelButtonText: "取消",
           type: "warning"
         }
-      )
-        .then(() => {
-
-					tagSortByCite().then(response => {
-            if (response.code == this.$ECode.SUCCESS) {
-              this.$commonUtil.message.success(response.message)
-              this.tagList();
-            }
-					});
-
-        })
-        .catch(() => {
-          this.$commonUtil.message.info("已取消批量排序")
+      ).then(() => {
+        tagSortByCite().then(response => {
+          if (response.code == this.$ECode.SUCCESS) {
+            this.$commonUtil.message.success(response.message)
+            this.tagList();
+          }
         });
+      }).catch(() => {
+        this.$commonUtil.message.info("已取消批量排序")
+      });
     },
-    handleEdit: function(row) {
+    handleEdit: function (row) {
       this.title = "编辑标签";
       this.dialogFormVisible = true;
       this.isEditForm = true;
       this.form = row;
     },
-    handleStick: function(row) {
+    handleStick: function (row) {
       this.$confirm("此操作将会把该标签放到首位, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -295,7 +280,7 @@ export default {
           this.$commonUtil.message.info("已取消置顶")
         });
     },
-    handleDelete: function(row) {
+    handleDelete: function (row) {
       var that = this;
       this.$confirm("此操作将把标签删除, 是否继续?", "提示", {
         confirmButtonText: "确定",
@@ -307,7 +292,7 @@ export default {
           var params = [];
           params.push(row);
           deleteBatchTag(params).then(response => {
-            if(response.code == this.$ECode.SUCCESS) {
+            if (response.code == this.$ECode.SUCCESS) {
               this.$commonUtil.message.success(response.message)
             } else {
               this.$commonUtil.message.error(response.message)
@@ -319,10 +304,10 @@ export default {
           this.$commonUtil.message.info("已取消删除")
         });
     },
-    handleDeleteBatch: function() {
+    handleDeleteBatch: function () {
       var that = this;
       var that = this;
-      if(that.multipleSelection.length <= 0 ) {
+      if (that.multipleSelection.length <= 0) {
         this.$commonUtil.message.error("请先选中需要删除的内容")
         return;
       }
@@ -333,7 +318,7 @@ export default {
       })
         .then(() => {
           deleteBatchTag(that.multipleSelection).then(response => {
-            if(response.code == this.$ECode.SUCCESS) {
+            if (response.code == this.$ECode.SUCCESS) {
               this.$commonUtil.message.success(response.message)
             } else {
               this.$commonUtil.message.error(response.message)
@@ -345,13 +330,13 @@ export default {
           this.$commonUtil.message.info("已取消删除")
         });
     },
-    handleCurrentChange: function(val) {
+    handleCurrentChange: function (val) {
       this.currentPage = val;
       this.tagList();
     },
-    submitForm: function() {
+    submitForm: function () {
       this.$refs.form.validate((valid) => {
-        if(!valid) {
+        if (!valid) {
           console.log('校验失败')
           return;
         } else {

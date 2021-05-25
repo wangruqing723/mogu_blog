@@ -5,7 +5,7 @@
       <h1 class="t_nav">
         <span>慢生活，不是懒惰，放慢速度不是拖延时间，而是让我们在生活中寻找到平衡。</span>
         <a href="/" class="n1">网站首页</a>
-        <a href="/" class="n2">搜索</a>
+        <a href="javascript:void(0);" class="n2" v-text="searchField">搜索</a>
       </h1>
 
       <!--blogsbox begin-->
@@ -37,7 +37,7 @@
               </li>
               <li class="lmname" v-if="item.blogSortName">
                 <span class="iconfont">&#xe603;</span>
-                <a href="javascript:void(0);" @click="goToList(item.blogSortUid)">{{item.blogSortName}}</a>
+                <a href="javascript:void(0);" @click="goToList(item.blogSortUid,item.blogSortName)">{{item.blogSortName}}</a>
               </li>
               <li class="createTime"><span class="iconfont">&#xe606;</span>{{item.createTime}}</li>
             </ul>
@@ -117,7 +117,11 @@ export default {
       searchBlogData: [], //搜索出来的文章
       sortUid: "",
       isEnd: false, //是否到底底部了
-      loading: false //内容是否正在加载
+      loading: false, //内容是否正在加载
+      author: "",
+      searchField: "搜索关键字", //显示在搜索后面的搜索字段
+      blogSortName: "搜索博客分类" , //显示在搜索后面的搜索字段
+      tagName:"搜索标签"  //显示在搜索后面的搜索字段
     };
   },
   components: {
@@ -132,17 +136,29 @@ export default {
     this.tagUid = this.$route.query.tagUid;
     this.sortUid = this.$route.query.sortUid;
     this.author = this.$route.query.author;
+    this.blogSortName = this.$route.query.blogSortName;
+    this.tagName = this.$route.query.tagName;
 
     if (
-      this.keywords == undefined &&
-      this.tagUid == undefined &&
-      this.sortUid == undefined &&
-      this.author == undefined
+      this.keywords === undefined &&
+      this.tagUid === undefined &&
+      this.sortUid === undefined &&
+      this.author === undefined
     ) {
       return;
     }
 
     this.search();
+
+    if (this.keywords !== undefined) {
+      this.searchField = "搜索关键字：" + this.keywords;
+    } else if (this.tagUid !== undefined) {
+      this.searchField = "搜索标签：" + this.tagName;
+    } else if (this.sortUid !== undefined) {
+      this.searchField = "搜索分类：" + this.blogSortName;
+    } else if (this.author !== undefined) {
+      this.searchField = "搜索作者：" + this.author;
+    }
   },
   mounted() {
     // 注册scroll事件并监听
@@ -164,6 +180,9 @@ export default {
       this.sortUid = this.$route.query.sortUid;
       this.searchBlogData = [] // 清空查询出来的博客
       this.search();
+      if (this.keywords !== undefined) {
+        this.searchField = "搜索关键字：" + this.keywords;
+      }
     }
   },
   methods: {
@@ -185,10 +204,10 @@ export default {
       }
     },
     //点击了分类
-    goToList(uid) {
+    goToList(uid, sortName) {
       let routeData = this.$router.resolve({
         path: "/list",
-        query: { sortUid: uid }
+        query: { sortUid: uid, blogSortName: sortName }
       });
       window.open(routeData.href, '_blank');
     },
@@ -317,11 +336,10 @@ export default {
             this.blogData = blogData;
             that.loading = false;
           } else {
-
-
             that.isEnd = true;
             that.loading = false;
           }
+          this.blogSortName = this.searchBlogData[0].blogSortName;
         });
       } else if (this.author != undefined) {
         var params = new URLSearchParams();

@@ -80,16 +80,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="状态" width="100" align="center">
+      <el-table-column label="状态" width="90" align="center">
         <template slot-scope="scope">
-          <template v-if="scope.row.status == 1">
-            <span>正常</span>
-          </template>
-          <template v-if="scope.row.status == 2">
-            <span>推荐</span>
-          </template>
-          <template v-if="scope.row.status == 0">
-            <span>已删除</span>
+          <template>
+            <el-tag v-for="item in paramsStatusDictList" :key="item.uid" :type="item.listClass"
+                    v-if="scope.row.status == item.dictValue">{{ item.dictLabel }}
+            </el-tag>
           </template>
         </template>
       </el-table-column>
@@ -129,9 +125,22 @@
           <el-input v-model="form.paramsValue" auto-complete="off"></el-input>
         </el-form-item>
 
-        <el-form-item label="系统内置" :label-width="formLabelWidth" prop="paramsType">
-          <el-radio v-for="item in paramsTypeDictList" :key="item.uid" v-model="form.paramsType" :label="parseInt(item.dictValue)" border size="medium">{{item.dictLabel}}</el-radio>
-        </el-form-item>
+        <el-row :gutter="24">
+          <el-col :span="12">
+            <el-form-item label="系统内置" :label-width="formLabelWidth" prop="paramsType">
+              <el-radio v-for="item in paramsTypeDictList" :key="item.uid" v-model="form.paramsType"
+                        :label="parseInt(item.dictValue)" border size="medium">{{ item.dictLabel }}
+              </el-radio>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="状态" :label-width="formLabelWidth" prop="status">
+              <el-radio v-for="item in paramsStatusDictList" :key="item.uid" v-model="form.status"
+                        :label="parseInt(item.dictValue)" border size="medium">{{ item.dictLabel }}
+              </el-radio>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
         <el-form-item label="备注" :label-width="formLabelWidth" prop="remark">
           <el-input v-model="form.remark" auto-complete="off"></el-input>
@@ -171,7 +180,9 @@ export default {
       title: "增加友链",
       dialogFormVisible: false, //控制弹出框
       paramsTypeDictList: [], // 友链状态字典
+      paramsStatusDictList: [],
       paramsTypeDefault: null, // 友链状态默认值
+      paramsStatusDefault: null,
       formLabelWidth: "120px",
       isEditForm: false,
       form: {
@@ -195,6 +206,10 @@ export default {
         paramsType: [
           {required: true, message: '系统内置字段不能为空', trigger: 'blur'},
           {pattern: /^[0-9]\d*$/, message: '系统内置字段只能为自然数'},
+        ],
+        status: [
+          {required: true, message: '状态字段不能为空', trigger: 'blur'},
+          {pattern: /^[0-9]\d*$/, message: '状态字段只能为自然数'},
         ],
         sort: [
           {required: true, message: '排序字段不能为空', trigger: 'blur'},
@@ -224,30 +239,34 @@ export default {
         this.total = response.data.total;
       });
     },
-    getFormObject: function() {
-      var formObject = {
+    getFormObject: function () {
+      return {
         paramsName: null,
         paramsKey: null,
         paramsValue: null,
         remark: "",
         paramsType: this.paramsTypeDefault,
+        status: this.paramsStatusDefault,
         sort: 0
       };
-      return formObject;
     },
     /**
      * 字典查询
      */
     getDictList: function () {
 
-      var dictTypeList = ['sys_params_type']
+      var dictTypeList = ['sys_params_type', 'sys_params_status']
 
       getListByDictTypeList(dictTypeList).then(response => {
         if (response.code == this.$ECode.SUCCESS) {
           var dictMap = response.data;
-          this.paramsTypeDictList = dictMap.sys_params_type.list
-          if(dictMap.sys_params_type.defaultValue) {
+          this.paramsTypeDictList = dictMap.sys_params_type.list;
+          this.paramsStatusDictList = dictMap.sys_params_status.list;
+          if (dictMap.sys_params_type.defaultValue) {
             this.paramsTypeDefault = parseInt(dictMap.sys_params_type.defaultValue);
+          }
+          if (dictMap.sys_params_status.defaultValue) {
+            this.paramsStatusDefault = parseInt(dictMap.sys_params_status.defaultValue);
           }
         }
       });

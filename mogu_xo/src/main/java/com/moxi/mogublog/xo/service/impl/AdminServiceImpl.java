@@ -179,7 +179,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         page.setSize(adminVO.getPageSize());
         // 去除密码
         queryWrapper.select(Admin.class, i -> !i.getProperty().equals(SQLConf.PASS_WORD));
-        queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
+        queryWrapper.ne(SQLConf.STATUS, EStatus.DISABLED);
         IPage<Admin> pageList = adminService.page(page, queryWrapper);
         List<Admin> list = pageList.getRecords();
 
@@ -253,7 +253,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         }
         String defaultPassword = sysParamsService.getSysParamsValueByKey(SysConf.SYS_DEFAULT_PASSWORD);
         QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(SQLConf.USER_NAME, userName);
+        queryWrapper.eq(SQLConf.USER_NAME, userName).ne(SQLConf.STATUS, EStatus.DISABLED);
         Admin temp = adminService.getOne(queryWrapper);
         if (temp == null) {
             Admin admin = new Admin();
@@ -263,8 +263,10 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
             admin.setUserName(adminVO.getUserName());
             admin.setNickName(adminVO.getNickName());
             admin.setRoleUid(adminVO.getRoleUid());
-            // 设置为未审核状态
-            admin.setStatus(EStatus.ENABLE);
+            admin.setMobile(adminVO.getMobile());
+            admin.setQqNumber(adminVO.getQqNumber());
+            admin.setOccupation(adminVO.getOccupation());
+            admin.setStatus(adminVO.getStatus());
             PasswordEncoder encoder = new BCryptPasswordEncoder();
             //设置默认密码
             admin.setPassWord(encoder.encode(defaultPassword));
@@ -273,6 +275,11 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
 
             // 更新成功后，同时申请网盘存储空间
             String maxStorageSize = sysParamsService.getSysParamsValueByKey(SysConf.MAX_STORAGE_SIZE);
+            if (adminVO.getMaxStorageSize() == 0 && adminVO.getMaxStorageSize() == null) {
+                maxStorageSize = sysParamsService.getSysParamsValueByKey(SysConf.MAX_STORAGE_SIZE);
+            } else {
+                maxStorageSize = adminVO.getMaxStorageSize().toString();
+            }
             // 初始化网盘的容量, 单位 B
             pictureFeignClient.initStorageSize(admin.getUid(), StringUtils.getLong(maxStorageSize, 0L) * 1024 * 1024);
             return ResultUtil.successWithMessage(MessageConf.INSERT_SUCCESS);
@@ -289,7 +296,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
             return ResultUtil.errorWithMessage("超级管理员用户名必须为admin");
         }
         QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
+        queryWrapper.ne(SQLConf.STATUS, EStatus.DISABLED);
         queryWrapper.eq(SQLConf.USER_NAME, adminVO.getUserName());
         List<Admin> adminList = adminService.list(queryWrapper);
         if (adminList != null) {
@@ -318,6 +325,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         admin.setUpdateTime(new Date());
         admin.setMobile(adminVO.getMobile());
         admin.setRoleUid(adminVO.getRoleUid());
+        admin.setStatus(adminVO.getStatus());
         // 无法直接修改密码，只能通过重置密码完成密码修改
         admin.setPassWord(null);
         admin.updateById();

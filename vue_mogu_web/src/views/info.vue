@@ -1,14 +1,14 @@
 <template>
   <article>
     <el-dialog :visible.sync="dialogPictureVisible" fullscreen>
-      <img :src="dialogImageUrl" alt="dialogImageUrl" style="margin: 0 auto;" />
+      <img @click="closeDialog" :src="dialogImageUrl" alt="dialogImageUrl" style="margin: 0 auto;" />
     </el-dialog>
     <h1 class="t_nav">
       <a href="/" class="n1">网站首页</a>
       <a
         href="javascript:void(0);"
         v-if="blogData.blogSort.uid"
-        @click="goToSortList(blogData.blogSort.uid)"
+        @click="goToSortList(blogData.blogSort)"
         class="n2"
       >{{blogData.blogSort ? blogData.blogSort.sortName:""}}</a>
     </h1>
@@ -25,7 +25,7 @@
               <span class="iconfont">&#xe603;</span>
               <a
                 href="javascript:void(0);"
-                @click="goToSortList(blogData.blogSort.uid)"
+                @click="goToSortList(blogData.blogSort)"
               >{{blogData.blogSort ? blogData.blogSort.sortName:""}}</a>
             </li>
             <li class="createTime">
@@ -100,8 +100,7 @@
     <div class="sidebar2" v-if="showSidebar">
       <side-catalog
         :class="vueCategory"
-        v-bind="catalogProps"
-      >
+        v-bind="catalogProps">
       </side-catalog>
     </div>
   </article>
@@ -222,6 +221,7 @@
           getBlogByUid(params).then(response => {
             if (response.code == this.$ECode.SUCCESS) {
               this.blogData = response.data;
+              this.$emit("showParentTitle", this.blogData)
               this.blogUid = response.data.uid
               this.blogOid = response.data.oid
               this.commentInfo.blogUid = response.data.uid;
@@ -381,21 +381,21 @@
                 window.open(routeData.href, "_blank");
             },
             //跳转到搜索详情页
-            goToList(uid) {
-                let routeData = this.$router.resolve({
-                    path: "/list",
-                    query: { tagUid: uid }
-                });
-                window.open(routeData.href, "_blank");
-            },
-            //跳转到搜索详情页
-            goToSortList(uid) {
-                let routeData = this.$router.resolve({
-                    path: "/list",
-                    query: { sortUid: uid }
-                });
-                window.open(routeData.href, "_blank");
-            },
+          goToList(entity) {
+            let routeData = this.$router.resolve({
+              path: "/list",
+              query: {tagUid: entity.uid, tagName: entity.content}
+            });
+            window.open(routeData.href, "_blank");
+          },
+          //跳转到搜索详情页
+          goToSortList(entity) {
+            let routeData = this.$router.resolve({
+              path: "/list",
+              query: {sortUid: entity.uid, blogSortName: entity.sortName}
+            });
+            window.open(routeData.href, "_blank");
+          },
             //跳转到搜索详情页
             goToAuthor(author) {
                 let routeData = this.$router.resolve({
@@ -414,6 +414,10 @@
                     this.dialogImageUrl = e.target.currentSrc;
                 }
             },
+          //点击图片关闭图片对话框
+          closeDialog: function () {
+            this.dialogPictureVisible = false;
+          },
             //切割字符串
             subText: function(str, index) {
                 if (str.length < index) {
@@ -444,7 +448,7 @@
     vertical-align: middle;
   }
   .emoji-size-large {
-    zoom: 0.5; // emojipanel表情大小
+    zoom: 0.5; /* emojipanel表情大小 */
     margin: 5px;
   }
   .iconfont {

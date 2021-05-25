@@ -693,7 +693,7 @@ public class CommentRestApi {
         if (!comment.getUserUid().equals(commentVO.getUserUid())) {
             return ResultUtil.result(SysConf.ERROR, MessageConf.DATA_NO_PRIVILEGE);
         }
-        comment.setStatus(EStatus.DISABLED);
+        comment.setStatus(EStatus.FREEZE);
         comment.updateById();
 
         // 获取该评论下的子评论进行删除
@@ -721,7 +721,7 @@ public class CommentRestApi {
         // 将所有的子评论也删除
         if (resultList.size() > 0) {
             resultList.forEach(item -> {
-                item.setStatus(EStatus.DISABLED);
+                item.setStatus(EStatus.FREEZE);
                 item.setUpdateTime(new Date());
             });
             commentService.updateBatchById(resultList);

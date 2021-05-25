@@ -34,7 +34,8 @@ public class BaseMessageConf {
 
     public static final String BLOG_NO_OPEN_COMMENTS = "本博客未开启评论功能";
 
-    public static final String LOGIN_DISABLE = "该账号已被封禁";
+    public static final String LOGIN_DISABLE = "该账号已被封禁,请联系管理员!";
+    public static final String LOGIN_NOT_EXIST = "用户不存在,请重新输入!";
     public static final String LOGIN_ERROR = "用户名或密码错误，错误%d次后，账户将被锁定30分钟";
     public static final String NO_ROLE = "没有分配角色权限";
     public static final String INTERFACE_FREQUENTLY = "接口过于频繁调用";
@@ -52,7 +53,7 @@ public class BaseMessageConf {
     public static final String CHILDREN_MENU_UNDER_THIS_MENU = "该菜单下还有子菜单！";
     public static final String THIS_SORT_IS_TOP = "该分类已经在顶端！";
     public static final String THIS_TAG_IS_TOP = "该标签已经在顶端！";
-    public final static String INVALID_TOKEN = "token令牌未被识别";
+    public final static String INVALID_TOKEN = "token令牌未被识别，请重新登录";
     public final static String SERVER_ERROR = "服务器目前繁忙，请稍等片刻后重试";
     public final static String ERROR_PASSWORD = "密码错误";
     public final static String YOU_HAVE_BEEN_PRISE = "您已经点赞过了!";

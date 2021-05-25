@@ -156,13 +156,13 @@
         loginRules: {
           userName: [
             {required: true, message: '请输入用户名', trigger: 'blur'},
-            { min: 5, message: "用户名长度大于等于 5 个字符", trigger: "blur" },
-            { max: 20, message: "用户名长度不能大于 20 个字符", trigger: "blur" }
+            { min: 2, message: "用户名长度大于等于 2 个字符", trigger: "blur" },
+            { max: 30, message: "用户名长度不能大于 30 个字符", trigger: "blur" }
           ],
           nickName: [
             {required: true, message: '请输入昵称', trigger: 'blur'},
             { min: 1, message: "用户名长度大于等于 1 个字符", trigger: "blur" },
-            { max: 20, message: "用户名长度不能大于 20 个字符", trigger: "blur" }
+            { max: 30, message: "用户名长度不能大于 30 个字符", trigger: "blur" }
           ],
           password: [
             { required: true, message: "请输入密码", trigger: "blur" },
@@ -173,8 +173,8 @@
         rules: {
           userName: [
             {required: true, message: '请输入用户名', trigger: 'blur'},
-            { min: 5, message: "用户名长度大于等于 5 个字符", trigger: "blur" },
-            { max: 20, message: "用户名长度不能大于 20 个字符", trigger: "blur" }
+            { min: 2, message: "用户名长度大于等于 2 个字符", trigger: "blur" },
+            { max: 30, message: "用户名长度不能大于 30 个字符", trigger: "blur" }
           ],
           nickName: [
             {required: true, message: '请输入昵称', trigger: 'blur'}
@@ -244,7 +244,12 @@
             localLogin(params).then(response => {
               if (response.code == this.$ECode.SUCCESS) {
                 // 跳转到首页
-                location.replace(this.vueMoguWebUrl + "/#/?token=" + response.data)
+                // 跳转到首页,修改:登录成功刷新当前页面,不跳转到首页
+                if (window.location.href.indexOf("?") === -1){
+                  location.replace(window.location.href + "?token=" + response.data)
+                } else {
+                  location.replace(window.location.href.split("&token")[0] + "&token=" + response.data)
+                }
                 window.location.reload()
               } else {
                 this.$message({
@@ -321,13 +326,14 @@
           lock: true,
           text: '加载中……',
           background: 'rgba(0, 0, 0, 0.7)'
-        })
+        });
         var params = new URLSearchParams();
         params.append("source", source);
+        params.append("reUrl", window.location.href);
         login(params).then(response => {
           if (response.code == this.$ECode.SUCCESS) {
-            var token = response.data.token;
-            window.location.href = response.data.url
+            // var token = response.data.token;
+            window.location.href = response.data.url;
           }
         });
       },

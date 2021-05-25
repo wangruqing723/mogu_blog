@@ -9,7 +9,6 @@
       <el-button class="filter-item" type="success" @click="setCover" icon="el-icon-video-camera-solid" v-permission="'/picture/setCover'">设为封面</el-button>
     </div>
 
-
   <el-tabs
     v-model="activeName"
     type="border-card"
@@ -135,7 +134,7 @@
 		</el-dialog>
 
     <el-dialog :visible.sync="dialogPictureVisible" fullscreen style="text-align: center">
-      <img :src="dialogImageUrl" alt="">
+      <img @click="closeDialog" :src="dialogImageUrl" alt="">
     </el-dialog>
 
     <el-dialog :visible.sync="pictureCropperVisible" fullscreen>
@@ -333,6 +332,10 @@ export default {
     showPicture: function(url) {
       this.dialogPictureVisible = true
       this.dialogImageUrl = url
+    },
+    //点击图片关闭图片对话框
+    closeDialog: function () {
+      this.dialogPictureVisible = false;
     },
     copyUrl(url) {
       this.$commonUtil.copyText(url)

@@ -128,7 +128,7 @@ export default {
           // 标签uid
           let routeData = this.$router.resolve({
             path: "/list",
-            query: { tagUid: entity.uid }
+            query: { tagUid: entity.uid, tagName: entity.content }
           });
           window.open(routeData.href, "_blank");
         }
@@ -137,7 +137,7 @@ export default {
         {
           let routeData = this.$router.resolve({
             path: "/list",
-            query: { sortUid: entity.blogSort.uid }
+            query: { sortUid: entity.uid, blogSortName: entity.sortName }
           });
           window.open(routeData.href, "_blank");
         }

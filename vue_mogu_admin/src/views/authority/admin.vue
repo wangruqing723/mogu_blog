@@ -40,14 +40,17 @@
 
       <el-table-column label="拥有角色" width="150" align="center">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.role" type="danger">{{scope.row.role.roleName}}</el-tag>
+          <el-tag v-if="scope.row.role" type="primary">{{scope.row.role.roleName}}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="性别" width="60" align="center">
+      <el-table-column label="性别" width="57" align="center">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.gender==1" type="success">男</el-tag>
-          <el-tag v-if="scope.row.gender==2" type="danger">女</el-tag>
+          <template>
+            <el-tag v-for="item in genderDictList" :key="item.uid" :type="item.listClass"
+                    v-if="scope.row.gender == item.dictValue">{{ item.dictLabel }}
+            </el-tag>
+          </template>
         </template>
       </el-table-column>
 
@@ -81,16 +84,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="状态" width="100" align="center">
+      <el-table-column label="状态" width="57" align="center">
         <template slot-scope="scope">
-          <template v-if="scope.row.status == 1">
-            <span>正常</span>
-          </template>
-          <template v-if="scope.row.status == 2">
-            <span>推荐</span>
-          </template>
-          <template v-if="scope.row.status == 0">
-            <span>已删除</span>
+          <template>
+            <el-tag v-for="item in paramsStatusDictList" :key="item.uid" :type="item.listClass"
+                    v-if="scope.row.status == item.dictValue">{{ item.dictLabel }}
+            </el-tag>
           </template>
         </template>
       </el-table-column>
@@ -157,8 +156,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="10">
-            <el-form-item label="性别"  :label-width="formLabelWidth" prop="gender">
-              <el-radio v-for="gender in genderDictList" :key="gender.uid" v-model="form.gender" :label="gender.dictValue" border size="medium">{{gender.dictLabel}}</el-radio>
+            <el-form-item label="手机号" :label-width="formLabelWidth" prop="mobile">
+              <el-input v-model="form.mobile" placeholder="请输入手机号"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -169,9 +168,11 @@
               <el-input v-model="form.email" placeholder="请输入邮箱"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="10">
-            <el-form-item label="手机号" :label-width="formLabelWidth" prop="mobile">
-              <el-input v-model="form.mobile" placeholder="请输入手机号"></el-input>
+          <el-col :span="12">
+            <el-form-item label="性别" :label-width="formLabelWidth" prop="gender">
+              <el-radio v-for="item in genderDictList" :key="item.uid" v-model="form.gender"
+                        :label="item.dictValue" border size="medium">{{ item.dictLabel }}
+              </el-radio>
             </el-form-item>
           </el-col>
         </el-row>
@@ -182,14 +183,21 @@
               <el-input v-model="form.qqNumber" placeholder="请输入QQ号码"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="10">
-            <el-form-item label="职业" :label-width="formLabelWidth">
-              <el-input v-model="form.occupation" placeholder="请输入职业"></el-input>
+          <el-col :span="12">
+            <el-form-item label="状态" :label-width="formLabelWidth" prop="status">
+              <el-radio v-for="item in paramsStatusDictList" :key="item.uid" v-model="form.status"
+                        :label="parseInt(item.dictValue)" border size="medium">{{ item.dictLabel }}
+              </el-radio>
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-row :gutter="24">
+          <el-col :span="10">
+            <el-form-item label="职业" :label-width="formLabelWidth">
+              <el-input v-model="form.occupation" placeholder="请输入职业"></el-input>
+            </el-form-item>
+          </el-col>
           <el-col :span="10">
             <el-form-item label="网盘容量(MB)" :label-width="formLabelWidth" prop="maxStorageSize">
               <el-input-number v-model="form.maxStorageSize" :min="0"  label="用户最大网盘容量"></el-input-number>
@@ -229,7 +237,7 @@ import {
 } from "@/api/admin";
 
 import { getRoleList } from "@/api/role";
-import {getListByDictType} from "@/api/sysDictData"
+import {getListByDictTypeList} from "@/api/sysDictData"
 import AvatarCropper from '@/components/AvatarCropper'
 
 import { formatData } from "@/utils/webUtils";
@@ -257,6 +265,9 @@ export default {
       photoList: [],
       icon: false, //控制删除图标的显示
       genderDictList: [], //字典列表
+      genderDefault: null,
+      paramsStatusDictList: [],
+      paramsStatusDefault: null,
       rules: {
         userName: [
           {required: true, message: '用户名不能为空', trigger: 'blur'},
@@ -273,10 +284,14 @@ export default {
           {pattern: /\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/, message: '请输入正确的邮箱'},
         ],
         mobile: [
-          {required: false, pattern: /0?(13|14|15|17|18)[0-9]{9}/, message: '请输入正确的手机号码'}
+          {required: false, pattern: /^1(3[0-9]|4[01456879]|5[0-35-9]|6[2567]|7[0-8]|8[0-9]|9[0-35-9])\d{8}$/, message: '请输入正确的手机号码'}
         ],
         qqNumber: [
           {pattern: /[1-9]([0-9]{5,11})/, message: '请输入正确的QQ号码'}
+        ],
+        status: [
+          {required: true, message: '状态字段不能为空', trigger: 'blur'},
+          {pattern: /^[0-9]\d*$/, message: '状态字段只能为自然数'},
         ]
       }
     };
@@ -313,14 +328,17 @@ export default {
      * 字典查询
      */
     getDictList: function () {
-      var params = {};
-      params.dictType = 'sys_user_sex';
-      getListByDictType(params).then(response => {
+      var dictTypeList = ['sys_user_sex', 'sys_params_status'];
+      getListByDictTypeList(dictTypeList).then(response => {
         if (response.code == this.$ECode.SUCCESS) {
-          this.genderDictList = response.data.list;
-          // 设置默认值
-          if(response.data.defaultValue) {
-            this.genderDefaultValue =response.data.defaultValue
+          var dictMap = response.data;
+          this.genderDictList = dictMap.sys_user_sex.list;
+          this.paramsStatusDictList = dictMap.sys_params_status.list;
+          if (dictMap.sys_user_sex.defaultValue) {
+            this.genderDefault = dictMap.sys_user_sex.defaultValue;
+          }
+          if (dictMap.sys_params_status.defaultValue) {
+            this.paramsStatusDefault = parseInt(dictMap.sys_params_status.defaultValue);
           }
         }
       });
@@ -356,12 +374,13 @@ export default {
       this.avatar = "";
       this.imagecropperShow = true;
     },
-    getFormObject: function() {
-      var formObject = {
+    getFormObject: function () {
+      return {
         uid: null,
-        gender: this.genderDefaultValue
+        gender: this.genderDefault,
+        status: this.paramsStatusDefault,
+        maxStorageSize: 50
       };
-      return formObject;
     },
     handleFind: function() {
       this.adminList();
@@ -406,7 +425,7 @@ export default {
           });
         })
         .catch(() => {
-          this.$commonUtil.message.info("已取消删除")
+          this.$commonUtil.message.info("已取消重置")
         });
     },
     //  计算文件大小

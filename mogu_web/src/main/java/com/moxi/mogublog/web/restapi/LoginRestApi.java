@@ -19,6 +19,7 @@ import com.moxi.mogublog.xo.vo.UserVO;
 import com.moxi.mougblog.base.enums.EOpenStatus;
 import com.moxi.mougblog.base.enums.EStatus;
 import com.moxi.mougblog.base.exception.ThrowableUtils;
+import com.moxi.mougblog.base.global.BaseMessageConf;
 import com.moxi.mougblog.base.global.Constants;
 import com.moxi.mougblog.base.holder.RequestHolder;
 import com.moxi.mougblog.base.validator.group.GetOne;
@@ -87,10 +88,10 @@ public class LoginRestApi {
         queryWrapper.last(SysConf.LIMIT_ONE);
         User user = userService.getOne(queryWrapper);
         if (user == null || EStatus.DISABLED == user.getStatus()) {
-            return ResultUtil.result(SysConf.ERROR, "用户不存在");
+            return ResultUtil.result(SysConf.ERROR, BaseMessageConf.LOGIN_NOT_EXIST);
         }
         if (EStatus.FREEZE == user.getStatus()) {
-            return ResultUtil.result(SysConf.ERROR, "用户账号未激活");
+            return ResultUtil.result(SysConf.ERROR, BaseMessageConf.LOGIN_DISABLE);
         }
         if (StringUtils.isNotEmpty(user.getPassWord()) && user.getPassWord().equals(MD5Utils.string2MD5(userVO.getPassWord()))) {
             // 更新登录信息

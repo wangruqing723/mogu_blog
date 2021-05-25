@@ -106,19 +106,17 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作系统" width="160">
+      <el-table-column label="状态" width="57">
         <template slot-scope="scope">
-          <span>{{ scope.row.os }}</span>
+          <template>
+            <el-tag v-for="item in paramsStatusDictList" :key="item.uid" :type="item.listClass"
+                    v-if="scope.row.status == item.dictValue">{{ item.dictLabel }}
+            </el-tag>
+          </template>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="浏览器" width="160">
-        <template slot-scope="scope">
-          <span>{{ scope.row.browser }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="最后登录时间" width="160" prop="lastLoginTime" sortable="custom" :sort-by="['lastLoginTime']">
+      <el-table-column align="center" label="最后登录" width="160" prop="lastLoginTime" sortable="custom" :sort-by="['lastLoginTime']">
         <template slot-scope="scope">
           <span>{{ scope.row.lastLoginTime }}</span>
         </template>
@@ -133,6 +131,18 @@
       <el-table-column align="center" label="IP来源" width="160">
         <template slot-scope="scope">
           <span>{{ scope.row.ipSource }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="操作系统" width="160">
+        <template slot-scope="scope">
+          <span>{{ scope.row.os }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="浏览器" width="160">
+        <template slot-scope="scope">
+          <span>{{ scope.row.browser }}</span>
         </template>
       </el-table-column>
 
@@ -266,6 +276,13 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="12">
+            <el-form-item label="状态" :label-width="formLabelWidth" prop="status">
+              <el-radio v-for="item in paramsStatusDictList" :key="item.uid" v-model="form.status"
+                        :label="parseInt(item.dictValue)" border size="medium">{{ item.dictLabel }}
+              </el-radio>
+            </el-form-item>
+          </el-col>
         </el-row>
 
         <el-form-item :label-width="formLabelWidth" label="简介">
@@ -299,11 +316,11 @@
 </template>
 
 <script>
-  import {deleteUser, addUser, editUser, getUserList, resetUserPassword} from "@/api/user";
-  import AvatarCropper from '@/components/AvatarCropper'
-  import {getListByDictTypeList} from "@/api/sysDictData"
+import {addUser, deleteUser, editUser, getUserList, resetUserPassword} from "@/api/user";
+import AvatarCropper from '@/components/AvatarCropper'
+import {getListByDictTypeList} from "@/api/sysDictData"
 
-  export default {
+export default {
     data() {
       return {
         photoVisible: false, //控制图片选择器的显示
@@ -329,15 +346,20 @@
         },
         accountSourceDictList: [], //账号来源字典
         commentStatusDictList: [], //评论状态字典
-        genderDictList: [], //评论状态字典
+        genderDictList: [], //性别状态字典
         userTagDictList: [], // 用户标签列表
+        paramsStatusDictList: [],//用户状态字典
+        commentStatus: null,
+        userTag: 0,
+        genderDefault: null,
+        paramsStatusDefault: null,
         defaultAvatar: this.$SysConf.defaultAvatar, // 默认头像
         orderByDescColumn: "", // 降序字段
         orderByAscColumn: "", // 升序字段
         rules: {
           userName: [
             {required: true, message: '用户名不能为空', trigger: 'blur'},
-            {min: 5, max: 30, message: '长度在5到30个字符'},
+            {min: 2, max: 30, message: '长度在5到30个字符'},
           ],
           nickName: [
             {required: true, message: '昵称不能为空', trigger: 'blur'},
@@ -353,10 +375,14 @@
             {required: true, message: '性别不能为空', trigger: 'blur'},
           ],
           email: [
-            {pattern: /\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/, message: '请输入正确的邮箱'},
+            {required: true, pattern: /\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/, message: '请输入正确的邮箱'},
           ],
           qqNumber: [
             {pattern: /[1-9]([0-9]{5,11})/, message: '请输入正确的QQ号码'}
+          ],
+          status: [
+            {required: true, message: '状态字段不能为空', trigger: 'blur'},
+            {pattern: /^[0-9]\d*$/, message: '状态字段只能为自然数'},
           ]
         }
       };
@@ -435,7 +461,7 @@
        * 字典查询
        */
       getDictList: function () {
-        var dictTypeList = ['sys_account_source', 'sys_comment_status', 'sys_user_sex', 'sys_user_tag']
+        var dictTypeList = ['sys_account_source', 'sys_comment_status', 'sys_user_sex', 'sys_user_tag', 'sys_params_status']
         getListByDictTypeList(dictTypeList).then(response => {
           if (response.code == this.$ECode.SUCCESS) {
             var dictMap = response.data;
@@ -443,14 +469,27 @@
             this.commentStatusDictList = dictMap.sys_comment_status.list
             this.genderDictList = dictMap.sys_user_sex.list
             this.userTagDictList = dictMap.sys_user_tag.list
+            this.paramsStatusDictList = dictMap.sys_params_status.list;
+            if (dictMap.sys_comment_status.defaultValue) {
+              this.commentStatus = parseInt(dictMap.sys_comment_status.defaultValue);
+            }
+            if (dictMap.sys_user_sex.defaultValue) {
+              this.genderDefault = dictMap.sys_user_sex.defaultValue;
+            }
+            if (dictMap.sys_params_status.defaultValue) {
+              this.paramsStatusDefault = parseInt(dictMap.sys_params_status.defaultValue);
+            }
           }
         });
       },
       getFormObject: function () {
-        var formObject = {
+        return {
           uid: null,
+          commentStatus: this.commentStatus,
+          userTag: this.userTag,
+          gender: this.genderDefault,
+          status: this.paramsStatusDefault,
         };
-        return formObject;
       },
       handleFind: function () {
         this.userList();

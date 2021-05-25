@@ -169,7 +169,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="标签" width="200" align="center" >
+      <el-table-column label="标签" min-width align="center" >
         <template slot-scope="scope">
           <template>
             <el-tag
@@ -603,6 +603,35 @@ export default {
       this.sortRemoteMethod(tempBlogSort.name);
       this.queryParams.sortKeyword = tempBlogSort.blogSortUid;
     }
+
+    if (this.$route.query.keyword) {
+      this.queryParams.keyword = this.$route.query.keyword
+    }
+    if (this.$route.query.levelKeyword == 0) {
+      this.queryParams.levelKeyword = "正常"
+    }
+    if (this.$route.query.levelKeyword == 1) {
+      this.queryParams.levelKeyword = "一级推荐"
+    }
+    if (this.$route.query.levelKeyword == 2) {
+      this.queryParams.levelKeyword = "二级推荐"
+    }
+    if (this.$route.query.levelKeyword == 3) {
+      this.queryParams.levelKeyword = "三级推荐"
+    }
+    if (this.$route.query.levelKeyword ==4) {
+      this.queryParams.levelKeyword = "四级推荐"
+    }
+    if (this.$route.query.publishKeyword) {
+      this.queryParams.publishKeyword = this.$route.query.publishKeyword
+    }
+    if (this.$route.query.originalKeyword) {
+      this.queryParams.originalKeyword = this.$route.query.originalKeyword
+    }
+    if (this.$route.query.typeKeyword) {
+      this.queryParams.typeKeyword = this.$route.query.typeKeyword
+    }
+
     // 判断是否需要展开条件查询
     this.getShowSearch()
 

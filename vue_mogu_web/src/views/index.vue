@@ -1,11 +1,11 @@
 <template>
   <article>
     <!--banner begin-->
-    <div class="picsbox">
+<!--    <div class="picsbox">
       <FirstRecommend></FirstRecommend>
-      <!--banner end-->
+      &lt;!&ndash;banner end&ndash;&gt;
 
-      <!-- 二级推荐 -->
+      &lt;!&ndash; 二级推荐 &ndash;&gt;
       <div class="toppic">
         <li v-for="item in secondData" :key="item.uid" @click="goToInfo(item)">
           <a href="javascript:void(0);">
@@ -17,8 +17,8 @@
           </a>
         </li>
       </div>
-    </div>
-    <div class="blank"></div>
+    </div>-->
+<!--    <div class="blank"></div>-->
 
     <!--blogsbox begin-->
     <div class="blogsbox">
@@ -26,8 +26,7 @@
         v-for="item in newBlogData"
         :key="item.uid"
         class="blogs"
-        data-scroll-reveal="enter bottom over 1s"
-      >
+        data-scroll-reveal="enter bottom over 1s">
         <h3 class="blogtitle">
           <a href="javascript:void(0);" @click="goToInfo(item)">{{item.title}}</a>
         </h3>
@@ -41,7 +40,6 @@
         <p class="blogtext">{{item.summary}}</p>
         <div class="bloginfo">
           <ul>
-
             <li class="author">
               <span class="iconfont">&#xe60f;</span>
               <a href="javascript:void(0);" @click="goToAuthor(item.author)">{{item.author}}</a>
@@ -50,7 +48,7 @@
               <span class="iconfont">&#xe603;</span>
               <a
                 href="javascript:void(0);"
-                @click="goToList(item.blogSort.uid)"
+                @click="goToList(item.blogSort.uid,item.blogSort.sortName)"
               >{{item.blogSort.sortName}}</a>
             </li>
             <li class="view">
@@ -71,15 +69,10 @@
 
       <div class="isEnd">
         <!-- <span v-if="!isEnd">正在加载中~</span> -->
-
         <div class="loadContent" @click="loadContent" v-if="!isEnd&&!loading">点击加载更多</div>
 
         <div class="lds-css ng-scope" v-if="!isEnd&&loading">
-          <div style="width:100%;height:100%" class="lds-facebook">
-            <div></div>
-            <div></div>
-            <div></div>
-          </div>
+          <div style="width:100%;height:100%" class="lds-facebook"></div>
         </div>
 
         <span v-if="isEnd">我也是有底线的~</span>
@@ -157,15 +150,17 @@
       this.loading = false;
     },
     created() {
-      var secondParams = new URLSearchParams();
-      secondParams.append("level", 2);
+      // 获取二级推荐博客
+      // var secondParams = new URLSearchParams();
+      // secondParams.append("level", 2);
       // 是否排序
-      secondParams.append("useSort", 1);
-      getBlogByLevel(secondParams).then(response => {
-        if(response.code == this.$ECode.SUCCESS) {
-          this.secondData = response.data.records;
-        }
-      });
+      // secondParams.append("useSort", 1);
+      // getBlogByLevel(secondParams).then(response => {
+      //   if(response.code == this.$ECode.SUCCESS) {
+      //     this.secondData = response.data.records;
+      //   }
+      // });
+
       // 获取最新博客
       this.newBlogList();
       var params = new URLSearchParams();
@@ -192,17 +187,16 @@
         }
       },
       //跳转到搜索详情页
-      goToList(uid) {
-        let routeData = this.$router.push({
+      goToList(uid, sortName) {
+        this.$router.push({
           path: "/list",
-          query: {sortUid: uid}
+          query: {sortUid: uid, blogSortName: sortName}
         });
-
       },
 
       //跳转到搜索详情页
       goToAuthor(author) {
-        let routeData = this.$router.push({
+        this.$router.push({
           path: "/list",
           query: {author: author}
         });
@@ -215,7 +209,7 @@
           lock: true,
           text: '正在努力加载中……',
           background: 'rgba(0, 0, 0, 0.7)'
-        })
+        });
 
         var params = new URLSearchParams();
         params.append("currentPage", this.currentPage);

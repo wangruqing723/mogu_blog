@@ -21,6 +21,7 @@ export const constantRouterMap = [
       { path: '/time', component: () => import('@/views/time') },
       { path: '/info', component: () => import('@/views/info') },
       { path: '/messageBoard', component: () => import('@/views/messageBoard') },
+      { path: '/tool', component: () => import('@/views/tool') },
     ]
   },
   { path: '/404', component: () => import('@/views/404') },

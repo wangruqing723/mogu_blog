@@ -1097,7 +1097,6 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
 
     @Override
     public IPage<Blog> getBlogPageByLevel(Integer level, Long currentPage, Integer useSort) {
-
         //从Redis中获取内容
         String jsonResult = redisUtil.get(RedisConf.BLOG_LEVEL + RedisConf.SEGMENTATION + level);
 
@@ -1136,7 +1135,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         if (StringUtils.isEmpty(blogCount)) {
             log.error(MessageConf.PLEASE_CONFIGURE_SYSTEM_PARAMS);
         } else {
-            page.setSize(Long.valueOf(blogCount));
+            page.setSize(Long.parseLong(blogCount));
         }
 
         IPage<Blog> pageList = blogService.getBlogPageByLevel(page, level, useSort);
@@ -1152,7 +1151,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
             if (StringUtils.isEmpty(blogHotCount) || StringUtils.isEmpty(blogSecondCount)) {
                 log.error(MessageConf.PLEASE_CONFIGURE_SYSTEM_PARAMS);
             } else {
-                hotPage.setSize(Long.valueOf(blogHotCount));
+                hotPage.setSize(Long.parseLong(blogHotCount));
             }
             queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
             queryWrapper.eq(SQLConf.IS_PUBLISH, EPublish.PUBLISH);
@@ -1164,7 +1163,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
             List<Blog> firstBlogList = new ArrayList<>();
             for (int a = 0; a < hotBlogList.size(); a++) {
                 // 当推荐大于两个的时候
-                if ((hotBlogList.size() - firstBlogList.size()) > Long.valueOf(blogSecondCount)) {
+                if ((hotBlogList.size() - firstBlogList.size()) > Long.parseLong(blogSecondCount)) {
                     firstBlogList.add(hotBlogList.get(a));
                 } else {
                     secondBlogList.add(hotBlogList.get(a));
@@ -1243,7 +1242,6 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
 
     @Override
     public IPage<Blog> getNewBlog(Long currentPage, Long pageSize) {
-
         String blogNewCount = sysParamsService.getSysParamsValueByKey(SysConf.BLOG_NEW_COUNT);
         if (StringUtils.isEmpty(blogNewCount)) {
             log.error(MessageConf.PLEASE_CONFIGURE_SYSTEM_PARAMS);
@@ -1263,7 +1261,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
         Page<Blog> page = new Page<>();
         page.setCurrent(currentPage);
-        page.setSize(Long.valueOf(blogNewCount));
+        page.setSize(Long.parseLong(blogNewCount));
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
         queryWrapper.eq(BaseSQLConf.IS_PUBLISH, EPublish.PUBLISH);
         queryWrapper.orderByDesc(SQLConf.CREATE_TIME);
@@ -1297,7 +1295,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         if (StringUtils.isEmpty(blogNewCount)) {
             log.error(MessageConf.PLEASE_CONFIGURE_SYSTEM_PARAMS);
         } else {
-            page.setSize(Long.valueOf(blogNewCount));
+            page.setSize(Long.parseLong(blogNewCount));
         }
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
         queryWrapper.eq(BaseSQLConf.IS_PUBLISH, EPublish.PUBLISH);

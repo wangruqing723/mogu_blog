@@ -5,7 +5,7 @@
       <h1 class="t_nav">
         <span>好咖啡要和朋友一起品尝，好“资料”也要和同样喜欢它的人一起分享。</span>
         <a href="/" class="n1">网站首页</a>
-        <a href="/" class="n2">学习教程</a>
+        <a href="javascript:void(0);" class="n2">学习教程</a>
       </h1>
 
       <div class="share">

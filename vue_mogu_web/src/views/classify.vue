@@ -23,7 +23,7 @@
           </div>
         </div>
 
-        <div class="article">
+        <div class="article" v-if="itemByDate.length !==0">
           <div class="block" v-infinite-scroll="load">
             <el-timeline>
               <el-timeline-item
@@ -62,6 +62,9 @@
               </el-timeline-item>
             </el-timeline>
           </div>
+        </div>
+        <div v-if="itemByDate.length === 0">
+          <el-card>该分类下暂无博客！！！</el-card>
         </div>
       </div>
     </div>
@@ -148,7 +151,7 @@ export default {
           // 标签uid
           let routeData = this.$router.resolve({
             path: "/list",
-            query: { tagUid: entity.uid }
+            query: { tagUid: entity.uid, tagName: entity.content }
           });
           window.open(routeData.href, "_blank");
         }
@@ -157,7 +160,7 @@ export default {
         {
           let routeData = this.$router.resolve({
             path: "/list",
-            query: { sortUid: entity.blogSort.uid }
+            query: { sortUid: entity.blogSort.uid,blogSortName: entity.blogSort.sortName }
           });
           window.open(routeData.href, "_blank");
         }

@@ -140,7 +140,7 @@
           </el-row>
 
           <el-row :gutter="24">
-            <el-col :span="6">
+            <el-col :span="7">
               <el-form-item label="网站评论">
                 <el-radio v-for="item in openDictList" :key="item.uid" v-model="form.openComment" :label="item.dictValue" border size="medium">{{item.dictLabel}}</el-radio>
               </el-form-item>
@@ -148,7 +148,7 @@
           </el-row>
 
           <el-row :gutter="24">
-            <el-col :span="6">
+            <el-col :span="7">
               <el-form-item label="网站打赏">
                 <el-radio v-for="item in openDictList" :key="item.uid" v-model="form.openAdmiration" :label="item.dictValue" border size="medium">{{item.dictLabel}}</el-radio>
               </el-form-item>
@@ -156,7 +156,7 @@
           </el-row>
 
           <el-row :gutter="24">
-            <el-col :span="6">
+            <el-col :span="7">
               <el-form-item label="移动端评论">
                 <el-radio v-for="item in openDictList" :key="item.uid" v-model="form.openMobileComment" :label="item.dictValue" border size="medium">{{item.dictLabel}}</el-radio>
               </el-form-item>
@@ -164,7 +164,7 @@
           </el-row>
 
           <el-row :gutter="24">
-            <el-col :span="6">
+            <el-col :span="7">
               <el-form-item label="移动端打赏">
                 <el-radio v-for="item in openDictList" :key="item.uid" v-model="form.openMobileAdmiration" :label="item.dictValue" border size="medium">{{item.dictLabel}}</el-radio>
               </el-form-item>
