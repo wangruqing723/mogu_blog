@@ -4,6 +4,7 @@
     :visible.sync="drawer"
     @close="beforeClose"
     direction="ltr"
+    :size="drawerSize"
     :with-header="false">
 
     <div class="block" style="margin:10px;">
@@ -24,11 +25,11 @@
             :key="item.uid"
             class="blogs"
           >
-            <el-timeline-item :timestamp="item.createTime" placement="top">
+            <el-timeline-item :timestamp="item.blog.createTime" placement="top">
               <el-card>
                 <span class="blogpic" @click="goToInfo(item.blog.uid)">
                   <a href="javascript:void(0);" title>
-                    <img v-if="item.blog && item.blog.photoList.length > 0" :src="item.blog.photoList[0]" alt>
+                    <img v-if="item.blog && item.blog.photoList" :src="item.blog.photoList[0]" alt>
                   </a>
                 </span>
                 <p class="blogtext" style="font-weight: bold; cursor: pointer;" @click="goToInfo(item.blog.uid)">{{item.blog.title}}</p>
@@ -88,10 +89,20 @@
           currentPage: 1,
           total: 0,
           loading: true,
+          drawerSize: "30%"
         };
       },
       created() {
         // this.getList()
+      },
+      mounted() {
+        // 获取宽高
+        window.onresize = () => {
+          return (() => {
+            this.resizeWin();
+          })();
+        };
+        this.resizeWin();
       },
       methods: {
         getList() {
@@ -111,6 +122,19 @@
             this.loading = false
           })
         },
+        resizeWin() {
+          //当前window 宽
+          let centerWidth = document.documentElement.scrollWidth;
+          if (centerWidth > 1300) {
+              this.drawerSize = "30%"
+          } else if(centerWidth > 1000) {
+            this.drawerSize = "50%"
+          } else if(centerWidth > 600) {
+            this.drawerSize = "60%"
+          } else {
+            this.drawerSize = "95%"
+          }
+        },
         load() {
           // console.log("加载")
           // this.currentPage = this.currentPage + 1
@@ -122,7 +146,6 @@
         },
         //跳转到文章详情
         goToInfo(uid) {
-          console.log("传递过来的uid", uid)
           let routeData = this.$router.resolve({
             path: "/info",
             query: {blogUid: uid}

@@ -1,6 +1,5 @@
-
 <template>
-  <div class="page">
+  <div>
     <div class="pagebg tagPage"></div>
     <div class="container">
       <h1 class="t_nav">
@@ -9,17 +8,18 @@
         <a href="javascript:void(0);" class="n2">留言</a>
       </h1>
 
-        <CommentBox
-          :userInfo="userInfo"
-          :commentInfo="commentInfo"
-          @submit-box="submitBox"
-          :showCancel="showCancel"
-        ></CommentBox>
+      <CommentBox
+        :userInfo="userInfo"
+        :commentInfo="commentInfo"
+        @submit-box="submitBox"
+        :showCancel="showCancel"
+      ></CommentBox>
 
       <div class="message_infos">
         <CommentList :comments="comments" :commentInfo="commentInfo"></CommentList>
         <div class="noComment" v-if="comments.length ==0">还没有评论，快来抢沙发吧！</div>
       </div>
+
     </div>
   </div>
 </template>
@@ -65,7 +65,7 @@
         mounted () {
           var that = this;
           // 屏幕的高度
-          this.pageMinHeight = window.innerHeight - 82
+          this.pageMinHeight = window.innerHeight - 62
           $(window).scroll(function () {
             var docHeight = $(document).height(); // 获取整个页面的高度(不只是窗口,还包括为显示的页面)
             var winHeight = $(window).height(); // 获取当前窗体的高度(显示的高度)
@@ -125,7 +125,7 @@
             getCommentDataList: function() {
                 let params = {};
                 params.source = "MESSAGE_BOARD";
-                params.currentPage = 1;
+                params.currentPage = this.currentPage;
                 params.pageSize = this.pageSize;
                 getCommentList(params).then(response => {
                     if (response.code == this.$ECode.SUCCESS) {
@@ -136,7 +136,7 @@
                         this.total = response.data.total;
                     }
                 });
-            }
+            },
         }
     };
 </script>

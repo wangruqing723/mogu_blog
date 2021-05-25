@@ -3,24 +3,34 @@
     <div class="box loginBox" v-if="showLogin == true">
       <div class="title"  >
         <span class="t1">
-          登录
+          {{showPasswordLogin == false ? "微信扫码登录":"登录"}}
         </span>
         <div class="t2" @click="closeLogin()">
           X
         </div>
       </div>
+      <!-- 分割线 -->
       <el-divider></el-divider>
+
       <el-form :label-position="labelPosition" :rules="loginRules" :model="loginForm" ref="loginForm">
-        <el-form-item label="用户名" prop="userName">
-          <el-input v-model="loginForm.userName" placeholder="请输入用户名或邮箱" :disabled="loginType.password"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input type="password" v-model="loginForm.password" placeholder="请输入密码" :disabled="loginType.password"></el-input>
-        </el-form-item>
-        <el-row class="btn">
-          <el-button class="loginBtn" type="primary" @click="startLogin" :disabled="loginType.password">登录</el-button>
-          <el-button class="registerBtn" type="info" @click="goRegister" :disabled="loginType.password">注册</el-button>
-        </el-row>
+
+        <div class="passwordLogin" v-if="showPasswordLogin">
+          <el-form-item label="用户名" prop="userName">
+            <el-input v-model="loginForm.userName" placeholder="请输入用户名或邮箱" :disabled="loginType.password"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="password">
+            <el-input type="password" v-model="loginForm.password" placeholder="请输入密码" :disabled="loginType.password"></el-input>
+          </el-form-item>
+          <el-row class="btn">
+            <el-button class="loginBtn" type="primary" @click="startLogin" :disabled="loginType.password">登录</el-button>
+            <el-button class="registerBtn" type="info" @click="goRegister" :disabled="loginType.password">注册</el-button>
+          </el-row>
+        </div>
+
+        <div v-if="showPasswordLogin == false" style="text-align: center" class="block">
+          <el-image :src="wechatOrCode" style="width: 250px;"></el-image>
+        </div>
+
 
         <el-row class="elRow">
           <el-tooltip content="码云" placement="bottom">
@@ -56,6 +66,7 @@
           <span v-if="!loginType.wechat"> 微信 </span>
         </div>
       </el-form>
+
     </div>
 
     <div class="box registerBox" v-if="showLogin == false">
@@ -104,7 +115,7 @@
 </template>
 
 <script>
-  import {login, localLogin, localRegister} from "@/api/user";
+  import {login, localLogin, localRegister, getWechatOrCodeTicket} from "@/api/user";
   import { Loading } from 'element-ui';
   export default {
     name: "share",
@@ -116,6 +127,8 @@
           lock: true
         },
         vueMoguWebUrl: process.env.VUE_MOGU_WEB,
+        showPasswordLogin: true, // 是否显示账号密码登录
+        wechatOrCode: "", // 微信公众号登录二维码
         // 显示登录页面
         showLogin: true,
         isLogin: false,
@@ -143,13 +156,13 @@
         loginRules: {
           userName: [
             {required: true, message: '请输入用户名', trigger: 'blur'},
-            { min: 5, message: "用户名长度大于等于 5 个字符", trigger: "blur" },
-            { max: 20, message: "用户名长度不能大于 20 个字符", trigger: "blur" }
+            { min: 2, message: "用户名长度大于等于 2 个字符", trigger: "blur" },
+            { max: 30, message: "用户名长度不能大于 30 个字符", trigger: "blur" }
           ],
           nickName: [
             {required: true, message: '请输入昵称', trigger: 'blur'},
             { min: 1, message: "用户名长度大于等于 1 个字符", trigger: "blur" },
-            { max: 20, message: "用户名长度不能大于 20 个字符", trigger: "blur" }
+            { max: 30, message: "用户名长度不能大于 30 个字符", trigger: "blur" }
           ],
           password: [
             { required: true, message: "请输入密码", trigger: "blur" },
@@ -160,8 +173,8 @@
         rules: {
           userName: [
             {required: true, message: '请输入用户名', trigger: 'blur'},
-            { min: 5, message: "用户名长度大于等于 5 个字符", trigger: "blur" },
-            { max: 20, message: "用户名长度不能大于 20 个字符", trigger: "blur" }
+            { min: 2, message: "用户名长度大于等于 2 个字符", trigger: "blur" },
+            { max: 30, message: "用户名长度不能大于 30 个字符", trigger: "blur" }
           ],
           nickName: [
             {required: true, message: '请输入昵称', trigger: 'blur'}
@@ -230,6 +243,7 @@
             params.isRememberMe = 1;
             localLogin(params).then(response => {
               if (response.code == this.$ECode.SUCCESS) {
+                // 跳转到首页
                 // 跳转到首页,修改:登录成功刷新当前页面,不跳转到首页
                 if (window.location.href.indexOf("?") === -1){
                   location.replace(window.location.href + "?token=" + response.data)
@@ -289,19 +303,35 @@
         this.showLogin = true;
       },
       goRegister: function () {
+        this.registerForm.userName="";
+        this.registerForm.password="";
+        this.registerForm.password2="";
+        this.registerForm.email="";
         this.showLogin = false;
       },
       goAuth: function (source) {
+        // 判断是否点击公众号登录
+        if(source == "wechat") {
+          console.log("点击公众号登录")
+          getWechatOrCodeTicket().then(response => {
+            if (response.code == this.$ECode.SUCCESS) {
+              console.log("得到的响应", response)
+              this.showPasswordLogin = false
+              this.wechatOrCode = response.data
+            }
+          });
+          return
+        }
         this.loading = Loading.service({
           lock: true,
           text: '加载中……',
           background: 'rgba(0, 0, 0, 0.7)'
-        })
+        });
         var params = new URLSearchParams();
         params.append("source", source);
         params.append("reUrl", window.location.href);
         login(params).then(response => {
-          if (response.code === this.$ECode.SUCCESS) {
+          if (response.code == this.$ECode.SUCCESS) {
             // var token = response.data.token;
             window.location.href = response.data.url;
           }

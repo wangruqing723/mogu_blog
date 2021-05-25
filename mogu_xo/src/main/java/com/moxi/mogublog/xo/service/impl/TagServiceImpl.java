@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.moxi.mogublog.commons.entity.Blog;
 import com.moxi.mogublog.commons.entity.Tag;
+import com.moxi.mogublog.utils.RedisUtil;
 import com.moxi.mogublog.utils.ResultUtil;
 import com.moxi.mogublog.utils.StringUtils;
 import com.moxi.mogublog.xo.global.MessageConf;
+import com.moxi.mogublog.xo.global.RedisConf;
 import com.moxi.mogublog.xo.global.SQLConf;
 import com.moxi.mogublog.xo.global.SysConf;
 import com.moxi.mogublog.xo.mapper.TagMapper;
@@ -16,6 +18,7 @@ import com.moxi.mogublog.xo.service.TagService;
 import com.moxi.mogublog.xo.vo.TagVO;
 import com.moxi.mougblog.base.enums.EPublish;
 import com.moxi.mougblog.base.enums.EStatus;
+import com.moxi.mougblog.base.global.Constants;
 import com.moxi.mougblog.base.serviceImpl.SuperServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +38,8 @@ public class TagServiceImpl extends SuperServiceImpl<TagMapper, Tag> implements 
     private TagService tagService;
     @Autowired
     private BlogService blogService;
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Override
     public IPage<Tag> getPageList(TagVO tagVO) {
@@ -47,7 +52,17 @@ public class TagServiceImpl extends SuperServiceImpl<TagMapper, Tag> implements 
         page.setCurrent(tagVO.getCurrentPage());
         page.setSize(tagVO.getPageSize());
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
-        queryWrapper.orderByDesc(SQLConf.SORT);
+        if(StringUtils.isNotEmpty(tagVO.getOrderByAscColumn())) {
+            // 将驼峰转换成下划线
+            String column = StringUtils.underLine(new StringBuffer(tagVO.getOrderByAscColumn())).toString();
+            queryWrapper.orderByAsc(column);
+        } else if(StringUtils.isNotEmpty(tagVO.getOrderByDescColumn())) {
+            // 将驼峰转换成下划线
+            String column = StringUtils.underLine(new StringBuffer(tagVO.getOrderByDescColumn())).toString();
+            queryWrapper.orderByDesc(column);
+        } else {
+            queryWrapper.orderByDesc(SQLConf.SORT);
+        }
         IPage<Tag> pageList = tagService.page(page, queryWrapper);
         return pageList;
     }
@@ -76,6 +91,8 @@ public class TagServiceImpl extends SuperServiceImpl<TagMapper, Tag> implements 
         tag.setStatus(EStatus.ENABLE);
         tag.setSort(tagVO.getSort());
         tag.insert();
+        // 删除Redis中的BLOG_TAG
+        deleteRedisBlogTagList();
         return ResultUtil.successWithMessage(MessageConf.INSERT_SUCCESS);
     }
 
@@ -100,6 +117,8 @@ public class TagServiceImpl extends SuperServiceImpl<TagMapper, Tag> implements 
         tag.updateById();
         // 删除和标签相关的博客缓存
         blogService.deleteRedisByBlogTag();
+        // 删除Redis中的BLOG_TAG
+        deleteRedisBlogTagList();
         return ResultUtil.successWithMessage(MessageConf.UPDATE_SUCCESS);
     }
 
@@ -132,6 +151,8 @@ public class TagServiceImpl extends SuperServiceImpl<TagMapper, Tag> implements 
         Boolean save = tagService.updateBatchById(tagList);
         // 删除和标签相关的博客缓存
         blogService.deleteRedisByBlogTag();
+        // 删除Redis中的BLOG_TAG
+        deleteRedisBlogTagList();
         if (save) {
             return ResultUtil.successWithMessage(MessageConf.DELETE_SUCCESS);
         } else {
@@ -165,7 +186,8 @@ public class TagServiceImpl extends SuperServiceImpl<TagMapper, Tag> implements 
         tag.setSort(sortCount);
         tag.setUpdateTime(new Date());
         tag.updateById();
-
+        // 删除Redis中的BLOG_TAG
+        deleteRedisBlogTagList();
         return ResultUtil.successWithMessage(MessageConf.OPERATION_SUCCESS);
     }
 
@@ -176,13 +198,13 @@ public class TagServiceImpl extends SuperServiceImpl<TagMapper, Tag> implements 
         // 按点击从高到低排序
         queryWrapper.orderByDesc(SQLConf.CLICK_COUNT);
         List<Tag> tagList = tagService.list(queryWrapper);
-        // 设置初始化最大的sort值
-        Integer maxSort = tagList.size();
         for (Tag item : tagList) {
             item.setSort(item.getClickCount());
             item.setCreateTime(new Date());
         }
         tagService.updateBatchById(tagList);
+        // 删除Redis中的BLOG_TAG
+        deleteRedisBlogTagList();
         return ResultUtil.successWithMessage(MessageConf.OPERATION_SUCCESS);
     }
 
@@ -194,9 +216,7 @@ public class TagServiceImpl extends SuperServiceImpl<TagMapper, Tag> implements 
         tagQueryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
         List<Tag> tagList = tagService.list(tagQueryWrapper);
         // 初始化所有标签的引用量
-        tagList.forEach(item -> {
-            map.put(item.getUid(), 0);
-        });
+        tagList.forEach(item -> map.put(item.getUid(), 0));
 
         QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
@@ -218,16 +238,19 @@ public class TagServiceImpl extends SuperServiceImpl<TagMapper, Tag> implements 
             }
         });
 
+        // 通过查询出所有标签的引用量,修改sort排序,达到引用量排序的目的
         tagList.forEach(item -> {
             item.setSort(map.get(item.getUid()));
             item.setUpdateTime(new Date());
         });
         tagService.updateBatchById(tagList);
+        // 删除Redis中的BLOG_TAG
+        deleteRedisBlogTagList();
         return ResultUtil.successWithMessage(MessageConf.OPERATION_SUCCESS);
     }
 
     @Override
-    public IPage<Tag> getHotTag(Integer hotTagCount) {
+    public List<Tag> getHotTag(Integer hotTagCount) {
         QueryWrapper<Tag> queryWrapper = new QueryWrapper<>();
         Page<Tag> page = new Page<>();
         page.setCurrent(1);
@@ -236,7 +259,7 @@ public class TagServiceImpl extends SuperServiceImpl<TagMapper, Tag> implements 
         queryWrapper.orderByDesc(SQLConf.SORT);
         queryWrapper.orderByDesc(SQLConf.CLICK_COUNT);
         IPage<Tag> pageList = tagService.page(page, queryWrapper);
-        return pageList;
+        return pageList.getRecords();
     }
 
     @Override
@@ -247,5 +270,14 @@ public class TagServiceImpl extends SuperServiceImpl<TagMapper, Tag> implements 
         tagQueryWrapper.orderByDesc(SQLConf.SORT);
         Tag tag = tagService.getOne(tagQueryWrapper);
         return tag;
+    }
+
+    /**
+     * 删除Redis中的友链列表
+     */
+    private void deleteRedisBlogTagList() {
+        // 删除Redis中的BLOG_LINK
+        Set<String> keys = redisUtil.keys(RedisConf.BLOG_TAG + Constants.SYMBOL_COLON + "*");
+        redisUtil.delete(keys);
     }
 }

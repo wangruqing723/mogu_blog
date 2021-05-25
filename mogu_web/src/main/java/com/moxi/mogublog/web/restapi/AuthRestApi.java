@@ -15,13 +15,16 @@ import com.moxi.mogublog.web.global.MessageConf;
 import com.moxi.mogublog.web.global.RedisConf;
 import com.moxi.mogublog.web.global.SQLConf;
 import com.moxi.mogublog.web.global.SysConf;
-import com.moxi.mogublog.web.utils.RabbitMqUtil;
 import com.moxi.mogublog.xo.service.*;
+import com.moxi.mogublog.xo.utils.RabbitMqUtil;
 import com.moxi.mogublog.xo.utils.WebUtil;
 import com.moxi.mogublog.xo.vo.FeedbackVO;
 import com.moxi.mogublog.xo.vo.LinkVO;
 import com.moxi.mogublog.xo.vo.UserVO;
-import com.moxi.mougblog.base.enums.*;
+import com.moxi.mougblog.base.enums.EGender;
+import com.moxi.mougblog.base.enums.ELinkStatus;
+import com.moxi.mougblog.base.enums.EOpenStatus;
+import com.moxi.mougblog.base.enums.EStatus;
 import com.moxi.mougblog.base.exception.ThrowableUtils;
 import com.moxi.mougblog.base.global.Constants;
 import com.moxi.mougblog.base.validator.group.Insert;
@@ -57,6 +60,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 第三方登录认证
+ *
  * @author 陌溪
  * @date 2020年10月11日10:25:58
  */
@@ -125,7 +129,7 @@ public class AuthRestApi {
         httpServletRequest.getSession().getServletContext().setAttribute("reUrl", reUrl);
         // 将传递过来的转换成大写
         Boolean isOpenLoginType = webConfigService.isOpenLoginType(source.toUpperCase());
-        if (!isOpenLoginType){
+        if (!isOpenLoginType) {
             return ResultUtil.result(SysConf.ERROR, "后台未开启该登录方式!");
         }
         log.info("进入render:" + source);
@@ -140,7 +144,6 @@ public class AuthRestApi {
 
     /**
      * oauth平台中配置的授权回调地址，以本项目为例，在创建gitee授权应用时的回调地址应为：http://127.0.0.1:8603/oauth/callback/gitee
-     * https://gitee.com/oauth/authorize?response_type=code&client_id=86b1d9b75aea903cbef88c12d672af50edfba09555bc0e8e8b2e501bfdbcee2c&redirect_uri=http://127.0.0.1:8603/oauth/callback/gitee&state=c2620e8dd61b99cee00089f60912223c
      */
     @RequestMapping("/callback/{source}")
     public void login(@PathVariable("source") String source, AuthCallback callback,
@@ -257,6 +260,7 @@ public class AuthRestApi {
             //将从数据库查询的数据缓存到redis中
             stringRedisTemplate.opsForValue().set(RedisConf.USER_TOKEN + Constants.SYMBOL_COLON + accessToken, JsonUtils.objectToJson(user), userTokenSurvivalTime, TimeUnit.HOURS);
         }
+
         String reUrl = (String) httpServletRequest.getSession().getServletContext().getAttribute("reUrl");
         httpServletRequest.getSession().getServletContext().removeAttribute("reUrl");
         if (!reUrl.contains("?")) {

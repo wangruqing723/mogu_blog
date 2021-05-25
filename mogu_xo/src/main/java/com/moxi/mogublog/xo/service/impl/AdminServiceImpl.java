@@ -1,5 +1,6 @@
 package com.moxi.mogublog.xo.service.impl;
 
+import cn.hutool.core.lang.Assert;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -226,7 +227,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
 
             // 设置已用容量大小和最大容量
             Storage storage = storageMap.get(item.getUid());
-            if (storage != null) {
+            if(storage != null) {
                 item.setStorageSize(storage.getStorageSize());
                 item.setMaxStorageSize(storage.getMaxStorageSize());
             } else {
@@ -238,10 +239,6 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         return ResultUtil.successWithData(pageList);
     }
 
-    /**
-     * @param adminVO
-     * @return
-     */
     @Override
     public String addAdmin(AdminVO adminVO) {
 
@@ -277,7 +274,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
             //TODO 这里需要通过SMS模块，发送邮件告诉初始密码
 
             // 更新成功后，同时申请网盘存储空间
-            String maxStorageSize = "50";
+            String maxStorageSize = sysParamsService.getSysParamsValueByKey(SysConf.MAX_STORAGE_SIZE);
             if (adminVO.getMaxStorageSize() == 0 && adminVO.getMaxStorageSize() == null) {
                 maxStorageSize = sysParamsService.getSysParamsValueByKey(SysConf.MAX_STORAGE_SIZE);
             } else {
@@ -293,31 +290,29 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
     @Override
     public String editAdmin(AdminVO adminVO) {
         Admin admin = adminService.getById(adminVO.getUid());
-        if (admin != null) {
-            //判断修改的对象是否是admin，admin的用户名必须是admin
-            if (admin.getUserName().equals(SysConf.ADMIN) && !adminVO.getUserName().equals(SysConf.ADMIN)) {
-                return ResultUtil.errorWithMessage("超级管理员用户名必须为admin");
-            }
-            QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
-            queryWrapper.ne(SQLConf.STATUS, EStatus.DISABLED);
-            queryWrapper.eq(SQLConf.USER_NAME, adminVO.getUserName());
-            List<Admin> adminList = adminService.list(queryWrapper);
-            if (adminList != null) {
-                for (Admin item : adminList) {
-                    if (item.getUid().equals(adminVO.getUid())) {
-                        continue;
-                    } else {
-                        return ResultUtil.errorWithMessage("修改失败，用户名存在");
-                    }
+        Assert.notNull(admin, MessageConf.PARAM_INCORRECT);
+        //判断修改的对象是否是admin，admin的用户名必须是admin
+        if (admin.getUserName().equals(SysConf.ADMIN) && !adminVO.getUserName().equals(SysConf.ADMIN)) {
+            return ResultUtil.errorWithMessage("超级管理员用户名必须为admin");
+        }
+        QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
+        queryWrapper.ne(SQLConf.STATUS, EStatus.DISABLED);
+        queryWrapper.eq(SQLConf.USER_NAME, adminVO.getUserName());
+        List<Admin> adminList = adminService.list(queryWrapper);
+        if (adminList != null) {
+            for (Admin item : adminList) {
+                if (item.getUid().equals(adminVO.getUid())) {
+                    continue;
+                } else {
+                    return ResultUtil.errorWithMessage("修改失败，用户名存在");
                 }
             }
         }
 
         // 判断是否更改了RoleUid，更新redis中admin的URL访问路径
-        if (StringUtils.isNotEmpty(adminVO.getRoleUid()) && !admin.getRoleUid().equals(adminVO.getRoleUid())) {
+        if (StringUtils.isNotEmpty(adminVO.getRoleUid()) && !adminVO.getRoleUid().equals(admin.getRoleUid())) {
             redisUtil.delete(RedisConf.ADMIN_VISIT_MENU + RedisConf.SEGMENTATION + admin.getUid());
         }
-        assert admin != null;
         admin.setUserName(adminVO.getUserName());
         admin.setAvatar(adminVO.getAvatar());
         admin.setNickName(adminVO.getNickName());
@@ -338,7 +333,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         // 更新完成后，判断是否调整了网盘的大小
         String result = pictureFeignClient.editStorageSize(admin.getUid(), adminVO.getMaxStorageSize() * 1024 * 1024);
         Map<String, String> resultMap = webUtil.getMessage(result);
-        if (SysConf.SUCCESS.equals(resultMap.get(SysConf.CODE))) {
+        if(SysConf.SUCCESS.equals(resultMap.get(SysConf.CODE))) {
             return ResultUtil.successWithMessage(resultMap.get(SysConf.MESSAGE));
         } else {
             return ResultUtil.errorWithMessage(resultMap.get(SysConf.MESSAGE));
@@ -424,7 +419,7 @@ public class AdminServiceImpl extends SuperServiceImpl<AdminMapper, Admin> imple
         List<String> tokenList = new ArrayList<>();
         tokenUidList.forEach(item -> {
             String token = redisUtil.get(RedisConf.LOGIN_UUID_KEY + RedisConf.SEGMENTATION + item);
-            if (StringUtils.isNotEmpty(token)) {
+            if(StringUtils.isNotEmpty(token)) {
                 tokenList.add(token);
             }
         });

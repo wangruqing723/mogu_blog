@@ -20,58 +20,61 @@
         placeholder="请输入参数键名"
       ></el-input>
 
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFind"
-                 v-permission="'/link/getList'">查找
-      </el-button>
-      <el-button class="filter-item" type="primary" @click="handleAdd" icon="el-icon-edit" v-permission="'/link/add'">
-        添加参数
-      </el-button>
+<!--      <el-select v-model="queryParams.paramsType" clearable placeholder="系统内置" style="width:140px">-->
+<!--        <el-option-->
+<!--          v-for="item in paramsTypeDictList"-->
+<!--          :key="item.uid"-->
+<!--          :label="item.dictLabel"-->
+<!--          :value="item.dictValue"-->
+<!--        ></el-option>-->
+<!--      </el-select>-->
+
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFind" v-permission="'/link/getList'">查找</el-button>
+      <el-button class="filter-item" type="primary" @click="handleAdd" icon="el-icon-edit" v-permission="'/link/add'">添加参数</el-button>
     </div>
 
-    <el-table :data="tableData" style="width: 100%" max-height="530">
+    <el-table :data="tableData" style="width: 100%">
       <el-table-column type="selection"></el-table-column>
 
       <el-table-column label="序号" width="60" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.$index + 1 }}</span>
+          <span>{{scope.$index + 1}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="参数名称" width="130" align="center">
+      <el-table-column label="参数名称" width="150" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.paramsName }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="参数键名" width="230" align="center">
+      <el-table-column label="参数键名" width="240" align="center">
         <template slot-scope="scope">
           <el-tag type="primary">{{ scope.row.paramsKey }}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="参数键值" width="120" align="center">
+      <el-table-column label="参数键值" width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.paramsValue }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="系统内置" width="100" align="center">
+      <el-table-column label="系统内置" width="80" align="center">
         <template slot-scope="scope">
           <template>
-            <el-tag v-for="item in paramsTypeDictList" :key="item.uid" :type="item.listClass"
-                    v-if="scope.row.paramsType == item.dictValue">{{ item.dictLabel }}
-            </el-tag>
+            <el-tag v-for="item in paramsTypeDictList" :key="item.uid" :type="item.listClass" v-if="scope.row.paramsType == item.dictValue">{{item.dictLabel}}</el-tag>
           </template>
         </template>
       </el-table-column>
 
-      <el-table-column label="备注" width="250" align="center">
+      <el-table-column label="备注" width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="排序" width="90" align="center">
+      <el-table-column label="排序" width="100" align="center">
         <template slot-scope="scope">
           <el-tag type="warning">{{ scope.row.sort }}</el-tag>
         </template>
@@ -87,12 +90,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" fixed="right" min-width="147">
+      <el-table-column label="操作" fixed="right" min-width="240">
         <template slot-scope="scope">
-          <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/link/edit'">编辑
-          </el-button>
-          <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/link/delete'">删除
-          </el-button>
+          <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/link/edit'">编辑</el-button>
+          <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/link/delete'">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -159,9 +160,13 @@
 </template>
 
 <script>
-import {addSysParams, deleteBatchSysParams, editSysParams, getSysParamsList} from "@/api/sysParams";
+import {
+  getSysParamsList,
+  addSysParams,
+  editSysParams,
+  deleteBatchSysParams
+} from "@/api/sysParams";
 import {getListByDictTypeList} from "@/api/sysDictData"
-
 export default {
   data() {
     return {
@@ -177,7 +182,7 @@ export default {
       paramsTypeDictList: [], // 友链状态字典
       paramsStatusDictList: [],
       paramsTypeDefault: null, // 友链状态默认值
-      paramsStatusDefault: null, //
+      paramsStatusDefault: null,
       formLabelWidth: "120px",
       isEditForm: false,
       form: {
@@ -220,7 +225,7 @@ export default {
     this.sysParamsList();
   },
   methods: {
-    sysParamsList: function () {
+    sysParamsList: function() {
       var params = {};
       params.paramsName = this.queryParams.paramsName;
       params.paramsKey = this.queryParams.paramsKey;
@@ -266,44 +271,50 @@ export default {
         }
       });
     },
-    handleFind: function () {
+    handleFind: function() {
       this.sysParamsList();
     },
-    handleAdd: function () {
+    handleAdd: function() {
       this.title = "增加参数"
       this.dialogFormVisible = true;
       this.form = this.getFormObject();
       this.isEditForm = false;
     },
-    handleEdit: function (row) {
-      this.title = "编辑参数";
+    handleEdit: function(row) {
+      title: "编辑参数";
       this.dialogFormVisible = true;
       this.isEditForm = true;
       this.form = row;
     },
-    handleDelete: function (row) {
+    handleDelete: function(row) {
       var that = this;
       this.$confirm("此操作将把参数配置删除, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      }).then(() => {
-        let list = [row]
-        deleteBatchSysParams(list).then(response => {
-          this.$commonUtil.message.success(response.message)
-          that.sysParamsList();
+      })
+        .then(() => {
+          let list = [row]
+          deleteBatchSysParams(list).then(response => {
+            if(response.code == this.$ECode.SUCCESS) {
+              this.$commonUtil.message.success(response.message)
+            } else {
+              this.$commonUtil.message.error(response.message)
+            }
+            that.sysParamsList();
+          });
+        })
+        .catch(() => {
+          this.$commonUtil.message.info("已取消删除")
         });
-      }).catch(() => {
-        this.$commonUtil.message.info("已取消删除")
-      });
     },
-    handleCurrentChange: function (val) {
+    handleCurrentChange: function(val) {
       this.currentPage = val;
       this.sysParamsList();
     },
-    submitForm: function () {
+    submitForm: function() {
       this.$refs.form.validate((valid) => {
-        if (!valid) {
+        if(!valid) {
           console.log("校验失败")
         } else {
           if (this.isEditForm) {

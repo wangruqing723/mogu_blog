@@ -86,6 +86,7 @@ public class UserVO extends BaseVO<UserVO> {
     /**
      * 自我简介最多150字
      */
+    @Range(groups = {Insert.class, Update.class}, max = 200)
     private String summary;
 
 
@@ -119,5 +120,16 @@ public class UserVO extends BaseVO<UserVO> {
      */
     @TableField(exist = false)
     private String photoUrl;
+
+    /**
+     * OrderBy排序字段（desc: 降序）
+     */
+    private String orderByDescColumn;
+
+    /**
+     * OrderBy排序字段（asc: 升序）
+     */
+    private String orderByAscColumn;
+
 
 }

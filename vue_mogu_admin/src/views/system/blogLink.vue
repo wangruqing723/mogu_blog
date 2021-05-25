@@ -24,7 +24,10 @@
       <el-button class="filter-item" type="primary" @click="handleAdd" icon="el-icon-edit" v-permission="'/link/add'">添加友链</el-button>
     </div>
 
-    <el-table :data="tableData" style="width: 100%" max-height="530">
+    <el-table :data="tableData"
+              style="width: 100%"
+              @sort-change="changeSort"
+              :default-sort="{prop: 'sort', order: 'descending'}">
       <el-table-column type="selection"></el-table-column>
 
       <el-table-column label="序号" width="60" align="center">
@@ -33,7 +36,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="网站图标" width="77" align="center">
+      <el-table-column label="网站图标" width="80" align="center">
         <template slot-scope="scope">
           <img
             v-if="scope.row.photoList"
@@ -43,31 +46,31 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="友链名" width="100%" align="center">
+      <el-table-column label="友链名" width="150" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.title }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="友链简介" width="150" align="center">
+      <el-table-column label="友链简介" width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.summary }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="友链URL" width="155" align="center">
+      <el-table-column label="友链URL" width="200" align="center">
         <template slot-scope="scope">
           <span @click="onClick(scope.row)" style="cursor:pointer;">{{ scope.row.url }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="站长邮箱" width="160" align="center">
+      <el-table-column label="站长邮箱" width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.email }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="发布状态" width="77" align="center">
+      <el-table-column label="发布状态" width="100" align="center" prop="linkStatus" sortable="custom" :sort-by="['linkStatus']">
         <template slot-scope="scope">
           <template>
             <el-tag v-for="item in linkStatusDictList" :key="item.uid" :type="item.listClass" v-if="scope.row.linkStatus == item.dictValue">{{item.dictLabel}}</el-tag>
@@ -75,19 +78,19 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="点击数" width="65" align="center">
+      <el-table-column label="点击数" width="100" align="center" prop="clickCount" sortable="custom" :sort-by="['clickCount']">
         <template slot-scope="scope">
           <span>{{ scope.row.clickCount }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="排序" width="60" align="center">
+      <el-table-column label="排序" width="100" align="center" prop="sort" sortable="custom" :sort-orders="['ascending', 'descending']">
         <template slot-scope="scope">
           <el-tag type="warning">{{ scope.row.sort }}</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column label="创建时间" width="100%" align="center">
+      <el-table-column label="创建时间" width="160" align="center" prop="createTime" sortable="custom" :sort-by="['createTime']">
         <template slot-scope="scope">
           <span>{{ scope.row.createTime }}</span>
         </template>
@@ -107,7 +110,7 @@
 <!--        </template>-->
 <!--      </el-table-column>-->
 
-      <el-table-column label="操作" fixed="right" min-width="217">
+      <el-table-column label="操作" fixed="right" min-width="240">
         <template slot-scope="scope">
           <el-button @click="handleStick(scope.row)" type="warning" size="small" v-permission="'/link/stick'">置顶</el-button>
           <el-button @click="handleEdit(scope.row)" type="primary" size="small" v-permission="'/link/edit'">编辑</el-button>
@@ -224,6 +227,8 @@ export default {
       photoList: [],
       fileIds: "",
       icon: false, //控制删除图标的显示
+      orderByDescColumn: "", // 降序字段
+      orderByAscColumn: "", // 升序字段
       form: {
         uid: null,
         content: "",
@@ -261,13 +266,26 @@ export default {
     this.linkList();
   },
   methods: {
+    // 从后台获取数据,重新排序
+    changeSort (val) {
+      // 根据当前排序重新获取后台数据,一般后台会需要一个排序的参数
+      if(val.order == "ascending") {
+        this.orderByAscColumn = val.prop
+        this.orderByDescColumn = ""
+      } else {
+        this.orderByAscColumn = ""
+        this.orderByDescColumn = val.prop
+      }
+      this.linkList()
+    },
     linkList: function() {
       var params = {};
       params.keyword = this.keyword;
       params.linkStatus = this.linkStatusKeyword
       params.currentPage = this.currentPage;
       params.pageSize = this.pageSize;
-
+      params.orderByDescColumn = this.orderByDescColumn
+      params.orderByAscColumn = this.orderByAscColumn
       getLinkList(params).then(response => {
         this.tableData = response.data.records;
         this.currentPage = response.data.current;

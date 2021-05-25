@@ -83,6 +83,17 @@ public class WebConfigServiceImpl extends SuperServiceImpl<WebConfigMapper, WebC
     }
 
     @Override
+    public String getWebSiteName() {
+        QueryWrapper<WebConfig> queryWrapper = new QueryWrapper<>();
+        queryWrapper.last(SysConf.LIMIT_ONE);
+        WebConfig webConfig = webConfigService.getOne(queryWrapper);
+        if (StringUtils.isNotEmpty(webConfig.getName())) {
+            return webConfig.getName();
+        }
+        return "";
+    }
+
+    @Override
     public WebConfig getWebConfigByShowList() {
         //从Redis中获取IP来源
         String webConfigResult = redisUtil.get(RedisConf.WEB_CONFIG);
@@ -122,14 +133,14 @@ public class WebConfigServiceImpl extends SuperServiceImpl<WebConfigMapper, WebC
 
         // 获取LOGO
         if (StringUtils.isNotEmpty(webConfig.getLogo()) && pictureMap.get(webConfig.getLogo()) != null) {
-            webConfig.setLogo(pictureMap.get(webConfig.getLogo()));
+            webConfig.setLogoPhoto(pictureMap.get(webConfig.getLogo()));
         }
         // 获取阿里支付码
-        if (StringUtils.isNotEmpty(webConfig.getLogo()) && pictureMap.get(webConfig.getAliPay()) != null) {
+        if (StringUtils.isNotEmpty(webConfig.getAliPay()) && pictureMap.get(webConfig.getAliPay()) != null) {
             webConfig.setAliPayPhoto(pictureMap.get(webConfig.getAliPay()));
         }
         // 获取微信支付码
-        if (StringUtils.isNotEmpty(webConfig.getLogo()) && pictureMap.get(webConfig.getWeixinPay()) != null) {
+        if (StringUtils.isNotEmpty(webConfig.getWeixinPay()) && pictureMap.get(webConfig.getWeixinPay()) != null) {
             webConfig.setWeixinPayPhoto(pictureMap.get(webConfig.getWeixinPay()));
         }
 

@@ -12,7 +12,7 @@
     <div v-if="saveTitle === '/tool'"><title>【放松一下】{{ info.title }}</title></div>
     <div v-if="keyword"><title>【搜索关键字: {{ keyword }}】{{ info.title }}</title></div>
     <div v-if="titleKeyword"><title>【{{ titleKeyword }}】{{ info.title }}</title></div>
-    <info v-if="saveTitle === '/info'" @showParentTitle="showTitle"/>
+    <!--    <info v-if="saveTitle === '/info'" @showParentTitle="showTitle"/>   直接在路由的时候绑定-->
     <div v-if="saveTitle === '/info'">
       <title>【{{ blogData.title }}】{{ info.title }}</title>
       <meta name="keywords" :content="blogData.blogSort.sortName+','+tagName">
@@ -29,8 +29,7 @@
 
   <header
     :class="isVisible?'header-navigation slideDown':'header-navigation slideUp'"
-    id="header"
-  >
+    id="header">
     <nav>
       <div class="logo">
         <router-link to="/">
@@ -43,11 +42,42 @@
       </h2>
 
       <ul id="starlist" :style="showHead?'display: block':''">
-        <li>
-          <router-link to="/">
-            <a href="javascript:void(0);" :class="[saveTitle == '/' ? 'title' : '']">首页</a>
-          </router-link>
+
+        <li v-for="webNavbar in webNavbarList" :key="webNavbar.uid">
+
+          <!--判断是否有下拉菜单-->
+          <span v-if="webNavbar.childWebNavbar && webNavbar.childWebNavbar.length > 0">
+            <el-dropdown trigger="click">
+            <span class="el-dropdown-link">
+              {{ webNavbar.name }}<i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item v-for="childWebNavbar in webNavbar.childWebNavbar" :key="index">
+                <router-link :to="childWebNavbar.url" v-if="childWebNavbar.isJumpExternalUrl == 0">
+                  <a href="javascript:void(0);" @click="openHead">{{ childWebNavbar.name }}</a>
+                </router-link>
+                <a v-if="childWebNavbar.isJumpExternalUrl == 1" :href="childWebNavbar.url"
+                   target="_blank">{{ childWebNavbar.name }}</a>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          </span>
+          <!--没有有下拉菜单-->
+          <span v-else>
+            <router-link :to="webNavbar.url" v-if="webNavbar.isJumpExternalUrl == 0">
+            <a href="javascript:void(0);" @click="openHead"
+               :class="[saveTitle == webNavbar.url ? 'title' : '']">{{ webNavbar.name }}</a>
+            </router-link>
+            <a v-if="webNavbar.isJumpExternalUrl == 1" :href="webNavbar.url" target="_blank"
+               :class="[saveTitle == webNavbar.url ? 'title' : '']">{{ webNavbar.name }}</a>
+          </span>
         </li>
+
+        <!--        <li>-->
+        <!--          <router-link to="/">-->
+        <!--            <a href="javascript:void(0);" :class="[saveTitle == '/' ? 'title' : '']">首页</a>-->
+        <!--          </router-link>-->
+        <!--        </li>-->
 
         <!--        <li>-->
         <!--          <router-link to="/about">-->
@@ -55,23 +85,23 @@
         <!--          </router-link>-->
         <!--        </li>-->
 
-        <li>
-          <router-link to="/sort">
-            <a href="javascript:void(0);" :class="[saveTitle == '/sort' ? 'title' : '']">归档</a>
-          </router-link>
-        </li>
+        <!--        <li>-->
+        <!--          <router-link to="/sort">-->
+        <!--            <a href="javascript:void(0);" :class="[saveTitle == '/sort' ? 'title' : '']">归档</a>-->
+        <!--          </router-link>-->
+        <!--        </li>-->
 
-        <li>
-          <router-link to="/classify">
-            <a href="javascript:void(0);" :class="[saveTitle == '/classify' ? 'title' : '']">分类</a>
-          </router-link>
-        </li>
+        <!--        <li>-->
+        <!--          <router-link to="/classify">-->
+        <!--            <a href="javascript:void(0);" :class="[saveTitle == '/classify' ? 'title' : '']">分类</a>-->
+        <!--          </router-link>-->
+        <!--        </li>-->
 
-        <li>
-          <router-link to="/tag">
-            <a href="javascript:void(0);" :class="[saveTitle == '/tag' ? 'title' : '']">标签</a>
-          </router-link>
-        </li>
+        <!--        <li>-->
+        <!--          <router-link to="/tag">-->
+        <!--            <a href="javascript:void(0);" :class="[saveTitle == '/tag' ? 'title' : '']">标签</a>-->
+        <!--          </router-link>-->
+        <!--        </li>-->
 
         <!--        <li>-->
         <!--          <router-link to="/subject">-->
@@ -85,26 +115,19 @@
         <!--          </router-link>-->
         <!--        </li>-->
 
-        <li>
-          <router-link to="/time">
-            <a href="javascript:void(0);" :class="[saveTitle == '/time' ? 'title' : '']">时间轴</a>
-          </router-link>
-        </li>
+        <!--        <li>-->
+        <!--          <router-link to="/time">-->
+        <!--            <a href="javascript:void(0);" :class="[saveTitle == '/time' ? 'title' : '']">时间轴</a>-->
+        <!--          </router-link>-->
+        <!--        </li>-->
 
-        <li v-if="openComment=='1'">
-          <router-link to="/messageBoard">
-            <a href="javascript:void(0);" :class="[saveTitle == '/messageBoard' ? 'title' : '']">留言板</a>
-          </router-link>
-        </li>
-
-        <li>
-          <router-link to="/tool">
-            <a href="javascript:void(0);" :class="[saveTitle == '/tool' ? 'title' : '']">放松一下</a>
-          </router-link>
-        </li>
+        <!--        <li v-if="openComment=='1'">-->
+        <!--          <router-link to="/messageBoard">-->
+        <!--            <a href="javascript:void(0);" :class="[saveTitle == '/messageBoard' ? 'title' : '']">留言板</a>-->
+        <!--          </router-link>-->
+        <!--        </li>-->
 
       </ul>
-
 
       <div class="searchbox">
         <div id="search_bar" :class="(showSearch || keyword.length > 0)?'search_bar search_open':'search_bar'">
@@ -117,19 +140,22 @@
             v-model="keyword"
             v-on:keyup.enter="search"
           >
-          <p class="search_ico" @click="clickSearchIco">
+          <p class="search_ico" @click="clickSearchIco" :style="(browserFlag == 1)?'':'top:17px'">
             <span></span>
           </p>
         </div>
       </div>
 
       <el-dropdown @command="handleCommand" class="userInfoAvatar">
+
         <span class="el-dropdown-link">
-          <img v-if="!isLogin" src="../../static/images/defaultAvatar.png">
-          <img v-if="isLogin&&userInfo.photoUrl!=undefined" :src="userInfo.photoUrl"
-               onerror="onerror=null;src='https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'">
-          <img v-if="isLogin&&userInfo.photoUrl==undefined"
-               src="https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif">
+          <el-badge :value="userReceiveCommentCount" class="item" :hidden="!isLogin || userReceiveCommentCount == 0">
+            <img v-if="!isLogin" src="../../static/images/defaultAvatar.png">
+            <img v-if="isLogin&&userInfo.photoUrl!=undefined" :src="userInfo.photoUrl"
+                 onerror="onerror=null;src=defaultAvatar">
+            <img v-if="isLogin&&userInfo.photoUrl==undefined"
+                 :src="defaultAvatar">
+          </el-badge>
         </span>
 
         <el-dropdown-menu slot="dropdown">
@@ -140,7 +166,6 @@
 
       </el-dropdown>
 
-
     </nav>
   </header>
   <LoginBox v-if="showLogin" @closeLoginBox="closeLoginBox"></LoginBox>
@@ -148,16 +173,15 @@
   <el-drawer
     :show-close="true"
     :visible.sync="drawer"
+    :size="drawerSize"
     :with-header="false">
 
     <el-tabs type="border-card" tab-position="left" v-model="activeName" style="margin-top: 50px; height: 100%;"
              @tab-click="handleClick">
       <el-tab-pane label="个人中心" name="0">
         <span slot="label"><i class="el-icon-user-solid"></i> 个人中心</span>
-
         <el-form label-position="left" :model="userInfo" label-width="100px" :rules="rules" ref="userInfo" size="small">
           <el-form-item label="用户头像" :label-width="labelWidth">
-
             <div class="imgBody" v-if="userInfo.photoUrl">
               <i class="el-icon-error inputClass" v-show="icon" @click="deletePhoto('user')"
                  @mouseover="icon = true"></i>
@@ -201,11 +225,11 @@
             <el-input v-model="userInfo.qqNumber" style="width: 100%"></el-input>
           </el-form-item>
 
-          <el-form-item label="职业" :label-width="labelWidth">
+          <el-form-item label="职业" :label-width="labelWidth" prop="occupation">
             <el-input v-model="userInfo.occupation" style="width: 100%"></el-input>
           </el-form-item>
 
-          <el-form-item label="简介" :label-width="labelWidth">
+          <el-form-item label="简介" :label-width="labelWidth" prop="summary">
             <el-input
               type="textarea"
               :autosize="{ minRows: 5, maxRows: 10}"
@@ -224,17 +248,16 @@
 
       <el-tab-pane label="我的评论" name="1">
         <span slot="label"><i class="el-icon-message-solid"></i> 我的评论</span>
-        <div style="width: 100%; height: 680px; overflow:auto;">
+        <div style="width: 100%; height: 840px;overflow:auto;">
           <el-timeline>
             <el-timeline-item v-for="comment in commentList" :key="comment.uid" :timestamp="timeAgo(comment.createTime)"
                               placement="top">
               <el-card>
                 <div class="commentList">
                 <span class="left p1">
-                  <img v-if="comment.user"
-                       :src="comment.user.photoUrl ? comment.user.photoUrl:'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'"
-                       onerror="onerror=null;src='https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'"/>
-                  <img v-else src="https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif"/>
+                  <img v-if="comment.user" :src="comment.user.photoUrl ? comment.user.photoUrl:defaultAvatar"
+                       onerror="onerror=null;src=defaultAvatar"/>
+                  <img v-else :src="defaultAvatar"/>
                 </span>
 
                   <span class="right p1">
@@ -259,18 +282,21 @@
       </el-tab-pane>
 
       <el-tab-pane label="我的回复" name="2">
-        <span slot="label"><i class="el-icon-s-promotion"></i> 我的回复</span>
-        <div style="width: 100%; height: 680px;overflow:auto">
+        <span slot="label">
+          <el-badge :value="userReceiveCommentCount" class="item" :hidden="!isLogin || userReceiveCommentCount == 0">
+            <i class="el-icon-s-promotion"></i> 我的回复
+          </el-badge>
+        </span>
+        <div style="width: 100%; height: 840px;overflow:auto">
           <el-timeline>
             <el-timeline-item v-for="reply in replyList" :key="reply.uid" :timestamp="timeAgo(reply.createTime)"
                               placement="top">
               <el-card>
                 <div class="commentList">
                   <span class="left p1">
-                    <img v-if="reply.user"
-                         :src="reply.user.photoUrl ? reply.user.photoUrl:'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'"
-                         onerror="onerror=null;src='https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'"/>
-                    <img v-else src="https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif"/>
+                    <img v-if="reply.user" :src="reply.user.photoUrl ? reply.user.photoUrl:defaultAvatar"
+                         onerror="onerror=null;src=defaultAvatar"/>
+                    <img v-else :src="defaultAvatar"/>
                   </span>
 
                   <span class="right p1">
@@ -298,7 +324,7 @@
       </el-tab-pane>
       <el-tab-pane label="我的点赞" name="3">
         <span slot="label"><i class="el-icon-star-on"></i> 我的点赞</span>
-        <div style="width: 100%; height: 680px;overflow:auto">
+        <div style="width: 100%; height: 840px;overflow:auto">
           <el-timeline>
             <el-timeline-item v-for="praise in praiseList" :key="praise.uid" :timestamp="timeAgo(praise.createTime)"
                               placement="top">
@@ -322,15 +348,14 @@
         <span slot="label"><i class="el-icon-phone"></i> 我的反馈</span>
 
         <el-collapse v-model="activeNames">
-          <el-collapse-item title="反馈须知" name="2">
+          <el-collapse-item title="反馈须知" name="1">
             <div>如果您对本站有什么想法，可以在这里进行反馈</div>
             <div>或者加入我们的QQ群进行交流</div>
           </el-collapse-item>
         </el-collapse>
+        <el-divider></el-divider>
 
-        <!--        <el-divider></el-divider>-->
-
-        <div style="width: 100%;height: 380px;overflow: auto;padding-top: 10px;">
+        <div style="width: 100%; height: 450px;overflow: auto;padding-top: 10px;">
           <el-timeline>
             <el-timeline-item v-for="feedbackItem in feedbackList" :key="feedbackItem.uid"
                               :timestamp="timeAgo(feedbackItem.createTime)" placement="top">
@@ -409,23 +434,14 @@
 
         <el-form label-position="left" :model="blogLink" label-width="100px" ref="blogLink" :rules="linkRules">
           <el-collapse v-model="activeNames">
-            <el-collapse-item title="申请须知" name="1">
-              <div>请确定贵站可以稳定运营</div>
-              <div>原创博客优先，技术类博客优先</div>
-              <div>申请前请先添加下方Java博客友链</div>
-              <div>欢迎各位小伙伴一起互换友链~</div>
-            </el-collapse-item>
-            <el-collapse-item title="Java博客" name="2">
-              <div>网站名称：Java博客</div>
-              <div>网站LOGO：https://image.wyong.top/favicon.png</div>
-              <div>网站简介：Java博客 - 专注于技术分享的博客平台</div>
-              <div>网站地址：https://www.wyong.top</div>
+            <el-collapse-item title="友链申请需知" name="1">
+              <span v-html="info.linkApplyTemplate">{{ info.linkApplyTemplate }}</span>
             </el-collapse-item>
           </el-collapse>
 
-          <!--          <el-divider></el-divider>-->
+          <el-divider></el-divider>
 
-          <el-form-item label="网站图标" style="margin-top: 10px;">
+          <el-form-item label="网站图标">
             <div class="imgBody" v-if="blogLink.photoList">
               <i class="el-icon-error inputClass" v-show="icon" @click="deletePhoto('link')"
                  @mouseover="icon = true"></i>
@@ -497,17 +513,15 @@
     :url="url"
     lang-type="zh"
     @close="close"
-    @crop-upload-success="cropSuccess"
-  />
+    @crop-upload-success="cropSuccess"/>
 
   <div>
-    <router-view/>
+    <router-view @showParentTitle="showTitle"/>
   </div>
 
   <footer>
     <p>
-      <!--      <a href="http://localhost:9527/" target="_blank">&nbsp;&nbsp;</a>-->
-      <a href="javasrcipt:void(0);" @click="goIndex()">Copyright 2019-2021&nbsp;{{ info.name }}&nbsp;</a>
+      <a href="javasrcipt:void(0);" @click="goIndex()">Copyright &nbsp;{{ info.name }}&nbsp;</a>
       <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=42112502000119"
          target="_blank">{{ info.recordNum }}</a>
     </p>
@@ -526,7 +540,7 @@
 
 <script>
 import AvatarCropper from '@/components/AvatarCropper'
-import {getWebConfig} from "../api/index";
+import {getWebConfig, getWebNavbar} from "../api/index";
 import {delCookie, getCookie, setCookie} from "@/utils/cookieUtils";
 import {
   authVerify,
@@ -537,20 +551,23 @@ import {
   getFeedbackList,
   addFeedback
 } from "../api/user";
-import {getCommentListByUser, getPraiseListByUser} from "../api/comment";
+import {
+  getCommentListByUser,
+  getPraiseListByUser,
+  getUserReceiveCommentCount,
+  readUserReceiveCommentCount
+} from "../api/comment";
 import LoginBox from "../components/LoginBox";
 import {getListByDictTypeList} from "@/api/sysDictData"
 // vuex中有mapState方法，相当于我们能够使用它的getset方法
 import {mapMutations} from 'vuex';
 import {timeAgo} from "../utils/webUtils";
-import info from "./info"
 
 export default {
   name: "index",
   components: {
     LoginBox,
     AvatarCropper,
-    info
   },
   data() {
     return {
@@ -569,6 +586,8 @@ export default {
       imagecropperShow: false,
       imagecropperKey: 0,
       url: process.env.PICTURE_API + "/file/cropperPicture",
+      webSite: process.env.VUE_MOGU_WEB,
+      webNavbarList: [],
       drawer: false,
       info: {},
       blogData: {
@@ -579,7 +598,7 @@ export default {
       saveTitle: "",
       keyword: "",
       titleKeyword: "",
-      showSearch: false, // 控制搜索框的弹出
+      showSearch: false, //控制搜索框的弹出
       showHead: false, //控制导航栏的弹出
       isCdTopVisible: false,
       isVisible: true, //控制web端导航的隐藏和显示
@@ -587,22 +606,29 @@ export default {
       showLogin: false, //显示登录框
       userInfo: { // 用户信息
       },
-      feedback: {}, // 反馈提交
-      blogLink: {}, // 友链申请
+      feedback: {}, //反馈提交
+      blogLink: {}, //友链申请
       icon: false, //控制删除图标的显示
       labelWidth: "100px",
       commentList: [], //我的评论
-      replyList: [], // 我的回复
-      praiseList: [], // 我的点赞
-      feedbackList: [], // 我的反馈
-      openComment: "0", // 是否开启评论
+      replyList: [], //我的回复
+      praiseList: [], //我的点赞
+      feedbackList: [], //我的反馈
+      openComment: "0", //是否开启评论
+      defaultAvatar: this.$SysConf.defaultAvatar, // 默认头像
+      drawerSize: "30%",
+      userReceiveCommentCount: 0, // 用户收到的评论数
+      browserFlag: 1, // 浏览器标志【默认Chrome】
       rules: {
         qqNumber: [
           {pattern: /[1-9]([0-9]{5,11})/, message: '请输入正确的QQ号码'},
         ],
         email: [
           {pattern: /\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/, message: '请输入正确的邮箱'},
-        ]
+        ],
+        summary: [
+          {min: 0, max: 200, message: '长度在0到200个字符'},
+        ],
       },
       linkRules: {
         title: [
@@ -619,7 +645,7 @@ export default {
         ],
         email: [
           {pattern: /\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}/, message: '请输入正确的邮箱'},
-        ]
+        ],
       },
       userInfoRules: {
         oldPwd: [
@@ -644,13 +670,11 @@ export default {
     window.addEventListener("scroll", function () {
       let scrollTop = document.documentElement.scrollTop; //当前的的位置
       let scrollHeight = document.documentElement.scrollHeight; //最高的位置
-
       if (scrollTop > offset) {
         that.isCdTopVisible = true;
       } else {
         that.isCdTopVisible = false;
       }
-
       if (scrollTop > after) {
         that.isVisible = false;
       } else {
@@ -658,6 +682,13 @@ export default {
       }
       after = scrollTop;
     });
+
+    // 屏幕自适应
+    window.onresize = () => {
+      return (() => {
+        that.setSize()
+      })()
+    }
   },
   watch: {
     $route(to, from) {
@@ -668,15 +699,20 @@ export default {
     // 判断登录状态位是否改变（用于控制弹框）
     '$store.state.app.loginMessage': function (newFlag, oldFlag) {
       this.showLogin = true
-    },
+    }
   },
   created() {
     // 字典查询
-    this.getDictList();
+    this.getDictList()
     this.getToken()
     this.getKeyword()
     this.getCurrentPageTitle()
     this.getWebConfigInfo()
+    this.getWebNavbarList()
+    this.setSize()
+    this.setUserReceiveCommentCount()
+    // 获取浏览器类型
+    this.getBrowser()
   },
   methods: {
     //拿到vuex中的写的方法
@@ -694,7 +730,24 @@ export default {
       }
       this.$router.push({path: "/list", query: {keyword: this.keyword}});
     },
-
+    setSize() {
+      // 屏幕大于950px的时候，显示侧边栏
+      let clientWidth = document.body.clientWidth
+      console.log("客户端宽度", clientWidth)
+      if (clientWidth > 1360) {
+        this.drawerSize = "30%";
+        this.showSearch = true
+      } else if (clientWidth < 1360 && clientWidth > 950) {
+        this.drawerSize = "50%";
+        this.showSearch = true
+      } else if (clientWidth < 950 && clientWidth > 650) {
+        this.drawerSize = "70%";
+        this.showSearch = false
+      } else {
+        this.drawerSize = "95%";
+        this.showSearch = false
+      }
+    },
     //跳转到文章详情
     goToInfo(uid) {
       let routeData = this.$router.resolve({
@@ -702,6 +755,27 @@ export default {
         query: {blogUid: uid}
       });
       window.open(routeData.href, '_blank');
+    },
+
+    // 获取导航栏列表
+    getWebNavbarList() {
+      console.log("获取导航栏")
+      var params = {};
+      params.isShow = 1
+      getWebNavbar(params).then(response => {
+        if (response.code == this.$ECode.SUCCESS) {
+          console.log("获取到的导航栏列表", response)
+          let webNavbarList = response.data
+          let newWebNavbarList = []
+          for (let a = 0; a < webNavbarList.length; a++) {
+            if (webNavbarList[a].isShow == 1) {
+              newWebNavbarList.push(webNavbarList[a])
+            }
+          }
+          this.webNavbarList = newWebNavbarList
+          setCookie("webNavbarList", JSON.stringify(webNavbarList), 1)
+        }
+      })
     },
 
     // 跳转到资源详情
@@ -714,6 +788,7 @@ export default {
           });
           window.open(routeData.href, '_blank');
         }
+          ;
           break;
         case "BLOG_INFO": {
           let routeData = this.$router.resolve({
@@ -722,6 +797,7 @@ export default {
           });
           window.open(routeData.href, '_blank');
         }
+          ;
           break;
         case "ABOUT": {
           let routeData = this.$router.resolve({
@@ -729,6 +805,7 @@ export default {
           });
           window.open(routeData.href, '_blank');
         }
+          ;
           break;
       }
     },
@@ -767,36 +844,55 @@ export default {
         }
       })
     },
+
     // 标签选择
     handleClick(tab, event) {
       switch (tab.index) {
         case "0": {
           console.log("点击个人中心")
         }
+          ;
           break;
         case "1": {
           console.log("点击我的评论")
         }
+          ;
           break;
         case "2": {
           console.log("点击我的回复")
+          // 判断用户是否未读的回复
+          if (this.userReceiveCommentCount > 0) {
+            // 设置已阅读
+            readUserReceiveCommentCount().then(response => {
+              if (response.code == this.$ECode.SUCCESS) {
+                // 阅读成功
+                console.log(response.message)
+                this.userReceiveCommentCount = 0
+              }
+            })
+          }
         }
+          ;
           break;
         case "3": {
           console.log("点击我的点赞")
         }
+          ;
           break;
         case "4": {
           console.log("点击我的反馈")
         }
+          ;
           break;
         case "5": {
           console.log("点击申请友链")
         }
+          ;
           break;
         case "6": {
           console.log("点击修改密码")
         }
+          ;
           break;
       }
     },
@@ -818,7 +914,6 @@ export default {
     cropSuccess(resData) {
       this.imagecropperShow = false
       this.imagecropperKey = this.imagecropperKey + 1
-      console.log("判断激活", this.activeName)
       // 判断当前激活的页面
       if (this.activeName == "0") {
         // 激活个人中心页面
@@ -830,8 +925,8 @@ export default {
         this.blogLink.photoList = photoList
         this.blogLink.fileUid = resData[0].uid
       }
-
     },
+
     deletePhoto: function (type) {
       switch (type) {
         case "user": {
@@ -847,8 +942,8 @@ export default {
         }
           break;
       }
-
     },
+
     close() {
       this.imagecropperShow = false
     },
@@ -876,6 +971,7 @@ export default {
             }
           })
         }
+          ;
           break;
 
         case "replyBlogLink": {
@@ -898,13 +994,11 @@ export default {
               });
             }
           })
-
         }
           break;
 
         case "feedback": {
           var feedback = this.feedback
-
           if (feedback.title == undefined || $.trim(feedback.title) == "" || feedback.content == undefined || $.trim(feedback.content) == "") {
             this.$message({
               type: "error",
@@ -1016,6 +1110,14 @@ export default {
         this.setLoginState(this.isLogin);
       }
     },
+    setUserReceiveCommentCount: function () {
+      getUserReceiveCommentCount().then(response => {
+        console.log("获取用户收到的评论数", response)
+        if (response.code == this.$ECode.SUCCESS) {
+          this.userReceiveCommentCount = response.data
+        }
+      });
+    },
     getKeyword: function () {
       var tempValue = decodeURI(this.getUrlVars()["keyword"]);
       if (tempValue == null || tempValue == undefined || tempValue == "undefined") {
@@ -1041,6 +1143,7 @@ export default {
     },
 
     showTitle: function (blogData) {
+      console.log(blogData)
       this.blogData = blogData;
       var tagNameList = [];
       this.blogData.tagList.forEach(function (tag, index) {
@@ -1048,7 +1151,6 @@ export default {
       });
       this.tagName = tagNameList.join(",");
     },
-
     /**
      * 获取当前所在页面的标题
      * @returns {{}}
@@ -1067,8 +1169,7 @@ export default {
       }
       var result = test.substring(start + 1, end);
       this.saveTitle = result;
-    }
-    ,
+    },
     /**
      * 获取网站配置
      */
@@ -1088,8 +1189,7 @@ export default {
           }
         });
       }
-    }
-    ,
+    },
     /**
      * 截取URL中的参数
      * @returns {{}}
@@ -1103,8 +1203,7 @@ export default {
         }
       );
       return vars;
-    }
-    ,
+    },
     clickSearchIco: function () {
       if (this.keyword != "") {
         this.search();
@@ -1112,37 +1211,30 @@ export default {
       this.showSearch = !this.showSearch;
       //获取焦点
       this.$refs.searchInput.focus();
-    }
-    ,
+    },
     openHead: function () {
       this.showHead = !this.showHead;
-    }
-    ,
+    },
     returnTop: function () {
       window.scrollTo(0, 0);
-    }
-    ,
+    },
     userLogin: function () {
       this.showLogin = true;
-    }
-    ,
+    },
     userLogout: function () {
       deleteUserAccessToken(getCookie("token"));
       delCookie("token");
       let url = window.parent.location.href;
-      let haveToken = url.indexOf("?token")
+      let haveToken = url.indexOf("token")
       if (haveToken != -1) {
-        let list = url.split("?token");
+        let list = url.split("token");
         this.isLogin = false;
         window.location.href = list[0]
         let userInfo = {};
         this.setUserInfo(userInfo)
-      } else {
-        window.location.reload()
       }
-
-    }
-    ,
+      window.location.reload()
+    },
 
     // 点击头像触发的动作
     handleCommand(command) {
@@ -1162,23 +1254,31 @@ export default {
           this.drawer = true;
           // 获取评论列表
           this.getCommentList();
-
           // 获取点赞列表
           this.getPraiseList()
-
           // 获取反馈列表
           this.getFeedback()
-
         }
-          ;
           break;
       }
-    }
-    ,
+    },
     closeLoginBox: function () {
       this.showLogin = false;
-    }
+    },
+    // 获取浏览器类型
+    getBrowser() {
+      let sBrowser, sUsrAg = navigator.userAgent;
+      if (sUsrAg.indexOf("Firefox") > -1) {
+        sBrowser = "Mozilla Firefox";
+        this.browserFlag = 2;
+        // "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:61.0) Gecko/20100101 Firefox/61.0"
+      } else if (sUsrAg.indexOf("Chrome") > -1) {
+        sBrowser = "Google Chrome or Chromium";
+        this.browserFlag = 1;
+        // "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/66.0.3359.181 Chrome/66.0.3359.181 Safari/537.36"
+      }
 
+    },
   }
 };
 </script>
@@ -1222,7 +1322,6 @@ export default {
   height: 35px;
   position: absolute;
   right: -77px;
-  top: 15px;
 }
 
 .userInfoAvatar img {
@@ -1236,13 +1335,13 @@ export default {
     width: 35px;
     height: 35px;
     position: absolute;
-    right: 0px;
-    top: 12px;
+    right: 10px;
+    top: 0px;
   }
 
   .searchbox {
     position: absolute;
-    right: 40px;
+    right: 50px;
     top: 0
   }
 }
@@ -1365,5 +1464,18 @@ export default {
   display: inline-block;
   width: 240px;
   margin-bottom: 5px;
+}
+
+.search_ico2 {
+  width: 60px;
+  height: 60px;
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 15px;
+  padding: 0;
+  margin: 0;
+  line-height: 60px;
+  cursor: pointer;
 }
 </style>

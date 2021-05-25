@@ -50,6 +50,7 @@
         <jaxb.version>2.3.0</jaxb.version>
         <minio.version>7.1.4</minio.version>
         <spring.mock.version>2.0.8</spring.mock.version>
+        <knife4j.version>3.0.2</knife4j.version>
         <spring-cloud-alibaba.version>2.2.4.RELEASE</spring-cloud-alibaba.version>
         <sentinel.version>2.1.0.RELEASE</sentinel.version>
     </properties>

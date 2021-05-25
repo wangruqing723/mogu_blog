@@ -168,6 +168,15 @@ public class BaseRedisConf {
      */
     public final static String BLOG_CONTRIBUTE_COUNT = "BLOG_CONTRIBUTE_COUNT";
 
+    public final static String BLOG_LINK = "BLOG_LINK";
+
+    public final static String BLOG_TAG = "BLOG_TAG";
+
+    /**
+     * 用户收到评论数
+     */
+    public final static String USER_RECEIVE_COMMENT_COUNT = "USER_RECEIVE_COMMENT_COUNT";
+
     /**
      * 登录方式
      */

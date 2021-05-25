@@ -1,14 +1,20 @@
 package com.moxi.mogublog.web.restapi;
 
 
+import com.moxi.mogublog.commons.entity.Link;
+import com.moxi.mogublog.commons.entity.Tag;
+import com.moxi.mogublog.utils.JsonUtils;
+import com.moxi.mogublog.utils.RedisUtil;
 import com.moxi.mogublog.utils.ResultUtil;
 import com.moxi.mogublog.utils.StringUtils;
+import com.moxi.mogublog.web.annotion.log.BussinessLog;
+import com.moxi.mogublog.web.annotion.requestLimit.RequestLimit;
 import com.moxi.mogublog.web.global.MessageConf;
 import com.moxi.mogublog.web.global.SysConf;
-import com.moxi.mogublog.web.log.BussinessLog;
-import com.moxi.mogublog.web.requestLimit.RequestLimit;
+import com.moxi.mogublog.xo.global.RedisConf;
 import com.moxi.mogublog.xo.service.*;
 import com.moxi.mougblog.base.enums.EBehavior;
+import com.moxi.mougblog.base.global.Constants;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -20,6 +26,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 /**
  * 首页 RestApi
  *
@@ -42,6 +51,10 @@ public class IndexRestApi {
     private SysParamsService sysParamsService;
     @Autowired
     private BlogService blogService;
+    @Autowired
+    private WebNavbarService webNavbarService;
+    @Autowired
+    private RedisUtil redisUtil;
 
     @RequestLimit(amount = 200, time = 60000)
     @ApiOperation(value = "通过推荐等级获取博客列表", notes = "通过推荐等级获取博客列表")
@@ -97,14 +110,34 @@ public class IndexRestApi {
     @GetMapping("/getHotTag")
     public String getHotTag() {
         String hotTagCount = sysParamsService.getSysParamsValueByKey(SysConf.HOT_TAG_COUNT);
-        return ResultUtil.result(SysConf.SUCCESS, tagService.getHotTag(Integer.valueOf(hotTagCount)));
+        // 从Redis中获取友情链接
+        String jsonResult = redisUtil.get(RedisConf.BLOG_TAG + Constants.SYMBOL_COLON + hotTagCount);
+        if (StringUtils.isNotEmpty(jsonResult)) {
+            List jsonResult2List = JsonUtils.jsonArrayToArrayList(jsonResult);
+            return ResultUtil.result(SysConf.SUCCESS, jsonResult2List);
+        }
+        List<Tag> tagList = tagService.getHotTag(Integer.valueOf(hotTagCount));
+        if (tagList.size() > 0) {
+            redisUtil.setEx(RedisConf.BLOG_TAG + Constants.SYMBOL_COLON + hotTagCount, JsonUtils.objectToJson(tagList), 1, TimeUnit.HOURS);
+        }
+        return ResultUtil.result(SysConf.SUCCESS, tagList);
     }
 
     @ApiOperation(value = "获取友情链接", notes = "获取友情链接")
     @GetMapping("/getLink")
     public String getLink() {
         String friendlyLinkCount = sysParamsService.getSysParamsValueByKey(SysConf.FRIENDLY_LINK_COUNT);
-        return ResultUtil.result(SysConf.SUCCESS, linkService.getListByPageSize(Integer.valueOf(friendlyLinkCount)));
+        // 从Redis中获取友情链接
+        String jsonResult = redisUtil.get(RedisConf.BLOG_LINK + Constants.SYMBOL_COLON + friendlyLinkCount);
+        if (StringUtils.isNotEmpty(jsonResult)) {
+            List jsonResult2List = JsonUtils.jsonArrayToArrayList(jsonResult);
+            return ResultUtil.result(SysConf.SUCCESS, jsonResult2List);
+        }
+        List<Link> linkList = linkService.getListByPageSize(Integer.valueOf(friendlyLinkCount));
+        if (linkList.size() > 0) {
+            redisUtil.setEx(RedisConf.BLOG_LINK + Constants.SYMBOL_COLON + friendlyLinkCount, JsonUtils.objectToJson(linkList), 1, TimeUnit.HOURS);
+        }
+        return ResultUtil.result(SysConf.SUCCESS, linkList);
     }
 
     @BussinessLog(value = "点击友情链接", behavior = EBehavior.FRIENDSHIP_LINK)
@@ -120,6 +153,13 @@ public class IndexRestApi {
     public String getWebConfig() {
         log.info("获取网站配置");
         return ResultUtil.result(SysConf.SUCCESS, webConfigService.getWebConfigByShowList());
+    }
+
+    @ApiOperation(value = "获取网站导航栏", notes = "获取网站导航栏")
+    @GetMapping("/getWebNavbar")
+    public String getWebNavbar() {
+        log.info("获取网站导航栏");
+        return ResultUtil.result(SysConf.SUCCESS, webNavbarService.getAllList());
     }
 
     @BussinessLog(value = "记录访问页面", behavior = EBehavior.VISIT_PAGE)

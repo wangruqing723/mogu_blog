@@ -42,33 +42,33 @@
       </el-button>
     </div>
 
-    <el-table :data="tableData" style="width: 100%" max-height="530" @selection-change="handleSelectionChange">
+    <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
 
       <el-table-column type="selection"></el-table-column>
 
-      <el-table-column label="序号" width="100%" align="center">
+      <el-table-column label="序号" width="60" align="center">
         <template slot-scope="scope">
           <span>{{ scope.$index + 1 }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="头像" width="100%" align="center">
+      <el-table-column label="头像" width="160" align="center">
         <template slot-scope="scope">
           <img
             v-if="scope.row.user"
             :src="scope.row.user.photoUrl"
-            onerror="onerror=null;src='https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'"
+            onerror="onerror=null;src=defaultAvatar"
             style="width: 100px;height: 100px;"
           >
           <img
             v-else
-            src="https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif"
+            :src="defaultAvatar"
             style="width: 100px;height: 100px;"
           >
         </template>
       </el-table-column>
 
-      <el-table-column label="评论人" width="110" align="center">
+      <el-table-column label="评论人" width="150" align="center">
         <template slot-scope="scope">
           <el-tag type="primary" v-if="scope.row.user" style="cursor: pointer;" @click.native="goUser(scope.row.user)">
             {{ scope.row.user.nickName }}
@@ -76,7 +76,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="被评论人" width="110" align="center">
+      <el-table-column label="被评论人" width="150" align="center">
         <template slot-scope="scope">
           <el-tag type="info" v-if="scope.row.toUser" style="cursor: pointer;" @click.native="goUser(scope.row.toUser)">
             {{ scope.row.toUser.nickName }}
@@ -85,7 +85,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="类型" width="100%" align="center">
+      <el-table-column label="类型" width="80" align="center">
         <template slot-scope="scope">
           <template>
             <el-tag type="danger" v-if="scope.row.type == 1">点赞</el-tag>
@@ -94,7 +94,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="来源" width="115" align="center">
+      <el-table-column label="来源" min-width align="center">
         <template slot-scope="scope">
           <template>
             <el-tag type="danger" v-if="scope.row.blog ? scope.row.blog.status == 0 : false" style="cursor: pointer;">
@@ -105,6 +105,9 @@
                     @click.native="goBlog(scope.row.blog)">
               该博客已下架
             </el-tag>
+            <el-tag type="error" v-else-if="scope.row.source == 'BLOG_INFO'"  @click.native="onClick(scope.row.blog)"
+                    style="cursor: pointer;">{{ subStr(scope.row.blog.title, 6) }}
+            </el-tag>
             <el-tag type="warning" v-else @click.native="goPage(scope.row.source, scope.row.blog)"
                     style="cursor: pointer;">
               {{ scope.row.sourceName }}
@@ -113,31 +116,49 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="内容" width="260px" align="center">
+<!--      <el-table-column label="来源博客" width="160" align="center">-->
+<!--        <template slot-scope="scope">-->
+<!--          <template>-->
+<!--            <el-tag type="error" v-if="scope.row.source == 'BLOG_INFO'" @click.native="onClick(scope.row.blog)"-->
+<!--                    style="cursor: pointer;">{{ subStr(scope.row.blog.title, 8) }}-->
+<!--            </el-tag>-->
+<!--          </template>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+
+      <el-table-column label="内容" width="300" align="center">
         <template slot-scope="scope">
+          <!--            <el-popover-->
+          <!--              v-if="scope.row.content"-->
+          <!--              placement="top-start"-->
+          <!--              width="400"-->
+          <!--              trigger="hover"-->
+          <!--              :content="scope.row.content">-->
+          <!--              <el-button slot="reference">{{subStr(scope.row.content, 10)}}</el-button>-->
+          <!--            </el-popover>-->
           <span v-html="$xss(scope.row.content, options)"></span>
         </template>
       </el-table-column>
 
-      <el-table-column label="创建时间" width="100%" align="center">
+      <el-table-column label="创建时间" width="160" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.createTime }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="状态" width="80" align="center">
+      <el-table-column label="状态" min-width align="center">
         <template slot-scope="scope">
           <template>
             <el-tag v-for="item in paramsStatusDictList" :key="item.uid" :type="item.listClass"
-                    v-if="scope.row.status == item.dictValue">{{ item.dictValue == 2 ? '已删除' : item.dictLabel }}
+                    v-if="scope.row.status == item.dictValue">{{ item.dictValue == 2 ? '页面评论已删除' : item.dictLabel }}
             </el-tag>
           </template>
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" fixed="right" min-width="100%" align="center">
+      <el-table-column label="操作" fixed="right" min-width="150">
         <template slot-scope="scope">
-          <el-button @click="handleReply(scope.row)" type="success" size="small">回复</el-button>
+          <!--          <el-button @click="handleReply(scope.row)" type="success" size="small">回复</el-button>-->
           <el-button @click="handleDelete(scope.row)" type="danger" size="small" v-permission="'/comment/delete'">删除
           </el-button>
         </template>
@@ -194,6 +215,7 @@ export default {
       commentTypeDefaultValue: null, // 评论类型默认值
       paramsStatusDictList: [],
       paramsStatusDefault: null,
+      defaultAvatar: this.$SysConf.defaultAvatar, // 默认头像
     };
   },
   created() {
@@ -234,14 +256,17 @@ export default {
         case 'MESSAGE_BOARD': {
           window.open(this.BLOG_WEB_URL + "/#/messageBoard")
         }
+          ;
           break;
         case 'ABOUT': {
           window.open(this.BLOG_WEB_URL + "/#/about")
         }
+          ;
           break;
         case 'BLOG_INFO': {
           window.open(this.BLOG_WEB_URL + "/#/info?blogUid=" + blog.uid);
         }
+          ;
           break;
       }
     },
@@ -304,7 +329,6 @@ export default {
       this.commentList();
     },
     handleReply: function (row) {
-      this.$commonUtil.message.info("回复功能待完善")
       console.log("点击了回复");
     },
     handleDelete: function (row) {
@@ -322,7 +346,7 @@ export default {
           })
         })
         .catch(() => {
-          this.$commonUtil.message.info("已取消删除")
+          this.$commonUtil.info("已取消删除")
         });
     },
     handleDeleteBatch: function () {
@@ -341,12 +365,16 @@ export default {
       })
         .then(() => {
           deleteBatchComment(that.multipleSelection).then(response => {
-            this.$commonUtil.message.success(response.message)
+            if (response.code == that.$ECode.SUCCESS) {
+              that.$commonUtil.message.success(response.message)
+            } else {
+              that.$commonUtil.message.error(response.message)
+            }
             that.commentList();
           });
         })
         .catch(() => {
-          this.$commonUtil.message.info("已取消删除")
+          that.$commonUtil.info("已取消删除")
         });
     },
     handleCurrentChange: function (val) {

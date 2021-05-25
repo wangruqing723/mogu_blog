@@ -25,16 +25,18 @@ public class BlogVO extends BaseVO<BlogVO> {
      */
     @NotBlank(groups = {Insert.class, Update.class})
     private String title;
+
     /**
      * 博客简介
      */
-
     private String summary;
+
     /**
      * 博客内容
      */
     @NotBlank(groups = {Insert.class, Update.class})
     private String content;
+
     /**
      * 标签uid
      */
@@ -136,6 +138,16 @@ public class BlogVO extends BaseVO<BlogVO> {
      * 是否开启评论(0:否， 1:是)
      */
     private String openComment;
+
+    /**
+     * OrderBy排序字段（desc: 降序）
+     */
+    private String orderByDescColumn;
+
+    /**
+     * OrderBy排序字段（asc: 升序）
+     */
+    private String orderByAscColumn;
 
     /**
      * 无参构造方法，初始化默认值

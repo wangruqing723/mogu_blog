@@ -2,7 +2,7 @@
   <div class="app-container">
       <!-- 查询和其他操作 -->
 	    <div class="filter-container" style="margin: 10px 0 10px 0;">
-				<el-input clearable class="filter-item" style="width: 200px;" v-model="keyword" placeholder="关键字"></el-input>
+				<el-input clearable class="filter-item" style="width: 200px;" v-model="keyword" placeholder="用户行为"></el-input>
         <el-date-picker
           clearable
           v-model="value5"
@@ -16,7 +16,7 @@
 	      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFind" v-permission="'/webVisit/getList'">查找</el-button>
 	    </div>
 
-      <el-table :data="tableData"  style="width: 100%" max-height="530">
+      <el-table :data="tableData"  style="width: 100%">
 
       <el-table-column type="selection"></el-table-column>
 
@@ -26,25 +26,25 @@
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="IP" width="110" align="center">
+      <el-table-column label="IP" width="150" align="center">
 	      <template slot-scope="scope">
 	        <span>{{ scope.row.ip }}</span>
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="IP来源" width="160" align="center">
+      <el-table-column label="IP来源" width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.ipSource }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="平台" width="87" align="center">
+      <el-table-column label="平台" width="150" align="center">
 	      <template slot-scope="scope">
 	        <span>{{ scope.row.os }}</span>
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="浏览器" width="165" align="center">
+      <el-table-column label="浏览器" width="200" align="center">
 	      <template slot-scope="scope">
 	        <span>{{ scope.row.browser }}</span>
 	      </template>
@@ -56,7 +56,7 @@
 	      </template>
 	    </el-table-column>
 
-      <el-table-column label="内容" width="220" align="center">
+      <el-table-column label="内容" width="200" align="center">
 	      <template slot-scope="scope">
           <span v-html="$xss(scope.row.content, options)"></span>
 	      </template>
@@ -68,7 +68,7 @@
 	      </template>
 	    </el-table-column>
 
-	   	<el-table-column label="状态" width="57" align="center">
+	   	<el-table-column label="状态" width="100" align="center">
 	   	  <template slot-scope="scope">
 		   	  <template v-if="scope.row.status == 1">
 		        <span>正常</span>

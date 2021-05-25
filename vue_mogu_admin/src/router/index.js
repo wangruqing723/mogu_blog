@@ -119,9 +119,9 @@ export const constantRouterMap = [
       },
       {
         path: 'button',
-        name: '按钮管理',
-        component: () => import('@/views/authority/button'),
-        meta: { title: '按钮管理', icon: 'authority' }
+        name: '接口管理',
+        component: () => import('@/views/authority/api'),
+        meta: { title: '接口管理', icon: 'authority' }
       }
     ]
   },
@@ -172,6 +172,22 @@ export const constantRouterMap = [
         name: '反馈管理',
         component: () => import('@/views/message/feedback'),
         meta: { title: '反馈管理', icon: 'table' }
+      }
+    ]
+  },
+
+  {
+    path: '/spider',
+    component: Layout,
+    redirect: '/spider/pictureSpider',
+    name: '爬虫管理',
+    meta: { title: '爬虫管理', icon: 'message1' },
+    children: [
+      {
+        path: 'pictureSpider',
+        name: '图片爬取',
+        component: () => import('@/views/spider/pictureSpider'),
+        meta: { title: '图片爬取', icon: 'table' }
       }
     ]
   },
@@ -350,34 +366,10 @@ export const constantRouterMap = [
         meta: { title: '在线用户', icon: 'log' }
       },
       {
-        path: 'SpringBootAdmin',
-        name: 'SpringBootAdmin',
-        component: () => import('@/views/monitor/SpringBootAdmin'),
-        meta: { title: 'SpringBootAdmin', icon: 'log' }
-      },
-      {
-        path: 'Zipkin',
-        name: 'Zipkin',
-        component: () => import('@/views/monitor/Zipkin'),
-        meta: { title: 'Zipkin链路追踪', icon: 'log' }
-      },
-      {
-        path: 'Druid',
-        name: 'Druid',
-        component: () => import('@/views/monitor/Druid'),
-        meta: { title: 'Druid', icon: 'exception' }
-      },
-      {
-        path: 'Eureka',
-        name: 'Eureka',
-        component: () => import('@/views/monitor/Eureka'),
-        meta: { title: 'Eureka', icon: 'user1' }
-      },
-      {
-        path: 'RabbitMQ',
-        name: 'RabbitMQ',
-        component: () => import('@/views/monitor/RabbitMQ'),
-        meta: { title: 'RabbitMQ', icon: 'user1' }
+        path: 'ServerMonitor',
+        name: '服务器监控',
+        component: () => import('@/views/monitor/ServerMonitor'),
+        meta: { title: '服务器监控', icon: 'exception' }
       },
       {
         path: 'Solr',
@@ -391,12 +383,22 @@ export const constantRouterMap = [
         component: () => import('@/views/monitor/ElasticSearch'),
         meta: { title: 'ElasticSearch', icon: 'exception' }
       },
+    ]
+  },
+
+  {
+    path: '/web',
+    component: Layout,
+    redirect: '/web/webNavbar',
+    name: '门户管理',
+    meta: { title: '门户管理', icon: 'user1' },
+    children: [
       {
-        path: 'ServerMonitor',
-        name: '服务器监控',
-        component: () => import('@/views/monitor/ServerMonitor'),
-        meta: { title: '服务器监控', icon: 'exception' }
-      },
+        path: 'webNavbar',
+        name: '导航栏管理',
+        component: () => import('@/views/web/webNavbar'),
+        meta: { title: '导航栏管理', icon: 'table' }
+      }
     ]
   },
 

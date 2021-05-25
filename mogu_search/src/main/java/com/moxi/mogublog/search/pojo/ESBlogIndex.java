@@ -3,8 +3,6 @@ package com.moxi.mogublog.search.pojo;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.util.Date;
 import java.util.List;
@@ -20,9 +18,15 @@ public class ESBlogIndex {
 
     private String uid;
 
+    private Integer oid;
+
+    private String type;
+
     private String title;
 
     private String summary;
+
+    private String content;
 
     private String blogSortName;
 
@@ -40,10 +44,5 @@ public class ESBlogIndex {
 
     private List<String> tagNameList;
 
-    /**
-     * 所以可搜索信息
-     */
-    @Field(type = FieldType.Text, analyzer = "ik_max_word")
-    private String all;
 
 }

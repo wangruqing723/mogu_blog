@@ -5,6 +5,7 @@
       <el-input clearable class="filter-item" style="width: 200px;" v-model="keyword" placeholder="请输入专题名称"></el-input>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFind" v-permission="'/subject/getList'">查找</el-button>
       <el-button class="filter-item" type="primary" @click="handleAdd" icon="el-icon-edit" v-permission="'/subject/add'">添加</el-button>
+      <el-button class= "button" type="primary"  @click="checkAll()" icon="el-icon-refresh">{{chooseTitle}}</el-button>
       <el-button class="filter-item" type="danger" @click="handleDeleteBatch" icon="el-icon-delete" v-permission="'/subject/deleteBatch'">删除选中</el-button>
     </div>
 
@@ -118,7 +119,7 @@
       </div>
     </el-dialog>
 
-    <CheckPhoto @choose_data="getChooseData" @cancelModel="cancelModel" :photoVisible="photoVisible" :photos="photoList" :files="fileIds" :limit="1"></CheckPhoto>
+    <CheckPhoto v-if="!isFirstPhotoVisible" @choose_data="getChooseData" @cancelModel="cancelModel" :photoVisible="photoVisible" :photos="photoList" :files="fileIds" :limit="1"></CheckPhoto>
 
   </div>
 </template>
@@ -151,6 +152,7 @@ export default {
       pageSize: 18,
       keyword: "",
       chooseTitle: "全选",
+      isCheckedAll: false, //是否全选
       selectUids: [], //专题uid集合
       title: "增加专题",
       formLabelWidth: "120px", //弹框的label边框
@@ -160,6 +162,7 @@ export default {
       photoList: [],
       fileIds: "",
       icon: false, //控制删除图标的显示
+      isFirstPhotoVisible: true, // 图片选择器是否首次显示【用于懒加载】
       rules: {
         fileUid: [
           {required: true, message: '封面图片不能为空', trigger: 'blur'}
@@ -211,11 +214,27 @@ export default {
         this.selectUids.push(data.uid);
       }
     },
+    checkAll: function() {
+      //如果是全选
+      if (this.isCheckedAll) {
+        this.selectUids = [];
+        this.isCheckedAll = false;
+        this.chooseTitle = "全选";
+      } else {
+        this.selectUids = [];
+        this.tableData.forEach(function(picture) {
+          this.selectUids.push(picture.uid);
+        }, this);
+        this.isCheckedAll = true;
+        this.chooseTitle = "取消全选";
+      }
+    },
     //弹出选择图片框
     checkPhoto: function() {
       this.photoList = [];
       this.fileIds = "";
       this.photoVisible = true;
+      this.isFirstPhotoVisible = false
     },
     getChooseData(data) {
       var that = this;

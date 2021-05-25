@@ -3,8 +3,8 @@
     <div v-for="item in comments" :key="item.uid">
       <div class="commentList">
         <span class="left p1">
-          <img v-if="item.user" :src="item.user.photoUrl ? item.user.photoUrl:'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'" onerror="onerror=null;src='https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'" />
-          <img v-else src="https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif" />
+          <img v-if="item.user" :src="item.user.photoUrl ? item.user.photoUrl:defaultAvatar" onerror="onerror=null;src=defaultAvatar" />
+          <img v-else :src="defaultAvatar" />
         </span>
 
         <span class="right p1">
@@ -16,7 +16,6 @@
           </div>
 
           <div class="rightCenter" v-html="$xss(item.content, options)"></div>
-<!--          <div class="rightCenter" v-html="item.content"></div>-->
 
           <div class="rightBottom">
             <el-link class="b1" :underline="false" @click="replyTo(item)">回复</el-link>
@@ -65,6 +64,7 @@
         },
         userInfo: {},
         userTagDictList: [], // 用户标签字典
+        defaultAvatar: this.$SysConf.defaultAvatar
       };
     },
     created() {
@@ -384,5 +384,18 @@
   }
   .commentList .rightBottom .b1 {
     margin-left: 10px;
+  }
+
+  @media only screen and (min-width: 300px) and (max-width: 767px) {
+    .commentList .left {
+      display: inline-block;
+      width: 30px;
+      height: 100%;
+    }
+    .commentList .right {
+      display: inline-block;
+      width: calc(100% - 35px);
+      margin-left: 5px;
+    }
   }
 </style>

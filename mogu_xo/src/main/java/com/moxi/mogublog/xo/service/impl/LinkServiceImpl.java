@@ -5,13 +5,17 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.moxi.mogublog.commons.entity.Link;
 import com.moxi.mogublog.commons.feign.PictureFeignClient;
+import com.moxi.mogublog.utils.CheckUtils;
+import com.moxi.mogublog.utils.RedisUtil;
 import com.moxi.mogublog.utils.ResultUtil;
 import com.moxi.mogublog.utils.StringUtils;
 import com.moxi.mogublog.xo.global.MessageConf;
+import com.moxi.mogublog.xo.global.RedisConf;
 import com.moxi.mogublog.xo.global.SQLConf;
 import com.moxi.mogublog.xo.global.SysConf;
 import com.moxi.mogublog.xo.mapper.LinkMapper;
 import com.moxi.mogublog.xo.service.LinkService;
+import com.moxi.mogublog.xo.utils.RabbitMqUtil;
 import com.moxi.mogublog.xo.utils.WebUtil;
 import com.moxi.mogublog.xo.vo.LinkVO;
 import com.moxi.mougblog.base.enums.ELinkStatus;
@@ -19,6 +23,7 @@ import com.moxi.mougblog.base.enums.EStatus;
 import com.moxi.mougblog.base.global.BaseSQLConf;
 import com.moxi.mougblog.base.global.Constants;
 import com.moxi.mougblog.base.serviceImpl.SuperServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +37,7 @@ import java.util.*;
  * @date 2018-09-08
  */
 @Service
+@Slf4j
 public class LinkServiceImpl extends SuperServiceImpl<LinkMapper, Link> implements LinkService {
 
     @Resource
@@ -42,6 +48,10 @@ public class LinkServiceImpl extends SuperServiceImpl<LinkMapper, Link> implemen
     private PictureFeignClient pictureFeignClient;
     @Autowired
     private WebUtil webUtil;
+    @Autowired
+    private RabbitMqUtil rabbitMqUtil;
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Override
     public List<Link> getListByPageSize(Integer pageSize) {
@@ -65,11 +75,19 @@ public class LinkServiceImpl extends SuperServiceImpl<LinkMapper, Link> implemen
         if (linkVO.getLinkStatus() != null) {
             queryWrapper.eq(SQLConf.LINK_STATUS, linkVO.getLinkStatus());
         }
+        if(StringUtils.isNotEmpty(linkVO.getOrderByAscColumn())) {
+            String column = StringUtils.underLine(new StringBuffer(linkVO.getOrderByAscColumn())).toString();
+            queryWrapper.orderByAsc(column);
+        }else if(StringUtils.isNotEmpty(linkVO.getOrderByDescColumn())) {
+            String column = StringUtils.underLine(new StringBuffer(linkVO.getOrderByDescColumn())).toString();
+            queryWrapper.orderByDesc(column);
+        } else {
+            queryWrapper.orderByDesc(SQLConf.SORT);
+        }
         Page<Link> page = new Page<>();
         page.setCurrent(linkVO.getCurrentPage());
         page.setSize(linkVO.getPageSize());
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
-        queryWrapper.orderByDesc(SQLConf.SORT);
         IPage<Link> pageList = linkService.page(page, queryWrapper);
         List<Link> linkList = pageList.getRecords();
         final StringBuffer fileUids = new StringBuffer();
@@ -118,12 +136,24 @@ public class LinkServiceImpl extends SuperServiceImpl<LinkMapper, Link> implemen
         link.setStatus(EStatus.ENABLE);
         link.setUpdateTime(new Date());
         link.insert();
+
+        // 友链从申请状态到发布状态，需要发送邮件到站长邮箱
+        if(StringUtils.isNotEmpty(link.getEmail()) && CheckUtils.checkEmail(link.getEmail())) {
+            log.info("发送友链申请通过的邮件通知");
+            String linkApplyText =  "<a href=\" " + link.getUrl() + "\">" + link.getTitle() + "</a> 站长，您申请的友链已经成功上架~";
+            rabbitMqUtil.sendSimpleEmail(link.getEmail(), linkApplyText);
+        }
+
+        // 删除Redis中的BLOG_LINK
+        deleteRedisBlogLinkList();
+
         return ResultUtil.successWithMessage(MessageConf.INSERT_SUCCESS);
     }
 
     @Override
     public String editLink(LinkVO linkVO) {
         Link link = linkService.getById(linkVO.getUid());
+        Integer linkStatus = link.getLinkStatus();
         link.setTitle(linkVO.getTitle());
         link.setSummary(linkVO.getSummary());
         link.setLinkStatus(linkVO.getLinkStatus());
@@ -133,6 +163,19 @@ public class LinkServiceImpl extends SuperServiceImpl<LinkMapper, Link> implemen
         link.setFileUid(linkVO.getFileUid());
         link.setUpdateTime(new Date());
         link.updateById();
+
+        // 友链从申请状态到发布状态，需要发送邮件到站长邮箱
+        if(StringUtils.isNotEmpty(link.getEmail()) && CheckUtils.checkEmail(link.getEmail())) {
+            if(ELinkStatus.APPLY.equals(linkStatus) && ELinkStatus.PUBLISH.equals(linkVO.getLinkStatus())) {
+                log.info("发送友链申请通过的邮件通知");
+                String linkApplyText =  "<a href=\" " + link.getUrl() + "\">" + link.getTitle() + "</a> 站长，您申请的友链已经成功上架~";
+                rabbitMqUtil.sendSimpleEmail(link.getEmail(), linkApplyText);
+            }
+        }
+
+        // 删除Redis中的BLOG_LINK
+        deleteRedisBlogLinkList();
+
         return ResultUtil.successWithMessage(MessageConf.UPDATE_SUCCESS);
     }
 
@@ -142,6 +185,10 @@ public class LinkServiceImpl extends SuperServiceImpl<LinkMapper, Link> implemen
         link.setStatus(EStatus.DISABLED);
         link.setUpdateTime(new Date());
         link.updateById();
+
+        // 删除Redis中的BLOG_LINK
+        deleteRedisBlogLinkList();
+
         return ResultUtil.successWithMessage(MessageConf.DELETE_SUCCESS);
     }
 
@@ -167,6 +214,8 @@ public class LinkServiceImpl extends SuperServiceImpl<LinkMapper, Link> implemen
         link.setSort(sortCount);
         link.setUpdateTime(new Date());
         link.updateById();
+        // 删除Redis中的BLOG_LINK
+        deleteRedisBlogLinkList();
         return ResultUtil.successWithMessage(MessageConf.OPERATION_SUCCESS);
     }
 
@@ -184,5 +233,14 @@ public class LinkServiceImpl extends SuperServiceImpl<LinkMapper, Link> implemen
             return ResultUtil.errorWithMessage(MessageConf.PARAM_INCORRECT);
         }
         return ResultUtil.successWithMessage(MessageConf.UPDATE_SUCCESS);
+    }
+
+    /**
+     * 删除Redis中的友链列表
+     */
+    private void deleteRedisBlogLinkList() {
+        // 删除Redis中的BLOG_LINK
+        Set<String> keys = redisUtil.keys(RedisConf.BLOG_LINK + Constants.SYMBOL_COLON + "*");
+        redisUtil.delete(keys);
     }
 }
