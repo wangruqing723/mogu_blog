@@ -17,13 +17,13 @@
                 <span
                   @click="getBlogTagList(activity.uid)"
                   :class="[activity.uid == selectBlogUid ? 'sortBoxSpan sortBoxSpanSelect' : 'sortBoxSpan']"
-                >{{activity.tagName}}</span>
+                >{{ activity.tagName }}</span>
               </el-timeline-item>
             </el-timeline>
           </div>
         </div>
 
-        <div class="article" v-if="itemByDate.length !==0">
+        <div class="article" v-if="itemByDate.length !== 0">
           <div class="block" v-infinite-scroll="load">
             <el-timeline>
               <el-timeline-item
@@ -33,7 +33,7 @@
                 placement="top"
               >
                 <el-card>
-                  <h4 @click="goToList('blogContent', item)" class="itemTitle">{{item.title}}</h4>
+                  <h4 @click="goToList('blogContent', item)" class="itemTitle">{{ item.title }}</h4>
                   <br>
                   <el-tag class="elTag" v-if="item.isOriginal==1" type="danger">原创</el-tag>
                   <el-tag class="elTag" v-if="item.isOriginal==0" type="info">转载</el-tag>
@@ -42,14 +42,16 @@
                     class="elTag"
                     v-if="item.author"
                     @click="goToList('author', item)"
-                  >{{item.author}}</el-tag>
+                  >{{ item.author }}
+                  </el-tag>
 
                   <el-tag
                     class="elTag"
                     type="success"
                     v-if="item.blogSort != null"
                     @click="goToList('blogSort', item)"
-                  >{{item.blogSort.sortName}}</el-tag>
+                  >{{ item.blogSort.sortName }}
+                  </el-tag>
                   <el-tag
                     class="elTag"
                     v-for="tagItem in item.tagList"
@@ -57,14 +59,15 @@
                     :key="tagItem.uid"
                     @click="goToList('tag', tagItem)"
                     type="warning"
-                  >{{tagItem.content}}</el-tag>
+                  >{{ tagItem.content }}
+                  </el-tag>
                 </el-card>
               </el-timeline-item>
             </el-timeline>
           </div>
-          <div v-if="itemByDate.length === 0">
-            <el-card>该标签下暂无博客！！！</el-card>
-          </div>
+        </div>
+        <div v-if="itemByDate.length === 0">
+          <el-card>该标签下暂无博客！！！</el-card>
         </div>
       </div>
     </div>
@@ -72,150 +75,152 @@
 </template>
 
 <script>
-  import { getTagList, getArticleByTagUid } from "../api/tag";
-  export default {
-    data() {
-      return {
-        selectBlogUid: "",
-        reverse: false,
-        activities: [],
-        itemByDate: [],
-        articleByDate: {},
-        count: 0,
-        currentPage: 1,
-        pageSize: 10
-      };
-    },
-    components: {
-      //注册组件
-    },
-    mounted() { },
-    created() {
-      var that = this;
-      getTagList().then(response => {
-        if (response.code == this.$ECode.SUCCESS) {
-          var activities = response.data;
-          var result = [];
-          for (var a = 0; a < activities.length; a++) {
-            var dataForDate = {
-              tagName: activities[a].content,
-              uid: activities[a].uid
-            };
-            result.push(dataForDate);
-          }
-          this.activities = result;
+import {getTagList, getArticleByTagUid} from "../api/tag";
 
-          // 默认选择第一个
-          this.getBlogTagList(activities[0].uid);
+export default {
+  data() {
+    return {
+      selectBlogUid: "",
+      reverse: false,
+      activities: [],
+      itemByDate: [],
+      articleByDate: {},
+      count: 0,
+      currentPage: 1,
+      pageSize: 10
+    };
+  },
+  components: {
+    //注册组件
+  },
+  mounted() {
+  },
+  created() {
+    var that = this;
+    getTagList().then(response => {
+      if (response.code == this.$ECode.SUCCESS) {
+        var activities = response.data;
+        var result = [];
+        for (var a = 0; a < activities.length; a++) {
+          var dataForDate = {
+            tagName: activities[a].content,
+            uid: activities[a].uid
+          };
+          result.push(dataForDate);
+        }
+        this.activities = result;
+
+        // 默认选择第一个
+        this.getBlogTagList(activities[0].uid);
+      }
+    });
+
+  },
+  methods: {
+    getBlogTagList(tagUid) {
+      this.selectBlogUid = tagUid;
+      var params = new URLSearchParams();
+      params.append("tagUid", tagUid);
+      getArticleByTagUid(params).then(response => {
+        if (response.code == this.$ECode.SUCCESS) {
+          this.itemByDate = response.data.records;
+          this.currentPage = response.data.current;
+          this.pageSize = response.data.size;
         }
       });
-
     },
-    methods: {
-      getBlogTagList(tagUid) {
-        this.selectBlogUid = tagUid;
-        var params = new URLSearchParams();
-        params.append("tagUid", tagUid);
-        getArticleByTagUid(params).then(response => {
-          if (response.code == this.$ECode.SUCCESS) {
-            this.itemByDate = response.data.records;
-            this.currentPage = response.data.current;
-            this.pageSize = response.data.size;
-          }
-        });
-      },
-      load() {
-        var params = new URLSearchParams();
-        if (
-          this.selectBlogUid == null ||
-          this.selectBlogUid == "" ||
-          this.selectBlogUid == undefined
-        ) {
-          return;
+    load() {
+      var params = new URLSearchParams();
+      if (
+        this.selectBlogUid == null ||
+        this.selectBlogUid == "" ||
+        this.selectBlogUid == undefined
+      ) {
+        return;
+      }
+      params.append("tagUid", this.selectBlogUid);
+      params.append("currentPage", this.currentPage + 1);
+      getArticleByTagUid(params).then(response => {
+        if (response.code == this.$ECode.SUCCESS) {
+          this.itemByDate = this.itemByDate.concat(response.data.records);
+          this.currentPage = response.data.current;
+          this.pageSize = response.data.size;
         }
-        params.append("tagUid", this.selectBlogUid);
-        params.append("currentPage", this.currentPage + 1);
-        getArticleByTagUid(params).then(response => {
-          if (response.code == this.$ECode.SUCCESS) {
-            this.itemByDate = this.itemByDate.concat(response.data.records);
-            this.currentPage = response.data.current;
-            this.pageSize = response.data.size;
-          }
-        });
-      },
-      //跳转到搜索详情页
-      goToList(type, entity) {
-        switch (type) {
-          case "tag":
-          {
-            // 标签uid
-            let routeData = this.$router.resolve({
-              path: "/list",
-              query: { tagUid: entity.uid, tagName: entity.content }
-            });
-            window.open(routeData.href, "_blank");
-          }
-            break;
-          case "blogSort":
-          {
-            let routeData = this.$router.resolve({
-              path: "/list",
-              query: { sortUid: entity.blogSort.uid, blogSortName: entity.blogSort.sortName }
-            });
-            window.open(routeData.href, "_blank");
-          }
-            break;
-          case "author":
-          {
-            let routeData = this.$router.resolve({
-              path: "/list",
-              query: { author: entity.author }
-            });
-            window.open(routeData.href, "_blank");
-          }
-            break;
+      });
+    },
+    //跳转到搜索详情页
+    goToList(type, entity) {
+      switch (type) {
+        case "tag": {
+          // 标签uid
+          let routeData = this.$router.resolve({
+            path: "/list",
+            query: {tagUid: entity.uid, tagName: entity.content}
+          });
+          window.open(routeData.href, "_blank");
+        }
+          break;
+        case "blogSort": {
+          let routeData = this.$router.resolve({
+            path: "/list",
+            query: {sortUid: entity.blogSort.uid, blogSortName: entity.blogSort.sortName}
+          });
+          window.open(routeData.href, "_blank");
+        }
+          break;
+        case "author": {
+          let routeData = this.$router.resolve({
+            path: "/list",
+            query: {author: entity.author}
+          });
+          window.open(routeData.href, "_blank");
+        }
+          break;
 
-          case "blogContent":
-          {
-            if(entity.type == "0") {
-              let routeData = this.$router.resolve({
-                path: "/info",
-                query: { blogOid: entity.oid }
-              });
-              window.open(routeData.href, "_blank");
-            } else if(entity.type == "1") {
-              window.open(entity.outsideLink, '_blank');
-            }
+        case "blogContent": {
+          if (entity.type == "0") {
+            let routeData = this.$router.resolve({
+              path: "/info",
+              query: {blogOid: entity.oid}
+            });
+            window.open(routeData.href, "_blank");
+          } else if (entity.type == "1") {
+            window.open(entity.outsideLink, '_blank');
           }
-            break;
         }
+          break;
       }
     }
-  };
+  }
+};
 </script>
 
 <style>
-  .sortBox {
-    color: #555;
-  }
+.sortBox {
+  color: #555;
+}
 
-  .sortBoxSpan {
-    cursor: pointer;
-  }
-  .sortBoxSpan:hover {
-    color: #409eff;
-  }
-  .sortBoxSpanSelect {
-    color: #409eff;
-  }
+.sortBoxSpan {
+  cursor: pointer;
+}
 
-  .itemTitle {
-    cursor: pointer;
-  }
-  .itemTitle:hover {
-    color: #409eff;
-  }
-  .elTag {
-    cursor: pointer;
-  }
+.sortBoxSpan:hover {
+  color: #409eff;
+}
+
+.sortBoxSpanSelect {
+  color: #409eff;
+}
+
+.itemTitle {
+  cursor: pointer;
+}
+
+.itemTitle:hover {
+  color: #409eff;
+}
+
+.elTag {
+  cursor: pointer;
+}
 </style>

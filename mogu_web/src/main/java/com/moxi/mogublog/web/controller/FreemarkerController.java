@@ -103,7 +103,6 @@ public class FreemarkerController {
         map.put("sameBlog", sameBlog);
         map.put("thirdBlogList", thirdBlog);
         map.put("fourthBlogList", fourthBlog);
-        map.put("fourthBlogList", fourthBlog);
         map.put("hotBlogList", blogService.getBlogListByTop(SysConf.FIVE));
         return "info";
     }

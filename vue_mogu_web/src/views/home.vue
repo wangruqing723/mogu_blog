@@ -138,8 +138,7 @@
             type="text"
             name="keyboard"
             v-model="keyword"
-            v-on:keyup.enter="search"
-          >
+            v-on:keyup.enter="search">
           <p class="search_ico" @click="clickSearchIco" :style="(browserFlag == 1)?'':'top:17px'">
             <span></span>
           </p>

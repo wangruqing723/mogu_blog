@@ -173,21 +173,21 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         StringBuffer fileUids = new StringBuffer();
         List<Map<String, Object>> picList = new ArrayList<>();
         // feign分页查询图片数据
-        if(fileUidSet.size() > 0) {
+        if (fileUidSet.size() > 0) {
             int count = 1;
-            for(String fileUid: fileUidSet) {
+            for (String fileUid : fileUidSet) {
                 fileUids.append(fileUid + ",");
-                System.out.println(count%10);
-                if(count%10 == 0) {
+                System.out.println(count % 10);
+                if (count % 10 == 0) {
                     pictureList = this.pictureFeignClient.getPicture(fileUids.toString(), ",");
                     List<Map<String, Object>> tempPicList = webUtil.getPictureMap(pictureList);
                     picList.addAll(tempPicList);
                     fileUids = new StringBuffer();
                 }
-                count ++;
+                count++;
             }
             // 判断是否存在图片需要获取
-            if(fileUids.length() >= Constants.NUM_32) {
+            if (fileUids.length() >= Constants.NUM_32) {
                 pictureList = this.pictureFeignClient.getPicture(fileUids.toString(), Constants.SYMBOL_COMMA);
                 List<Map<String, Object>> tempPicList = webUtil.getPictureMap(pictureList);
                 picList.addAll(tempPicList);
@@ -577,7 +577,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         if (!StringUtils.isEmpty(blogVO.getIsOriginal())) {
             queryWrapper.eq(SQLConf.IS_ORIGINAL, blogVO.getIsOriginal());
         }
-        if(!StringUtils.isEmpty(blogVO.getType())) {
+        if (!StringUtils.isEmpty(blogVO.getType())) {
             queryWrapper.eq(SQLConf.TYPE, blogVO.getType());
         }
 
@@ -587,11 +587,11 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         page.setSize(blogVO.getPageSize());
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
 
-        if(StringUtils.isNotEmpty(blogVO.getOrderByAscColumn())) {
+        if (StringUtils.isNotEmpty(blogVO.getOrderByAscColumn())) {
             // 将驼峰转换成下划线
             String column = StringUtils.underLine(new StringBuffer(blogVO.getOrderByAscColumn())).toString();
             queryWrapper.orderByAsc(column);
-        }else if(StringUtils.isNotEmpty(blogVO.getOrderByDescColumn())) {
+        } else if (StringUtils.isNotEmpty(blogVO.getOrderByDescColumn())) {
             // 将驼峰转换成下划线
             String column = StringUtils.underLine(new StringBuffer(blogVO.getOrderByDescColumn())).toString();
             queryWrapper.orderByDesc(column);
@@ -717,7 +717,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
             Admin admin = adminService.getById(request.getAttribute(SysConf.ADMIN_UID).toString());
             if (admin != null) {
-                if(StringUtils.isNotEmpty(admin.getNickName())) {
+                if (StringUtils.isNotEmpty(admin.getNickName())) {
                     blog.setAuthor(admin.getNickName());
                 } else {
                     blog.setAuthor(admin.getUserName());
@@ -772,7 +772,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         Admin admin = adminService.getById(request.getAttribute(SysConf.ADMIN_UID).toString());
         blog.setAdminUid(admin.getUid());
         if (EOriginal.ORIGINAL.equals(blogVO.getIsOriginal())) {
-            if(StringUtils.isNotEmpty(admin.getNickName())) {
+            if (StringUtils.isNotEmpty(admin.getNickName())) {
                 blog.setAuthor(admin.getNickName());
             } else {
                 blog.setAuthor(admin.getUserName());
@@ -974,10 +974,10 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
             if (EFilePriority.QI_NIU.equals(systemConfig.getContentPicturePriority())) {
                 // 获取七牛云上的图片
                 pictureMap.put(item.get(SysConf.FILE_OLD_NAME), item.get(SysConf.QI_NIU_URL));
-            } else if(EFilePriority.LOCAL.equals(systemConfig.getContentPicturePriority())) {
+            } else if (EFilePriority.LOCAL.equals(systemConfig.getContentPicturePriority())) {
                 // 获取本地的图片
                 pictureMap.put(item.get(SysConf.FILE_OLD_NAME), item.get(SysConf.PIC_URL));
-            } else if(EFilePriority.MINIO.equals(systemConfig.getContentPicturePriority())) {
+            } else if (EFilePriority.MINIO.equals(systemConfig.getContentPicturePriority())) {
                 // 获取MINIO的图片
                 pictureMap.put(item.get(SysConf.FILE_OLD_NAME), item.get(SysConf.MINIO_URL));
             }
@@ -1008,10 +1008,10 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
                                 if (EFilePriority.QI_NIU.equals(systemConfig.getContentPicturePriority())) {
                                     // 获取七牛云上的图片
                                     matchUrlMap.put(pictureUrl, systemConfig.getQiNiuPictureBaseUrl() + map.getValue());
-                                } else if(EFilePriority.LOCAL.equals(systemConfig.getContentPicturePriority())) {
+                                } else if (EFilePriority.LOCAL.equals(systemConfig.getContentPicturePriority())) {
                                     // 获取本地的图片
                                     matchUrlMap.put(pictureUrl, systemConfig.getLocalPictureBaseUrl() + map.getValue());
-                                } else if(EFilePriority.MINIO.equals(systemConfig.getContentPicturePriority())) {
+                                } else if (EFilePriority.MINIO.equals(systemConfig.getContentPicturePriority())) {
                                     // 获取MINIO的图片
                                     matchUrlMap.put(pictureUrl, systemConfig.getMinioPictureBaseUrl() + map.getValue());
                                 }
@@ -1222,7 +1222,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         if (StringUtils.isEmpty(blogHotCount)) {
             log.error(MessageConf.PLEASE_CONFIGURE_SYSTEM_PARAMS);
         } else {
-            page.setSize(Long.valueOf(blogHotCount));
+            page.setSize(Long.parseLong(blogHotCount));
         }
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
         queryWrapper.eq(SQLConf.IS_PUBLISH, EPublish.PUBLISH);
@@ -1241,7 +1241,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
     }
 
     @Override
-    public IPage<Blog> getNewBlog(Long currentPage, Long pageSize) {
+    public IPage<Blog> getNewBlog(Long currentPage, Long pageSize, Integer userTag) {
         String blogNewCount = sysParamsService.getSysParamsValueByKey(SysConf.BLOG_NEW_COUNT);
         if (StringUtils.isEmpty(blogNewCount)) {
             log.error(MessageConf.PLEASE_CONFIGURE_SYSTEM_PARAMS);
@@ -1262,8 +1262,19 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         Page<Blog> page = new Page<>();
         page.setCurrent(currentPage);
         page.setSize(Long.parseLong(blogNewCount));
+
+        // 判断是否打开了博客过滤
+        SystemConfig systemConfig = systemConfigService.getConfig();
+        String openBlogFilter = systemConfig.getOpenBlogFilter();
+        if (EOpenStatus.OPEN.equals(openBlogFilter)) {
+            // 判断用户是否登录,登录了用户标签就不为空,然后根据用户标签判断该显示哪些博客,没登录和普通用户不显示下架的博客
+            if ((userTag == null || userTag.equals(BaseSysConf.ZERO))) {
+                queryWrapper.eq(BaseSQLConf.IS_PUBLISH, EPublish.PUBLISH);
+            }
+        } else {
+            queryWrapper.eq(BaseSQLConf.IS_PUBLISH, EPublish.PUBLISH);
+        }
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
-        queryWrapper.eq(BaseSQLConf.IS_PUBLISH, EPublish.PUBLISH);
         queryWrapper.orderByDesc(SQLConf.CREATE_TIME);
 
         //因为首页并不需要显示内容，所以需要排除掉内容字段
@@ -1419,7 +1430,10 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
         queryWrapper.orderByDesc(SQLConf.CREATE_TIME);
-        queryWrapper.eq(BaseSQLConf.IS_PUBLISH, EPublish.PUBLISH);
+
+        // 博客过滤
+        this.blogFilter(queryWrapper);
+
         queryWrapper.eq(SQLConf.BLOG_SORT_UID, blogSortUid);
 
         //因为首页并不需要显示内容，所以需要排除掉内容字段
@@ -1438,7 +1452,10 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
         queryWrapper.and(wrapper -> wrapper.like(SQLConf.TITLE, keyword).or().like(SQLConf.SUMMARY, keyword));
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
-        queryWrapper.eq(SQLConf.IS_PUBLISH, EPublish.PUBLISH);
+
+        // 博客过滤
+        this.blogFilter(queryWrapper);
+
         queryWrapper.select(Blog.class, i -> !i.getProperty().equals(SQLConf.CONTENT));
         queryWrapper.orderByDesc(SQLConf.CLICK_COUNT);
         Page<Blog> page = new Page<>();
@@ -1520,6 +1537,26 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         return map;
     }
 
+    private void blogFilter(QueryWrapper<Blog> queryWrapper) {
+        // 判断是否打开了博客过滤
+        SystemConfig systemConfig = systemConfigService.getConfig();
+        String openBlogFilter = systemConfig.getOpenBlogFilter();
+        // 从请求中获取用户的标签,根据用户标签展示相应的博客列表
+        HttpServletRequest request = RequestHolder.getRequest();
+        Object attribute = request.getAttribute(SysConf.USER_TAG);
+        Integer userTag = null;
+        if (attribute != null) {
+            userTag = ((Double) attribute).intValue();
+        }
+        if (EOpenStatus.CLOSE.equals(openBlogFilter)) {
+            queryWrapper.eq(SQLConf.IS_PUBLISH, EPublish.PUBLISH);
+        } else {
+            if (userTag == null || userTag.equals(BaseSysConf.ZERO)) {
+                queryWrapper.eq(SQLConf.IS_PUBLISH, EPublish.PUBLISH);
+            }
+        }
+    }
+
     @Override
     public IPage<Blog> searchBlogByTag(String tagUid, Long currentPage, Long pageSize) {
         Tag tag = tagService.getById(tagUid);
@@ -1545,7 +1582,10 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
 
         queryWrapper.like(SQLConf.TAG_UID, tagUid);
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
-        queryWrapper.eq(BaseSQLConf.IS_PUBLISH, EPublish.PUBLISH);
+
+        // 博客过滤
+        this.blogFilter(queryWrapper);
+
         queryWrapper.orderByDesc(SQLConf.CREATE_TIME);
         queryWrapper.select(Blog.class, i -> !i.getProperty().equals(SysConf.CONTENT));
         IPage<Blog> pageList = blogService.page(page, queryWrapper);
@@ -1581,7 +1621,10 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         page.setSize(pageSize);
         queryWrapper.eq(SQLConf.BLOG_SORT_UID, blogSortUid);
         queryWrapper.orderByDesc(SQLConf.CREATE_TIME);
-        queryWrapper.eq(BaseSQLConf.IS_PUBLISH, EPublish.PUBLISH);
+
+        // 博客过滤
+        this.blogFilter(queryWrapper);
+
         queryWrapper.eq(BaseSQLConf.STATUS, EStatus.ENABLE);
         // 排除博客详情
         queryWrapper.select(Blog.class, i -> !i.getProperty().equals(SysConf.CONTENT));
@@ -1600,7 +1643,10 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         page.setCurrent(currentPage);
         page.setSize(pageSize);
         queryWrapper.eq(SQLConf.AUTHOR, author);
-        queryWrapper.eq(BaseSQLConf.IS_PUBLISH, EPublish.PUBLISH);
+
+        // 博客过滤
+        this.blogFilter(queryWrapper);
+
         queryWrapper.eq(BaseSQLConf.STATUS, EStatus.ENABLE);
         queryWrapper.orderByDesc(SQLConf.CREATE_TIME);
         queryWrapper.select(Blog.class, i -> !i.getProperty().equals(SysConf.CONTENT));
@@ -1613,18 +1659,60 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
 
     @Override
     public String getBlogTimeSortList() {
-        //从Redis中获取内容
-        String monthResult = redisUtil.get(SysConf.MONTH_SET);
-        //判断redis中时候包含归档的内容
-        if (StringUtils.isNotEmpty(monthResult)) {
-            List list = JsonUtils.jsonArrayToArrayList(monthResult);
-            return ResultUtil.successWithData(list);
+        HttpServletRequest request = RequestHolder.getRequest();
+        // 从请求中获取用户的标签,根据用户标签展示相应的博客列表
+        Object attribute = request.getAttribute(SysConf.USER_TAG);
+        Integer userTag = null;
+        // 获取上一次存储的标签
+        String loginStatus = redisUtil.get(SysConf.STATUS + RedisConf.SEGMENTATION + userTag);
+
+        // 设置一个标签,判断用户登录状态是否变化
+        if (attribute != null) {
+            userTag = ((Double) attribute).intValue();
+            redisUtil.set(SysConf.STATUS + RedisConf.SEGMENTATION + BaseSysConf.USER_TAG, userTag.toString());
+        } else {
+            redisUtil.set(SysConf.STATUS + RedisConf.SEGMENTATION + BaseSysConf.USER_TAG, "0");
+        }
+
+        // 比较上次和这次的状态,0:未登录或者普通用户
+        if (StringUtils.isNotBlank(loginStatus)) {
+            if (userTag != null) {
+                if (loginStatus.equals(userTag.toString()) || (!"0".equals(loginStatus) && userTag != 0)) {
+                    //从Redis中获取内容
+                    String monthResult = redisUtil.get(SysConf.MONTH_SET);
+                    //判断redis中时候包含归档的内容
+                    if (StringUtils.isNotEmpty(monthResult)) {
+                        List list = JsonUtils.jsonArrayToArrayList(monthResult);
+                        return ResultUtil.successWithData(list);
+                    }
+                }
+            } else {
+                if ("0".equals(loginStatus)) {
+                    //从Redis中获取内容
+                    String monthResult = redisUtil.get(SysConf.MONTH_SET);
+                    //判断redis中时候包含归档的内容
+                    if (StringUtils.isNotEmpty(monthResult)) {
+                        List list = JsonUtils.jsonArrayToArrayList(monthResult);
+                        return ResultUtil.successWithData(list);
+                    }
+                }
+            }
         }
         // 第一次启动的时候归档
         QueryWrapper<Blog> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
         queryWrapper.orderByDesc(SQLConf.CREATE_TIME);
-        queryWrapper.eq(SQLConf.IS_PUBLISH, EPublish.PUBLISH);
+
+        // 判断是否打开了博客过滤
+        SystemConfig systemConfig = systemConfigService.getConfig();
+        String openBlogFilter = systemConfig.getOpenBlogFilter();
+        if (EOpenStatus.CLOSE.equals(openBlogFilter)) {
+            queryWrapper.eq(SQLConf.IS_PUBLISH, EPublish.PUBLISH);
+        } else {
+            if (userTag == null || userTag.equals(BaseSysConf.ZERO)) {
+                queryWrapper.eq(SQLConf.IS_PUBLISH, EPublish.PUBLISH);
+            }
+        }
         //因为首页并不需要显示内容，所以需要排除掉内容字段
         queryWrapper.select(Blog.class, i -> !i.getProperty().equals(SQLConf.CONTENT));
         List<Blog> list = blogService.list(queryWrapper);
@@ -1672,7 +1760,7 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         //从Redis中获取内容
         String contentResult = redisUtil.get(SysConf.BLOG_SORT_BY_MONTH + SysConf.REDIS_SEGMENTATION + monthDate);
 
-        //判断redis中时候包含该日期下的文章
+        //判断redis中是否包含该日期下的文章
         if (StringUtils.isNotEmpty(contentResult)) {
             List list = JsonUtils.jsonArrayToArrayList(contentResult);
             return ResultUtil.successWithData(list);
@@ -1713,9 +1801,9 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         }
 
         // 缓存该月份下的所有文章  key: 月份   value：月份下的所有文章
-        map.forEach((key, value) -> {
-            redisUtil.set(SysConf.BLOG_SORT_BY_MONTH + SysConf.REDIS_SEGMENTATION + key, JsonUtils.objectToJson(value).toString());
-        });
+        map.forEach((key, value) ->
+                redisUtil.set(SysConf.BLOG_SORT_BY_MONTH + SysConf.REDIS_SEGMENTATION + key, JsonUtils.objectToJson(value).toString())
+        );
         //将从数据库查询的数据缓存到redis中
         redisUtil.set(SysConf.MONTH_SET, JsonUtils.objectToJson(monthSet));
         return ResultUtil.successWithData(map.get(monthDate));

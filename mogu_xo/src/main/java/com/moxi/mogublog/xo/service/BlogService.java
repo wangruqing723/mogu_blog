@@ -215,7 +215,7 @@ public interface BlogService extends SuperService<Blog> {
      * @param pageSize
      * @return
      */
-    public IPage<Blog> getNewBlog(Long currentPage, Long pageSize);
+    public IPage<Blog> getNewBlog(Long currentPage, Long pageSize,Integer userTag);
 
     /**
      * mogu-search调用获取博客的接口[包含内容]
