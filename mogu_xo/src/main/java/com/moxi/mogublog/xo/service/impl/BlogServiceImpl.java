@@ -1328,7 +1328,10 @@ public class BlogServiceImpl extends SuperServiceImpl<BlogMapper, Blog> implemen
         page.setCurrent(currentPage);
         page.setSize(pageSize);
         queryWrapper.eq(SQLConf.STATUS, EStatus.ENABLE);
-        queryWrapper.eq(BaseSQLConf.IS_PUBLISH, EPublish.PUBLISH);
+
+        // 博客过滤
+        this.blogFilter(queryWrapper);
+
         queryWrapper.orderByDesc(SQLConf.CREATE_TIME);
         //因为首页并不需要显示内容，所以需要排除掉内容字段
         queryWrapper.select(Blog.class, i -> !i.getProperty().equals(SQLConf.CONTENT));
