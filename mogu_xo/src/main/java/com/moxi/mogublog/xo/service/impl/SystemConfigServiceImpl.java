@@ -131,7 +131,7 @@ public class SystemConfigServiceImpl extends SuperServiceImpl<SystemConfigMapper
             SystemConfig systemConfig = systemConfigService.getById(systemConfigVO.getUid());
 
             // 判断是否更新了图片显示优先级【如果更新了，需要请求Redis中的博客，否者将导致图片无法正常显示】
-            if (systemConfigVO.getPicturePriority() != systemConfig.getPicturePriority()) {
+            if (!systemConfigVO.getPicturePriority().equals(systemConfig.getPicturePriority())) {
                 blogService.deleteRedisByBlog();
             }
 

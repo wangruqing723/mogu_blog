@@ -11,11 +11,9 @@
         <ul id="list" v-infinite-scroll="load">
           <li v-for="item in newBlogData" :key="item.uid">
             <span>{{formatDate(item.createTime)}}</span>
-            <a
-              href="javascript:void(0);"
+            <a href="javascript:void(0);"
               @click="goToInfo(item.uid)"
-              :title="item.title"
-            >{{item.title}}</a>
+              :title="item.title">{{item.title}}</a>
           </li>
         </ul>
         <ul id="list2"></ul>

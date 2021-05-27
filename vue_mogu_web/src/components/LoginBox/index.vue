@@ -243,7 +243,6 @@
             params.isRememberMe = 1;
             localLogin(params).then(response => {
               if (response.code == this.$ECode.SUCCESS) {
-                // 跳转到首页
                 // 跳转到首页,修改:登录成功刷新当前页面,不跳转到首页
                 if (window.location.href.indexOf("?") === -1){
                   location.replace(window.location.href + "?token=" + response.data)

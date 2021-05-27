@@ -41,9 +41,16 @@
             </el-radio>
           </el-form-item>
 
-          <!-- 仪表盘弹框通知，在用户登录后台的时候会出现，可以手动关闭 -->
+          <!-- 注册用户的时候是否开启邮件激活 -->
           <el-form-item label="注册用户邮件激活">
             <el-radio v-for="item in openDictList" :key="item.uid" v-model="form.openEmailActivate"
+                      :label="item.dictValue" border size="medium">{{ item.dictLabel }}
+            </el-radio>
+          </el-form-item>
+
+          <!-- 是否开启门户博客过滤 -->
+          <el-form-item label="首页显示博客过滤">
+            <el-radio v-for="item in openDictList" :key="item.uid" v-model="form.openBlogFilter"
                       :label="item.dictValue" border size="medium">{{ item.dictLabel }}
             </el-radio>
           </el-form-item>

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.moxi.mogublog.commons.entity.Blog;
+import com.moxi.mogublog.commons.entity.SystemConfig;
 import com.moxi.mogublog.commons.feign.PictureFeignClient;
 import com.moxi.mogublog.utils.IpUtils;
 import com.moxi.mogublog.utils.ResultUtil;
@@ -14,10 +15,13 @@ import com.moxi.mogublog.web.global.MessageConf;
 import com.moxi.mogublog.web.global.SysConf;
 import com.moxi.mogublog.xo.global.RedisConf;
 import com.moxi.mogublog.xo.service.BlogService;
+import com.moxi.mogublog.xo.service.SystemConfigService;
 import com.moxi.mogublog.xo.utils.WebUtil;
 import com.moxi.mougblog.base.enums.EBehavior;
+import com.moxi.mougblog.base.enums.EOpenStatus;
 import com.moxi.mougblog.base.enums.EPublish;
 import com.moxi.mougblog.base.enums.EStatus;
+import com.moxi.mougblog.base.global.BaseSysConf;
 import com.moxi.mougblog.base.global.Constants;
 import com.moxi.mougblog.base.global.ECode;
 import com.moxi.mougblog.base.holder.RequestHolder;
@@ -58,6 +62,8 @@ public class BlogContentRestApi {
     @Resource
     private PictureFeignClient pictureFeignClient;
     @Autowired
+    private SystemConfigService systemConfigService;
+    @Autowired
     private StringRedisTemplate stringRedisTemplate;
     @Value(value = "${BLOG.ORIGINAL_TEMPLATE}")
     private String ORIGINAL_TEMPLATE;
@@ -85,8 +91,23 @@ public class BlogContentRestApi {
             blog = blogService.getOne(queryWrapper);
         }
 
-        if (blog == null || blog.getStatus() == EStatus.DISABLED || EPublish.NO_PUBLISH.equals(blog.getIsPublish())) {
-            return ResultUtil.result(ECode.ERROR, MessageConf.BLOG_IS_DELETE);
+        // 从请求中获取用户的标签,根据用户标签展示相应的博客列表
+        Object attribute = request.getAttribute(SysConf.USER_TAG);
+        Integer userTag = null;
+        if (attribute != null) {
+            userTag = ((Double) attribute).intValue();
+        }
+        // 判断是否打开了博客过滤
+        SystemConfig systemConfig = systemConfigService.getConfig();
+        String openBlogFilter = systemConfig.getOpenBlogFilter();
+        if (EOpenStatus.CLOSE.equals(openBlogFilter)) {
+            if (blog == null || blog.getStatus() == EStatus.DISABLED || EPublish.NO_PUBLISH.equals(blog.getIsPublish())) {
+                return ResultUtil.result(ECode.ERROR, MessageConf.BLOG_IS_DELETE);
+            }
+        } else {
+            if (blog == null || blog.getStatus() == EStatus.DISABLED || (EPublish.NO_PUBLISH.equals(blog.getIsPublish()) && (userTag == null || userTag.equals(BaseSysConf.ZERO)))) {
+                return ResultUtil.result(ECode.ERROR, MessageConf.BLOG_IS_DELETE);
+            }
         }
 
         // 设置文章版权申明

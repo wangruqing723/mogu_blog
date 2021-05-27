@@ -447,13 +447,13 @@
 </template>
 
 <script>
-import { getBlogList, addBlog, editBlog, deleteBlog, deleteBatchBlog } from "@/api/blog";
-import { getSystemConfig} from "@/api/systemConfig";
-import { getTagList } from "@/api/tag";
-import { getBlogSortList } from "@/api/blogSort";
+import {addBlog, deleteBatchBlog, deleteBlog, editBlog, getBlogList} from "@/api/blog";
+import {getSystemConfig} from "@/api/systemConfig";
+import {getTagList} from "@/api/tag";
+import {getBlogSortList} from "@/api/blogSort";
 import {formatData} from "@/utils/webUtils";
-import { getToken } from '@/utils/auth'
-import { setCookie, getCookie, delCookie } from "@/utils/cookieUtils";
+import {getToken} from '@/utils/auth'
+import {getCookie} from "@/utils/cookieUtils";
 import {getListByDictTypeList} from "@/api/sysDictData"
 import {addSubjectItemList} from "@/api/subjectItem";
 
@@ -461,8 +461,9 @@ import CheckPhoto from "../../components/CheckPhoto";
 import CKEditor from "../../components/CKEditor";
 import MarkdownEditor from "../../components/MarkdownEditor";
 import SubjectSelect from "../../components/SubjectSelect";
+import {Loading} from 'element-ui';
+
 var querystring = require("querystring");
-import { Loading } from 'element-ui';
 export default {
   components: {
     CheckPhoto,
@@ -760,7 +761,7 @@ export default {
       });
     },
     getFormObject: function() {
-      var formObject = {
+      return {
         uid: null,
         title: null,
         summary: null,
@@ -775,15 +776,14 @@ export default {
         openComment: this.openDefault, // 是否启动
         articlesPart: null //文章出处，默认蘑菇博客
       };
-      return formObject;
     },
     // 跳转到该博客详情
     onClick: function(row) {
-      if(row.isPublish == 0) {
-        this.$message.error("文章暂未发布，无法进行浏览")
-        return
+      if (row.isPublish == 0) {
+        this.$message.error("文章暂未发布，无法进行浏览，可以登录管理员或博主账号在门户页面浏览")
+        return;
       }
-      window.open( this.BLOG_WEB_URL + "/#/info?blogOid=" + row.oid);
+      window.open(this.BLOG_WEB_URL + "/#/info?blogOid=" + row.oid);
     },
     //标签远程搜索函数
     tagRemoteMethod: function(query) {

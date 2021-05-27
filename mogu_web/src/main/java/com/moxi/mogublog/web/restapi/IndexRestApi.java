@@ -82,7 +82,14 @@ public class IndexRestApi {
                              @ApiParam(name = "pageSize", value = "每页显示数目", required = false) @RequestParam(name = "pageSize", required = false, defaultValue = "10") Long pageSize) {
 
         log.info("获取首页最新的博客");
-        return ResultUtil.result(SysConf.SUCCESS, blogService.getNewBlog(currentPage, null));
+        // 从请求中获取用户的标签
+        Object attribute = request.getAttribute(SysConf.USER_TAG);
+        Integer userTag = null;
+        if (attribute != null) {
+            userTag = ((Double) attribute).intValue();
+        }
+
+        return ResultUtil.result(SysConf.SUCCESS, blogService.getNewBlog(currentPage, null, userTag));
     }
 
     @ApiOperation(value = "mogu-search调用获取博客的接口[包含内容]", notes = "mogu-search调用获取博客的接口")
@@ -148,7 +155,7 @@ public class IndexRestApi {
         return linkService.addLinkCount(uid);
     }
 
-    @ApiOperation(value = "获取网站配置", notes = "获取友情链接")
+    @ApiOperation(value = "获取网站配置", notes = "获取网站配置")
     @GetMapping("/getWebConfig")
     public String getWebConfig() {
         log.info("获取网站配置");

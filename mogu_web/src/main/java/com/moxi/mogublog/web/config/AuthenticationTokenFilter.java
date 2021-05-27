@@ -44,6 +44,7 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
                 request.setAttribute(SysConf.TOKEN, accessToken);
                 request.setAttribute(SysConf.USER_UID, map.get(SysConf.UID));
                 request.setAttribute(SysConf.USER_NAME, map.get(SysConf.NICK_NAME));
+                request.setAttribute(SysConf.USER_TAG, map.get(SysConf.USER_TAG));
                 log.info("解析出来的用户:{}", map.get(SysConf.NICK_NAME));
             }
         }
